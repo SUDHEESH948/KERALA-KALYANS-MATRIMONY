@@ -1,0 +1,16 @@
+{
+  "admin": {
+    "email": "admin@apremiya.com",
+    "password": "admin123",
+    "name": "Super Admin",
+    "role": "Chief Administrator"
+  },
+  "stats": {
+    "verifiedProfiles": 100,
+    "happyConnections": 500,
+    "registeredMembers": 10,
+    "trustedExperience": 10
+  },
+  "profiles": [],
+  "inquiries": []
+}
