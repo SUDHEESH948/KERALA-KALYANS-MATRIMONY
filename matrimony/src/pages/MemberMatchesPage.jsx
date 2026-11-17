@@ -243,14 +243,16 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
           <div className="flex items-center gap-3">
             <button
               onClick={onNavigateHome}
-              className="flex items-center gap-2 group cursor-pointer text-left"
+              className="flex items-center gap-2.5 group cursor-pointer text-left"
             >
-              <div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-[#701C35] text-white shadow-sm group-hover:scale-105 transition">
-                <Heart size={20} fill="white" />
-              </div>
-              <div>
-                <span className="serif text-xl sm:text-2xl font-bold tracking-tight text-[#701C35] block leading-tight">
-                  Apremiya
+              <img
+                src="/kerala-kalyan-logo.png"
+                alt="Kerala Kalyans Matrimony"
+                className="h-10 sm:h-12 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition"
+              />
+              <div className="hidden sm:block">
+                <span className="serif text-lg sm:text-xl font-bold tracking-tight text-[#701C35] block leading-tight">
+                  Kerala Kalyans
                 </span>
                 <span className="text-[9px] sm:text-[10px] tracking-[2px] font-semibold text-[#B28D53] uppercase block">
                   Matrimony
@@ -788,7 +790,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-1 text-xs">
                   <span className="flex items-center gap-1 font-medium">
-                    <Mail size={13} className="text-emerald-700" /> {viewingProfile.email || 'Contact through Apremiya Support'}
+                    <Mail size={13} className="text-emerald-700" /> {viewingProfile.email || 'Contact through Kerala Kalyans Support'}
                   </span>
                   {viewingProfile.phone && (
                     <span className="flex items-center gap-1 font-medium">

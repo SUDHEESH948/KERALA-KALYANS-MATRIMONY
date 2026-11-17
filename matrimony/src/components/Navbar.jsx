@@ -16,17 +16,18 @@ export default function Navbar({
   return (
     <nav className="sticky top-0 z-50 border-b border-[#e9dfd2] bg-[#FAF7F1]/95 backdrop-blur-lg">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between px-3 sm:px-5 py-3 sm:py-4 lg:px-12">
-        <a href="#" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-[#701C35] text-white flex-shrink-0">
-            <Heart size={18} className="sm:hidden" fill="white" />
-            <Heart size={22} className="hidden sm:block" fill="white" />
-          </div>
-          <div>
-            <h2 className="serif font-serif text-xl sm:text-2xl font-bold text-[#701C35] leading-tight">
-              Apremiya
+        <a href="#" className="flex items-center gap-2.5">
+          <img
+            src="/kerala-kalyan-logo.png"
+            alt="Kerala Kalyans Matrimony"
+            className="h-9 sm:h-11 md:h-12 w-auto object-contain mix-blend-multiply"
+          />
+          <div className="hidden sm:block">
+            <h2 className="serif font-serif text-lg sm:text-xl font-bold text-[#701C35] leading-tight tracking-tight uppercase">
+              Kerala Kalyans
             </h2>
-            <p className="font-montserrat text-[8px] sm:text-[9px] font-semibold tracking-[2px] sm:tracking-[3px] text-[#9C8158]">
-              YOUR FOREVER BEGINS
+            <p className="font-inter text-[8px] sm:text-[9px] font-semibold tracking-[2px] text-[#9C8158]">
+              MATRIMONY
             </p>
           </div>
         </a>

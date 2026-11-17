@@ -32,7 +32,17 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister }) {
       <footer className="bg-[#24151A] px-2.5 sm:px-6 py-10 sm:py-16 text-white">
         <div className="mx-auto flex flex-col md:flex-row items-start justify-between max-w-[1300px] gap-8 sm:gap-12">
           <div className="max-w-md">
-            <h2 className="serif text-2xl sm:text-3xl font-bold text-[#E8CA91]">Apremiya</h2>
+            <div className="flex items-center gap-3 mb-3">
+              <img
+                src="/kerala-kalyan-logo.png"
+                alt="Kerala Kalyans Matrimony"
+                className="h-11 w-auto object-contain bg-white rounded-lg p-1.5 shadow-md"
+              />
+              <div>
+                <h2 className="serif text-xl sm:text-2xl font-bold text-[#E8CA91]">Kerala Kalyans</h2>
+                <p className="font-inter text-[9px] tracking-[2px] text-white/70 font-semibold uppercase">Matrimony</p>
+              </div>
+            </div>
             <p className="font-sans mt-3 sm:mt-5 text-xs sm:text-sm leading-6 sm:leading-7 text-white/60">
               Bringing hearts together through meaningful connections,
               trust, and beautiful beginnings.
@@ -48,13 +58,13 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister }) {
               onClick={onOpenRegister}
               className="font-montserrat mt-4 sm:mt-5 rounded-full bg-[#701C35] px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold tracking-wide cursor-pointer hover:bg-[#5a1429] transition shadow-md"
             >
-              Join Apremiya
+              Join Kerala Kalyans
             </button>
           </div>
         </div>
 
         <div className="font-sans mx-auto mt-10 sm:mt-14 max-w-[1300px] border-t border-white/10 pt-6 sm:pt-7 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] sm:text-xs text-white/40">
-          <span>© 2026 Apremiya Matrimony. All rights reserved.</span>
+          <span>© 2026 Kerala Kalyans Matrimony. All rights reserved.</span>
           <button
             onClick={onOpenAdmin}
             className="text-white/50 hover:text-[#E8CA91] transition flex items-center gap-1.5 cursor-pointer font-medium"

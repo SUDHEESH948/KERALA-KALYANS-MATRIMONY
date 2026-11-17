@@ -309,7 +309,7 @@ export const loginMember = async (req, res) => {
     res.json({
       success: true,
       mustChangePassword: false,
-      message: 'Login successful! Welcome to your Apremiya dashboard.',
+      message: 'Login successful! Welcome to your Kerala Kalyans dashboard.',
       token,
       member: {
         id: profile.id,

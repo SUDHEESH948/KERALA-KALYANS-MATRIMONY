@@ -31,9 +31,9 @@ const getTransporter = () => {
 const getFromAddress = () => {
   const user = process.env.SMTP_USER || process.env.EMAIL_USER
   if (user) {
-    return `"Apremiya Matrimony" <${user}>`
+    return `"Kerala Kalyans Matrimony" <${user}>`
   }
-  return process.env.EMAIL_FROM || '"Apremiya Matrimony" <no-reply@apremiya.com>'
+  return process.env.EMAIL_FROM || '"Kerala Kalyans Matrimony" <no-reply@keralakalyans.com>'
 }
 
 const getFrontendUrl = () => {
@@ -75,15 +75,15 @@ const emailWrapper = ({ title, preheader, contentHtml }) => `
 <body>
   <div class="wrapper">
     <div class="header">
-      <h1>Apremiya</h1>
-      <p>YOUR FOREVER BEGINS</p>
+      <h1>Kerala Kalyans</h1>
+      <p>MATRIMONY · WHERE BEAUTIFUL STORIES BEGIN</p>
     </div>
     <div class="body">
       ${contentHtml}
     </div>
     <div class="footer">
-      <p style="margin: 0 0 6px;">© ${new Date().getFullYear()} Apremiya Matrimony. All rights reserved.</p>
-      <p style="margin: 0; font-size: 11px;">Exquisite Matchmaking with Dignity, Privacy & Trust.</p>
+      <p style="margin: 0 0 6px;">© ${new Date().getFullYear()} Kerala Kalyans Matrimony. All rights reserved.</p>
+      <p style="margin: 0; font-size: 11px;">Exquisite Kerala Matchmaking with Dignity, Privacy & Trust.</p>
     </div>
   </div>
 </body>
@@ -102,7 +102,7 @@ export const sendWelcomeEmail = async (user) => {
   const contentHtml = `
     <div class="greeting">Dear ${name},</div>
     <div class="badge-pending">⏳ REGISTRATION PENDING ADMIN APPROVAL</div>
-    <p>Thank you for choosing <b>Apremiya Matrimony</b>. Your registration has been submitted successfully and received by our admissions team.</p>
+    <p>Thank you for choosing <b>Kerala Kalyans Matrimony</b>. Your registration has been submitted successfully and received by our admissions team.</p>
     
     <div class="card-box">
       <h3>Registration Confirmation</h3>
@@ -124,7 +124,7 @@ export const sendWelcomeEmail = async (user) => {
   const textContent = `
 Dear ${name},
 
-Welcome to Apremiya Matrimony!
+Welcome to Kerala Kalyans Matrimony!
 
 Your registration has been submitted successfully and is currently awaiting administrator approval.
 
@@ -136,7 +136,7 @@ Account Details:
 All profiles undergo careful review to maintain platform security and authenticity. Once our administrator approves your account, we will dispatch an email with your login credentials.
 
 Warm regards,
-Apremiya Matrimony Team
+Kerala Kalyans Matrimony Team
   `.trim()
 
   return dispatchEmail({ to, subject, html: emailWrapper({ title: subject, preheader: 'Your registration is under review', contentHtml }), text: textContent })
@@ -144,19 +144,19 @@ Apremiya Matrimony Team
 
 /**
  * 2. Send Approval Email with temporary password
- * Subject: Apremiya Matrimony - Account Approval Credentials
+ * Subject: Kerala Kalyans Matrimony - Account Approval Credentials
  */
 export const sendApprovalEmail = async (user, temporaryPassword) => {
   const to = user.email || (typeof user === 'string' ? user : '')
   const name = user.name || 'Valued Member'
   const frontendUrl = getFrontendUrl()
   const loginUrl = `${frontendUrl}/#login?email=${encodeURIComponent(to)}`
-  const subject = 'Apremiya Matrimony - Account Approval Credentials'
+  const subject = 'Kerala Kalyans Matrimony - Account Approval Credentials'
 
   const contentHtml = `
     <div class="greeting">Dear ${name},</div>
     <div class="badge-approved">✓ ACCOUNT APPROVED</div>
-    <p>Congratulations! Your matrimonial registration on <b>Apremiya Matrimony</b> has been verified and approved by our administrator.</p>
+    <p>Congratulations! Your matrimonial registration on <b>Kerala Kalyans Matrimony</b> has been verified and approved by our administrator.</p>
 
     <!-- 10 MINUTE EXPIRATION WARNING BANNER -->
     <div style="background: #FFF3CD; border-left: 5px solid #E65100; padding: 14px 18px; border-radius: 8px; margin: 20px 0; font-size: 13.5px; color: #7B341E;">
@@ -198,14 +198,14 @@ export const sendApprovalEmail = async (user, temporaryPassword) => {
     </div>
 
     <p style="font-size: 12px; color: #8C7E74; line-height: 1.5; margin-top: 24px;">
-      🔒 <b>Security Reminder:</b> Never share your credentials with anyone. Apremiya representatives will never ask for your password.
+      🔒 <b>Security Reminder:</b> Never share your credentials with anyone. Kerala Kalyans representatives will never ask for your password.
     </p>
   `
 
   const textContent = `
 Dear ${name},
 
-Congratulations! Your account on Apremiya Matrimony has been approved by the administrator.
+Congratulations! Your account on Kerala Kalyans Matrimony has been approved by the administrator.
 
 IMPORTANT: This temporary password is valid for 10 MINUTES ONLY.
 
@@ -220,7 +220,7 @@ Instructions:
 3. You will immediately be prompted to change this temporary password to your own permanent password.
 
 Warm regards,
-Apremiya Matrimony Team
+Kerala Kalyans Matrimony Team
   `.trim()
 
   return dispatchEmail({
@@ -234,17 +234,17 @@ Apremiya Matrimony Team
 
 /**
  * 3. Send Rejection Email
- * Subject: Account Status Update – Apremiya Matrimony
+ * Subject: Account Status Update – Kerala Kalyans Matrimony
  */
 export const sendRejectionEmail = async (user) => {
   const to = user.email
   const name = user.name || 'Member'
-  const subject = 'Account Status Update – Apremiya Matrimony'
+  const subject = 'Account Status Update – Kerala Kalyans Matrimony'
 
   const contentHtml = `
     <div class="greeting">Dear ${name},</div>
     <div class="badge-rejected">APPLICATION UPDATE</div>
-    <p>Thank you for your interest in joining <b>Apremiya Matrimony</b>.</p>
+    <p>Thank you for your interest in joining <b>Kerala Kalyans Matrimony</b>.</p>
     <p>After reviewing the details submitted in your profile application, our administration team is unable to approve your account at this time as it did not fulfill our community guidelines or verification requirements.</p>
 
     <div class="card-box">
@@ -252,20 +252,20 @@ export const sendRejectionEmail = async (user) => {
       <div class="credential-row"><span class="credential-label">Account Status:</span> <b style="color: #C62828;">Application Declined</b></div>
     </div>
 
-    <p>If you believe this decision was made in error or wish to provide updated documentation, please contact our support team at <a href="mailto:support@apremiya.com" style="color: #701C35;">support@apremiya.com</a>.</p>
+    <p>If you believe this decision was made in error or wish to provide updated documentation, please contact our support team at <a href="mailto:support@keralakalyans.com" style="color: #701C35;">support@keralakalyans.com</a>.</p>
   `
 
   const textContent = `
 Dear ${name},
 
-Thank you for your interest in Apremiya Matrimony.
+Thank you for your interest in Kerala Kalyans Matrimony.
 
 Following a review of your application, we regret to inform you that your registration could not be approved at this time.
 
-If you have questions, please reach out to support@apremiya.com.
+If you have questions, please reach out to support@keralakalyans.com.
 
 Sincerely,
-Apremiya Matrimony Admissions Team
+Kerala Kalyans Matrimony Admissions Team
   `.trim()
 
   return dispatchEmail({ to, subject, html: emailWrapper({ title: subject, preheader: 'Update on your account application', contentHtml }), text: textContent })

@@ -123,15 +123,17 @@ export default function MemberLoginModal({
           {/* Header Banner */}
           <div className="bg-[#701C35] px-5 py-4 text-white flex items-center justify-between">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 border border-white/20 flex-shrink-0">
-                <Heart size={18} fill="white" />
-              </div>
+              <img
+                src="/kerala-kalyan-logo.png"
+                alt="Kerala Kalyans Matrimony"
+                className="h-9 w-auto object-contain bg-white rounded-lg p-1 flex-shrink-0"
+              />
               <div className="min-w-0">
-                <h3 className="serif text-xl font-bold leading-tight truncate">
+                <h3 className="serif text-lg sm:text-xl font-bold leading-tight truncate">
                   Member Login
                 </h3>
                 <p className="text-[10px] text-[#E8CA91] font-semibold tracking-wide truncate">
-                  ACCESS YOUR VERIFIED ACCOUNT
+                  KERALA KALYANS MATRIMONY
                 </p>
               </div>
             </div>
@@ -243,7 +245,7 @@ export default function MemberLoginModal({
                 }}
                 className="text-[#701C35] font-semibold hover:underline cursor-pointer"
               >
-                Register on Apremiya
+                Register on Kerala Kalyans
               </button>
             </div>
           </div>

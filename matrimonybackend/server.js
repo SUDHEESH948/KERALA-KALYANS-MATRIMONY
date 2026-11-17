@@ -39,7 +39,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
     database: mongoose.connection.readyState === 1 ? 'connected (MongoDB Atlas)' : 'disconnected',
-    service: 'Apremiya Matrimony API Server',
+    service: 'Kerala Kalyans Matrimony API Server',
     uptime: process.uptime(),
     timestamp: new Date().toISOString()
   })

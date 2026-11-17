@@ -145,13 +145,20 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
       {/* 1. TOP STICKY HEADER */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#eadfce] bg-white text-gray-700 hover:text-[#701C35] hover:border-[#701C35] text-xs font-semibold transition cursor-pointer shadow-xs"
-          >
-            <ArrowLeft size={15} />
-            <span>Back to Matches</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onBack}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#eadfce] bg-white text-gray-700 hover:text-[#701C35] hover:border-[#701C35] text-xs font-semibold transition cursor-pointer shadow-xs"
+            >
+              <ArrowLeft size={15} />
+              <span>Back to Matches</span>
+            </button>
+            <img
+              src="/kerala-kalyan-logo.png"
+              alt="Kerala Kalyans Matrimony"
+              className="h-8 sm:h-9 w-auto object-contain mix-blend-multiply hidden sm:block"
+            />
+          </div>
 
           <div className="flex items-center gap-2 text-xs">
             <span className="font-mono text-gray-500 font-bold bg-white px-2.5 py-1 rounded-md border border-[#eadfce]">
@@ -223,7 +230,7 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                     {profile.name}
                   </h2>
                   <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                    Registered member seeking a compatible life partner. Profile verified by Apremiya admissions team.
+                    Registered member seeking a compatible life partner. Profile verified by Kerala Kalyans Matrimony admissions team.
                   </p>
                 </div>
 
@@ -465,11 +472,11 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
               </div>
             </div>
 
-            {/* Apremiya Trust Guarantee Card */}
+            {/* Kerala Kalyans Trust Guarantee Card */}
             <div className="bg-[#FAF7F1] rounded-3xl p-6 border border-[#eadfce] space-y-3 text-xs text-gray-600">
               <div className="flex items-center gap-2 text-[#701C35] font-bold text-sm">
                 <Award size={16} />
-                <span>Apremiya Assurance</span>
+                <span>Kerala Kalyans Assurance</span>
               </div>
               <ul className="space-y-2 text-[11px] list-disc list-inside text-gray-600">
                 <li>Government ID verified profile</li>

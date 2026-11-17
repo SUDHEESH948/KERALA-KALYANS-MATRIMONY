@@ -240,7 +240,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
 
               {/* Drawer Footer */}
               <div className="border-t border-[#eadfce] bg-white p-3.5 text-center text-[10px] text-gray-400">
-                Apremiya Live Notification Engine · Synchronized with MongoDB
+                Kerala Kalyans Live Notification Engine · Synchronized with MongoDB
                 Atlas
               </div>
             </motion.div>

@@ -186,12 +186,14 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
           {/* Header Banner */}
           <div className="bg-[#701C35] px-3.5 sm:px-8 py-3.5 sm:py-5 text-white flex items-center justify-between">
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 border border-white/20 flex-shrink-0">
-                <Heart size={18} fill="white" />
-              </div>
+              <img
+                src="/kerala-kalyan-logo.png"
+                alt="Kerala Kalyans Matrimony"
+                className="h-9 sm:h-11 w-auto object-contain bg-white rounded-lg p-1 flex-shrink-0"
+              />
               <div className="min-w-0">
                 <h3 className="serif text-base sm:text-2xl font-bold leading-tight truncate">
-                  Register on Apremiya
+                  Register on Kerala Kalyans
                 </h3>
                 <p className="text-[9px] sm:text-xs text-[#E8CA91] font-semibold tracking-wide truncate">
                   FIND YOUR SPECIAL SOMEONE

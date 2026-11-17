@@ -540,11 +540,13 @@ export default function AdminPage({ onExit }) {
       <div className="min-h-screen bg-[#FAF7F1] flex flex-col justify-center items-center p-4 font-inter admin-page">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-[#eadfce] p-8">
           <div className="text-center mb-6">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#701C35] text-white mb-3">
-              <Heart size={24} fill="white" />
-            </div>
+            <img
+              src="/kerala-kalyan-logo.png"
+              alt="Kerala Kalyans Matrimony"
+              className="h-12 w-auto mx-auto object-contain mb-3"
+            />
             <h1 className="serif font-serif text-2xl sm:text-3xl font-bold text-[#701C35]">
-              Apremiya Admin
+              Kerala Kalyans Admin
             </h1>
             <p className="font-inter text-xs tracking-[2px] font-semibold text-[#9C8158] mt-1">
               PORTAL CONTROL PANEL
@@ -622,12 +624,14 @@ export default function AdminPage({ onExit }) {
       <header className="sticky top-0 z-40 bg-[#701C35] text-white shadow-md">
         <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-white/10 border border-white/20 flex-shrink-0">
-              <Heart size={16} fill="white" />
-            </div>
+            <img
+              src="/kerala-kalyan-logo.png"
+              alt="Kerala Kalyans Matrimony"
+              className="h-8 sm:h-9 w-auto object-contain bg-white rounded-md p-1 flex-shrink-0"
+            />
             <div className="min-w-0">
               <h2 className="serif text-base sm:text-xl font-bold leading-tight truncate">
-                Apremiya
+                Kerala Kalyans
               </h2>
               <p className="font-inter text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[#E8CA91] font-semibold truncate">
                 ADMIN CONSOLE
