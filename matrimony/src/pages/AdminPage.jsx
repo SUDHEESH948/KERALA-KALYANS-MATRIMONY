@@ -912,7 +912,9 @@ export default function AdminPage({ onExit }) {
                               className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#701C35] hover:bg-[#8B2342] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
                             >
                               <RefreshCw size={13} />
-                              <span>Show All Registrations ({profiles.length})</span>
+                              <span>
+                                Show All Registrations ({profiles.length})
+                              </span>
                             </button>
                           </div>
                         </td>
@@ -945,7 +947,12 @@ export default function AdminPage({ onExit }) {
                               </div>
                               <span className="text-[10px] text-gray-400">
                                 {p.phone ? `${p.phone} · ` : ""}
-                                {p.id} · {p.gender} · <span className="text-[#701C35] font-medium">{p.marriageType || p.maritalStatus || 'Never Married'}</span>
+                                {p.id} · {p.gender} ·{" "}
+                                <span className="text-[#701C35] font-medium">
+                                  {p.marriageType ||
+                                    p.maritalStatus ||
+                                    "Never Married"}
+                                </span>
                               </span>
                             </div>
                           </td>
@@ -1034,7 +1041,7 @@ export default function AdminPage({ onExit }) {
                             <div className="flex items-center justify-end gap-1.5">
                               <button
                                 onClick={() => {
-                                  window.location.hash = `#profile/${p.id}`
+                                  window.location.hash = `#profile/${p.id}`;
                                 }}
                                 className="p-1.5 rounded text-gray-600 hover:text-[#701C35] hover:bg-[#701C35]/10 transition cursor-pointer flex items-center gap-1"
                                 title="View Complete Profile"
@@ -1223,7 +1230,10 @@ export default function AdminPage({ onExit }) {
             {/* Filter Pills */}
             <div className="flex flex-wrap items-center gap-2">
               {[
-                { id: "all", label: `All Registrations (${notifications.length})` },
+                {
+                  id: "all",
+                  label: `All Registrations (${notifications.length})`,
+                },
                 {
                   id: "unread",
                   label: `Unread (${notifications.filter((n) => !n.isRead).length})`,
@@ -1544,9 +1554,15 @@ export default function AdminPage({ onExit }) {
               </div>
 
               <div>
-                <label className="block font-semibold mb-1">Marriage Type</label>
+                <label className="block font-semibold mb-1">
+                  Marriage Type
+                </label>
                 <select
-                  value={editingProfile.marriageType || editingProfile.maritalStatus || "Never Married"}
+                  value={
+                    editingProfile.marriageType ||
+                    editingProfile.maritalStatus ||
+                    "Never Married"
+                  }
                   onChange={(e) =>
                     setEditingProfile({
                       ...editingProfile,
@@ -1743,7 +1759,9 @@ export default function AdminPage({ onExit }) {
               <Key size={26} />
             </div>
             <h3 className="serif text-xl sm:text-2xl font-bold text-center text-gray-900">
-              {approvalModal.isResend ? "Credentials Reissued" : "Account Approved"}
+              {approvalModal.isResend
+                ? "Credentials Reissued"
+                : "Account Approved"}
             </h3>
             <p className="mt-1 text-xs text-center text-gray-500">
               Member: <b className="text-gray-900">{approvalModal.name}</b>
@@ -1764,7 +1782,9 @@ export default function AdminPage({ onExit }) {
                 <button
                   type="button"
                   onClick={() => {
-                    navigator.clipboard.writeText(approvalModal.temporaryPassword);
+                    navigator.clipboard.writeText(
+                      approvalModal.temporaryPassword,
+                    );
                     setCopiedPassword(true);
                     setTimeout(() => setCopiedPassword(false), 2000);
                   }}
@@ -1784,7 +1804,8 @@ export default function AdminPage({ onExit }) {
                 </button>
               </div>
               <p className="text-[10px] text-gray-500 mt-2">
-                Combination of uppercase, lowercase, numbers &amp; special characters. Valid for 10 minutes.
+                Combination of uppercase, lowercase, numbers &amp; special
+                characters. Valid for 10 minutes.
               </p>
             </div>
 
@@ -1794,7 +1815,9 @@ export default function AdminPage({ onExit }) {
                 <span>Nodemailer Dispatched</span>
               </div>
               <p className="text-[11px] leading-relaxed text-emerald-700">
-                Email has been sent to <b>{approvalModal.email}</b>. If not visible in the inbox, ask the member to check their <b>Spam</b> or <b>Promotions</b> folder.
+                Email has been sent to <b>{approvalModal.email}</b>. If not
+                visible in the inbox, ask the member to check their <b>Spam</b>{" "}
+                or <b>Promotions</b> folder.
               </p>
             </div>
 
@@ -1819,7 +1842,9 @@ export default function AdminPage({ onExit }) {
               <Key size={26} />
             </div>
             <h3 className="serif text-xl sm:text-2xl font-bold text-center text-gray-900">
-              {approvalModal.isResend ? "Credentials Reissued" : "Account Approved"}
+              {approvalModal.isResend
+                ? "Credentials Reissued"
+                : "Account Approved"}
             </h3>
             <p className="mt-1 text-xs text-center text-gray-500">
               Member: <b className="text-gray-900">{approvalModal.name}</b>
@@ -1840,7 +1865,9 @@ export default function AdminPage({ onExit }) {
                 <button
                   type="button"
                   onClick={() => {
-                    navigator.clipboard.writeText(approvalModal.temporaryPassword);
+                    navigator.clipboard.writeText(
+                      approvalModal.temporaryPassword,
+                    );
                     setCopiedPassword(true);
                     setTimeout(() => setCopiedPassword(false), 2000);
                   }}
@@ -1860,7 +1887,8 @@ export default function AdminPage({ onExit }) {
                 </button>
               </div>
               <p className="text-[10px] text-gray-500 mt-2">
-                Combination of uppercase, lowercase, numbers &amp; special characters. Valid for 10 minutes.
+                Combination of uppercase, lowercase, numbers &amp; special
+                characters. Valid for 10 minutes.
               </p>
             </div>
 
@@ -1870,7 +1898,9 @@ export default function AdminPage({ onExit }) {
                 <span>Nodemailer Dispatched</span>
               </div>
               <p className="text-[11px] leading-relaxed text-emerald-700">
-                Email has been sent to <b>{approvalModal.email}</b>. If not visible in the inbox, ask the member to check their <b>Spam</b> or <b>Promotions</b> folder.
+                Email has been sent to <b>{approvalModal.email}</b>. If not
+                visible in the inbox, ask the member to check their <b>Spam</b>{" "}
+                or <b>Promotions</b> folder.
               </p>
             </div>
 

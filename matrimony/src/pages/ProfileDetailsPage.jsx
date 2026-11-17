@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Heart,
@@ -19,105 +19,119 @@ import {
   Award,
   Globe,
   Home as HomeIcon,
-  Users
-} from 'lucide-react'
-import { API_BASE } from '../config/api'
+  Users,
+} from "lucide-react";
+import { API_BASE } from "../config/api";
 
-export default function ProfileDetailsPage({ profileId, onBack, currentMember }) {
-  const [profile, setProfile] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [isCopied, setIsCopied] = useState(false)
-  const [interestSent, setInterestSent] = useState(false)
-  const [isShortlisted, setIsShortlisted] = useState(false)
-  const [toastMessage, setToastMessage] = useState(null)
+export default function ProfileDetailsPage({
+  profileId,
+  onBack,
+  currentMember,
+}) {
+  const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
+  const [interestSent, setInterestSent] = useState(false);
+  const [isShortlisted, setIsShortlisted] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
-    setToastMessage(msg)
-    setTimeout(() => setToastMessage(null), 3000)
-  }
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   // Load profile from API or database
   useEffect(() => {
-    if (!profileId) return
+    if (!profileId) return;
     const fetchProfile = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const res = await fetch(`${API_BASE}/profiles/${profileId}`)
+        const res = await fetch(`${API_BASE}/profiles/${profileId}`);
         if (res.ok) {
-          const data = await res.json()
-          setProfile(data)
+          const data = await res.json();
+          setProfile(data);
           // Check if interest was sent
           try {
-            const savedInterests = JSON.parse(localStorage.getItem(`apremiya_interests_${currentMember?.id}`) || '[]')
-            setInterestSent(savedInterests.includes(data.id))
-            const savedShortlist = JSON.parse(localStorage.getItem(`apremiya_shortlist_${currentMember?.id}`) || '[]')
-            setIsShortlisted(savedShortlist.includes(data.id))
+            const savedInterests = JSON.parse(
+              localStorage.getItem(`apremiya_interests_${currentMember?.id}`) ||
+                "[]",
+            );
+            setInterestSent(savedInterests.includes(data.id));
+            const savedShortlist = JSON.parse(
+              localStorage.getItem(`apremiya_shortlist_${currentMember?.id}`) ||
+                "[]",
+            );
+            setIsShortlisted(savedShortlist.includes(data.id));
           } catch {}
         } else {
-          setError('Profile not found')
+          setError("Profile not found");
         }
       } catch {
-        setError('Failed to load profile details')
+        setError("Failed to load profile details");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-    fetchProfile()
-  }, [profileId, currentMember])
+    };
+    fetchProfile();
+  }, [profileId, currentMember]);
 
   const handleToggleInterest = () => {
-    if (!profile) return
-    const memberKey = `apremiya_interests_${currentMember?.id || 'guest'}`
+    if (!profile) return;
+    const memberKey = `apremiya_interests_${currentMember?.id || "guest"}`;
     try {
-      const saved = JSON.parse(localStorage.getItem(memberKey) || '[]')
-      let updated
+      const saved = JSON.parse(localStorage.getItem(memberKey) || "[]");
+      let updated;
       if (interestSent) {
-        updated = saved.filter((id) => id !== profile.id)
-        setInterestSent(false)
-        showToast(`Interest withdrawn for ${profile.name}`)
+        updated = saved.filter((id) => id !== profile.id);
+        setInterestSent(false);
+        showToast(`Interest withdrawn for ${profile.name}`);
       } else {
-        updated = [...saved, profile.id]
-        setInterestSent(true)
-        showToast(`💖 Expressed interest in ${profile.name}! Notification sent.`)
+        updated = [...saved, profile.id];
+        setInterestSent(true);
+        showToast(
+          `💖 Expressed interest in ${profile.name}! Notification sent.`,
+        );
       }
-      localStorage.setItem(memberKey, JSON.stringify(updated))
+      localStorage.setItem(memberKey, JSON.stringify(updated));
     } catch {}
-  }
+  };
 
   const handleToggleShortlist = () => {
-    if (!profile) return
-    const memberKey = `apremiya_shortlist_${currentMember?.id || 'guest'}`
+    if (!profile) return;
+    const memberKey = `apremiya_shortlist_${currentMember?.id || "guest"}`;
     try {
-      const saved = JSON.parse(localStorage.getItem(memberKey) || '[]')
-      let updated
+      const saved = JSON.parse(localStorage.getItem(memberKey) || "[]");
+      let updated;
       if (isShortlisted) {
-        updated = saved.filter((id) => id !== profile.id)
-        setIsShortlisted(false)
-        showToast(`Removed from your shortlist`)
+        updated = saved.filter((id) => id !== profile.id);
+        setIsShortlisted(false);
+        showToast(`Removed from your shortlist`);
       } else {
-        updated = [...saved, profile.id]
-        setIsShortlisted(true)
-        showToast(`⭐ Added ${profile.name} to your shortlist!`)
+        updated = [...saved, profile.id];
+        setIsShortlisted(true);
+        showToast(`⭐ Added ${profile.name} to your shortlist!`);
       }
-      localStorage.setItem(memberKey, JSON.stringify(updated))
+      localStorage.setItem(memberKey, JSON.stringify(updated));
     } catch {}
-  }
+  };
 
   const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href)
-    setIsCopied(true)
-    showToast('Profile link copied to clipboard!')
-    setTimeout(() => setIsCopied(false), 2500)
-  }
+    navigator.clipboard.writeText(window.location.href);
+    setIsCopied(true);
+    showToast("Profile link copied to clipboard!");
+    setTimeout(() => setIsCopied(false), 2500);
+  };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#FAF7F1] flex flex-col items-center justify-center p-4 font-inter profile-details-page">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#701C35] border-t-transparent mb-4" />
-        <p className="font-inter text-sm font-semibold text-gray-600">Loading complete profile view...</p>
+        <p className="font-inter text-sm font-semibold text-gray-600">
+          Loading complete profile view...
+        </p>
       </div>
-    )
+    );
   }
 
   if (error || !profile) {
@@ -127,8 +141,13 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
           <div className="h-16 w-16 mx-auto rounded-full bg-red-100 text-red-600 flex items-center justify-center">
             <User size={32} />
           </div>
-          <h2 className="serif text-2xl font-bold text-gray-900">Profile Not Found</h2>
-          <p className="text-xs text-gray-500">The profile you are trying to view does not exist or has been removed.</p>
+          <h2 className="serif text-2xl font-bold text-gray-900">
+            Profile Not Found
+          </h2>
+          <p className="text-xs text-gray-500">
+            The profile you are trying to view does not exist or has been
+            removed.
+          </p>
           <button
             onClick={onBack}
             className="w-full py-2.5 rounded-xl bg-[#701C35] hover:bg-[#5C1429] text-white text-xs font-semibold cursor-pointer shadow-md"
@@ -137,7 +156,7 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -145,6 +164,13 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
       {/* 1. TOP STICKY HEADER */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#eadfce] bg-white text-gray-700 hover:text-[#701C35] hover:border-[#701C35] text-xs font-semibold transition cursor-pointer shadow-xs"
+          >
+            <ArrowLeft size={15} />
+            <span>Back to Matches</span>
+          </button>
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
@@ -169,7 +195,11 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
               className="p-2 rounded-full border border-[#eadfce] bg-white text-gray-600 hover:text-[#701C35] transition cursor-pointer"
               title="Share Profile Link"
             >
-              {isCopied ? <Check size={16} className="text-emerald-600" /> : <Share2 size={16} />}
+              {isCopied ? (
+                <Check size={16} className="text-emerald-600" />
+              ) : (
+                <Share2 size={16} />
+              )}
             </button>
           </div>
         </div>
@@ -203,7 +233,10 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
               {/* Bottom Photo Overlay */}
               <div className="absolute bottom-4 left-4 right-4 text-white">
                 <p className="text-xs text-amber-200 font-semibold tracking-wide">
-                  {profile.religion} · {profile.caste || profile.motherTongue} · {profile.marriageType || profile.maritalStatus || 'Never Married'}
+                  {profile.religion} · {profile.caste || profile.motherTongue} ·{" "}
+                  {profile.marriageType ||
+                    profile.maritalStatus ||
+                    "Never Married"}
                 </p>
                 <h1 className="serif text-2xl sm:text-3xl font-bold leading-tight mt-0.5">
                   {profile.name}
@@ -230,45 +263,78 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                     {profile.name}
                   </h2>
                   <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                    Registered member seeking a compatible life partner. Profile verified by Kerala Kalyans Matrimony admissions team.
+                    Registered member seeking a compatible life partner. Profile
+                    verified by Apremiya admissions team. Registered member
+                    seeking a compatible life partner. Profile verified by
+                    Kerala Kalyans Matrimony admissions team.
                   </p>
                 </div>
 
                 {/* Grid of Key Attributes */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 font-inter text-xs">
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Age &amp; Height</span>
-                    <span className="font-bold text-gray-900 text-sm mt-0.5 block">{profile.age} yrs · {profile.height}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                      Age &amp; Height
+                    </span>
+                    <span className="font-bold text-gray-900 text-sm mt-0.5 block">
+                      {profile.age} yrs · {profile.height}
+                    </span>
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Marriage Type</span>
-                    <span className="font-bold text-[#701C35] text-sm mt-0.5 block">{profile.marriageType || profile.maritalStatus || 'Never Married'}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                      Marriage Type
+                    </span>
+                    <span className="font-bold text-[#701C35] text-sm mt-0.5 block">
+                      {profile.marriageType ||
+                        profile.maritalStatus ||
+                        "Never Married"}
+                    </span>
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Religion</span>
-                    <span className="font-bold text-[#701C35] text-sm mt-0.5 block">{profile.religion}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                      Religion
+                    </span>
+                    <span className="font-bold text-[#701C35] text-sm mt-0.5 block">
+                      {profile.religion}
+                    </span>
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Community / Caste</span>
-                    <span className="font-bold text-gray-900 text-sm mt-0.5 block">{profile.caste || 'Open / Any'}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                      Community / Caste
+                    </span>
+                    <span className="font-bold text-gray-900 text-sm mt-0.5 block">
+                      {profile.caste || "Open / Any"}
+                    </span>
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Mother Tongue</span>
-                    <span className="font-bold text-gray-900 text-sm mt-0.5 block">{profile.motherTongue}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                      Mother Tongue
+                    </span>
+                    <span className="font-bold text-gray-900 text-sm mt-0.5 block">
+                      {profile.motherTongue}
+                    </span>
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Profession</span>
-                    <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">{profile.profession}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                      Profession
+                    </span>
+                    <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">
+                      {profile.profession}
+                    </span>
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Base Location</span>
-                    <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">{profile.location}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                      Base Location
+                    </span>
+                    <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">
+                      {profile.location}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -280,8 +346,12 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                     <Heart size={16} fill="white" />
                   </div>
                   <div>
-                    <span className="font-bold block">Interested in this profile?</span>
-                    <span className="text-[11px] text-emerald-700">Express your interest directly to start communication.</span>
+                    <span className="font-bold block">
+                      Interested in this profile?
+                    </span>
+                    <span className="text-[11px] text-emerald-700">
+                      Express your interest directly to start communication.
+                    </span>
                   </div>
                 </div>
 
@@ -290,24 +360,26 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                     onClick={handleToggleInterest}
                     className={`flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-sm ${
                       interestSent
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-[#701C35] hover:bg-[#8B2342] text-white'
+                        ? "bg-emerald-600 text-white"
+                        : "bg-[#701C35] hover:bg-[#8B2342] text-white"
                     }`}
                   >
-                    <Heart size={14} fill={interestSent ? 'white' : 'none'} />
-                    <span>{interestSent ? 'Interest Sent ✓' : 'Send Interest'}</span>
+                    <Heart size={14} fill={interestSent ? "white" : "none"} />
+                    <span>
+                      {interestSent ? "Interest Sent ✓" : "Send Interest"}
+                    </span>
                   </button>
 
                   <button
                     onClick={handleToggleShortlist}
                     className={`p-2.5 rounded-xl border transition cursor-pointer ${
                       isShortlisted
-                        ? 'bg-amber-100 border-amber-300 text-amber-800'
-                        : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
+                        ? "bg-amber-100 border-amber-300 text-amber-800"
+                        : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
                     }`}
-                    title={isShortlisted ? 'Shortlisted' : 'Shortlist'}
+                    title={isShortlisted ? "Shortlisted" : "Shortlist"}
                   >
-                    <Star size={16} fill={isShortlisted ? '#D97706' : 'none'} />
+                    <Star size={16} fill={isShortlisted ? "#D97706" : "none"} />
                   </button>
                 </div>
               </div>
@@ -327,28 +399,46 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                 <div className="h-8 w-8 rounded-lg bg-[#FAF7F1] border border-[#eadfce] text-[#701C35] flex items-center justify-center">
                   <GraduationCap size={18} />
                 </div>
-                <h3 className="serif text-xl font-bold text-[#701C35]">Education &amp; Professional Career</h3>
+                <h3 className="serif text-xl font-bold text-[#701C35]">
+                  Education &amp; Professional Career
+                </h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Highest Qualification</span>
-                  <p className="font-bold text-gray-900 text-sm">{profile.education}</p>
+                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Highest Qualification
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {profile.education}
+                  </p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Designation / Profession</span>
-                  <p className="font-bold text-gray-900 text-sm">{profile.profession}</p>
+                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Designation / Profession
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {profile.profession}
+                  </p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Work Location</span>
-                  <p className="font-bold text-gray-900 text-sm">{profile.location}</p>
+                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Work Location
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {profile.location}
+                  </p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Employment Type</span>
-                  <p className="font-bold text-gray-900 text-sm">Full Time Professional</p>
+                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Employment Type
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    Full Time Professional
+                  </p>
                 </div>
               </div>
             </div>
@@ -359,28 +449,46 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                 <div className="h-8 w-8 rounded-lg bg-[#FAF7F1] border border-[#eadfce] text-[#701C35] flex items-center justify-center">
                   <Globe size={18} />
                 </div>
-                <h3 className="serif text-xl font-bold text-[#701C35]">Religion &amp; Cultural Heritage</h3>
+                <h3 className="serif text-xl font-bold text-[#701C35]">
+                  Religion &amp; Cultural Heritage
+                </h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Religion</span>
-                  <p className="font-bold text-[#701C35] text-sm">{profile.religion}</p>
+                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Religion
+                  </span>
+                  <p className="font-bold text-[#701C35] text-sm">
+                    {profile.religion}
+                  </p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Caste / Division</span>
-                  <p className="font-bold text-gray-900 text-sm">{profile.caste || 'Not Specified / Open'}</p>
+                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Caste / Division
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {profile.caste || "Not Specified / Open"}
+                  </p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Mother Tongue</span>
-                  <p className="font-bold text-gray-900 text-sm">{profile.motherTongue}</p>
+                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Mother Tongue
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {profile.motherTongue}
+                  </p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Values &amp; Lifestyle</span>
-                  <p className="font-bold text-gray-900 text-sm">Traditional &amp; Progressive</p>
+                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Values &amp; Lifestyle
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    Traditional &amp; Progressive
+                  </p>
                 </div>
               </div>
             </div>
@@ -391,13 +499,17 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                 <div className="h-8 w-8 rounded-lg bg-[#FAF7F1] border border-[#eadfce] text-[#701C35] flex items-center justify-center">
                   <Users size={18} />
                 </div>
-                <h3 className="serif text-xl font-bold text-[#701C35]">Partner Expectations &amp; Preferences</h3>
+                <h3 className="serif text-xl font-bold text-[#701C35]">
+                  Partner Expectations &amp; Preferences
+                </h3>
               </div>
 
               <div className="text-xs text-gray-600 leading-relaxed space-y-2">
                 <p>
-                  Looking for an educated, understanding, and family-oriented life partner from the{' '}
-                  <b className="text-[#701C35]">{profile.religion}</b> community who values both cultural heritage and modern aspirations.
+                  Looking for an educated, understanding, and family-oriented
+                  life partner from the{" "}
+                  <b className="text-[#701C35]">{profile.religion}</b> community
+                  who values both cultural heritage and modern aspirations.
                 </p>
                 <div className="pt-2 flex flex-wrap gap-2 text-[11px]">
                   <span className="px-3 py-1 bg-[#FAF7F1] rounded-full border border-[#eadfce] font-semibold text-gray-700">
@@ -424,7 +536,8 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
               </div>
 
               <p className="text-xs text-gray-500 leading-relaxed">
-                Connect directly with {profile.name} or their family through verified contact channels:
+                Connect directly with {profile.name} or their family through
+                verified contact channels:
               </p>
 
               <div className="space-y-3 text-xs pt-1">
@@ -437,8 +550,12 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                       <Mail size={15} />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] text-gray-400 uppercase font-semibold block">Email Address</span>
-                      <span className="font-bold text-gray-900 truncate block">{profile.email}</span>
+                      <span className="text-[10px] text-gray-400 uppercase font-semibold block">
+                        Email Address
+                      </span>
+                      <span className="font-bold text-gray-900 truncate block">
+                        {profile.email}
+                      </span>
                     </div>
                   </a>
                 )}
@@ -452,15 +569,19 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                       <Phone size={15} />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] text-gray-400 uppercase font-semibold block">Verified Mobile Number</span>
-                      <span className="font-bold text-gray-900 block">+91 {profile.phone}</span>
+                      <span className="text-[10px] text-gray-400 uppercase font-semibold block">
+                        Verified Mobile Number
+                      </span>
+                      <span className="font-bold text-gray-900 block">
+                        +91 {profile.phone}
+                      </span>
                     </div>
                   </a>
                 )}
 
                 {profile.phone && (
                   <a
-                    href={`https://wa.me/91${profile.phone.replace(/[^0-9]/g, '')}`}
+                    href={`https://wa.me/91${profile.phone.replace(/[^0-9]/g, "")}`}
                     target="_blank"
                     rel="noreferrer"
                     className="p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl flex items-center justify-center gap-2 font-bold text-xs transition shadow-sm"
@@ -501,8 +622,12 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
               <span>Back</span>
             </button>
             <div className="text-left hidden sm:block">
-              <span className="text-xs font-bold text-gray-900 block leading-tight">{profile.name}</span>
-              <span className="text-[10px] text-gray-400 block">{profile.age} yrs · {profile.location}</span>
+              <span className="text-xs font-bold text-gray-900 block leading-tight">
+                {profile.name}
+              </span>
+              <span className="text-[10px] text-gray-400 block">
+                {profile.age} yrs · {profile.location}
+              </span>
             </div>
           </div>
 
@@ -511,24 +636,24 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
               onClick={handleToggleShortlist}
               className={`px-4 py-2.5 rounded-xl border text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                 isShortlisted
-                  ? 'bg-amber-100 border-amber-300 text-amber-800'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  ? "bg-amber-100 border-amber-300 text-amber-800"
+                  : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
               }`}
             >
-              <Star size={14} fill={isShortlisted ? '#D97706' : 'none'} />
-              <span>{isShortlisted ? 'Shortlisted' : 'Shortlist'}</span>
+              <Star size={14} fill={isShortlisted ? "#D97706" : "none"} />
+              <span>{isShortlisted ? "Shortlisted" : "Shortlist"}</span>
             </button>
 
             <button
               onClick={handleToggleInterest}
               className={`flex-1 sm:flex-initial px-6 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-md ${
                 interestSent
-                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                  : 'bg-[#701C35] hover:bg-[#8B2342] text-white shadow-[#701C35]/20'
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                  : "bg-[#701C35] hover:bg-[#8B2342] text-white shadow-[#701C35]/20"
               }`}
             >
-              <Heart size={15} fill={interestSent ? 'white' : 'none'} />
-              <span>{interestSent ? 'Interest Sent ✓' : 'Send Interest'}</span>
+              <Heart size={15} fill={interestSent ? "white" : "none"} />
+              <span>{interestSent ? "Interest Sent ✓" : "Send Interest"}</span>
             </button>
           </div>
         </div>
@@ -542,5 +667,5 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
         </div>
       )}
     </div>
-  )
+  );
 }

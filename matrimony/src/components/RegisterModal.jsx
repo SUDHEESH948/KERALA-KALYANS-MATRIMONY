@@ -21,7 +21,11 @@ import {
 import { API_BASE } from "../config/api";
 import { useNotification } from "../context/NotificationContext";
 
-export default function RegisterModal({ isOpen, onClose, initialPreferences = null }) {
+export default function RegisterModal({
+  isOpen,
+  onClose,
+  initialPreferences = null,
+}) {
   const { addNotification } = useNotification();
   const [profileFor, setProfileFor] = useState("Self");
   const [name, setName] = useState("");
@@ -50,16 +54,23 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
   // Sync initial preferences from hero search bar if provided
   useEffect(() => {
     if (isOpen && initialPreferences) {
-      if (initialPreferences.religion && initialPreferences.religion !== 'Select' && initialPreferences.religion !== 'Any') {
+      if (
+        initialPreferences.religion &&
+        initialPreferences.religion !== "Select" &&
+        initialPreferences.religion !== "Any"
+      ) {
         setReligion(initialPreferences.religion);
       }
-      if (initialPreferences.motherTongue && initialPreferences.motherTongue !== 'Select') {
+      if (
+        initialPreferences.motherTongue &&
+        initialPreferences.motherTongue !== "Select"
+      ) {
         setMotherTongue(initialPreferences.motherTongue);
       }
-      if (initialPreferences.lookingFor === 'Woman') {
-        setGender('Groom');
-      } else if (initialPreferences.lookingFor === 'Man') {
-        setGender('Bride');
+      if (initialPreferences.lookingFor === "Woman") {
+        setGender("Groom");
+      } else if (initialPreferences.lookingFor === "Man") {
+        setGender("Bride");
       }
     }
   }, [isOpen, initialPreferences]);
@@ -142,10 +153,10 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
         setIsSubmitted(true);
         addNotification(
           `New Registration: ${name.trim()} (${gender})`,
-          `${name.trim()} (${gender}, ${age} yrs) from ${location.trim() || 'India'} has registered. Status: Under Review. Please review and approve.`,
+          `${name.trim()} (${gender}, ${age} yrs) from ${location.trim() || "India"} has registered. Status: Under Review. Please review and approve.`,
           "registration",
           { tab: "profiles", search: name.trim() },
-          profileId
+          profileId,
         );
       } else {
         const data = await resProfile.json();
@@ -222,23 +233,35 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
                 </h4>
                 <div className="bg-amber-50/95 border border-amber-200 p-4 sm:p-5 rounded-xl max-w-md mx-auto shadow-xs text-center space-y-2.5">
                   <p className="text-sm font-bold text-amber-950 leading-relaxed">
-                    Your registration has been submitted successfully. Please wait for admin approval before logging in.
+                    Your registration has been submitted successfully. Please
+                    wait for admin approval before logging in.
                   </p>
                   <p className="text-xs text-amber-900/90 leading-relaxed pt-2.5 border-t border-amber-200/80">
-                    Once approved by our administrator, an approval confirmation with your temporary password will be sent to your registered email address.
+                    Once approved by our administrator, an approval confirmation
+                    with your temporary password will be sent to your registered
+                    email address.
                   </p>
                 </div>
                 <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl max-w-md mx-auto text-xs text-emerald-800 flex items-center justify-center gap-2">
-                  <CheckCircle2 size={16} className="text-emerald-600 flex-shrink-0" />
-                  <span>Welcome email confirmation sent to <b>{email}</b></span>
+                  <CheckCircle2
+                    size={16}
+                    className="text-emerald-600 flex-shrink-0"
+                  />
+                  <span>
+                    Welcome email confirmation sent to <b>{email}</b>
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 max-w-md mx-auto leading-relaxed">
-                  Thank you, <b>{name}</b>. Once our administrator reviews and approves your account, your approval notice with login credentials will be dispatched to <b>{email}</b>.
+                  Thank you, <b>{name}</b>. Once our administrator reviews and
+                  approves your account, your approval notice with login
+                  credentials will be dispatched to <b>{email}</b>.
                 </p>
 
                 <div className="bg-[#FAF7F1] p-4 rounded-xl border border-[#eadfce] text-left text-xs space-y-2 max-w-md mx-auto font-inter">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600 font-semibold">Account Status:</span>
+                    <span className="text-gray-600 font-semibold">
+                      Account Status:
+                    </span>
                     <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
                       Under Review (Pending Approval)
                     </span>
