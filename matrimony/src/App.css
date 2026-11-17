@@ -566,6 +566,12 @@ nav .wrap {
 /* ==========================================================================
    How It Works (Sequential 3-Step Process)
    ========================================================================== */
+#how-it-works,
+.steps,
+.step {
+  font-family: 'Raleway', system-ui, -apple-system, sans-serif;
+}
+
 .steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -611,12 +617,15 @@ nav .wrap {
 }
 
 .step h3 {
+  font-family: 'Raleway', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
   font-size: 20px;
   margin-bottom: 8px;
   color: var(--text);
 }
 
 .step p {
+  font-family: 'Raleway', system-ui, -apple-system, sans-serif;
   color: var(--muted);
   max-width: 290px;
   margin: 8px auto 0;
