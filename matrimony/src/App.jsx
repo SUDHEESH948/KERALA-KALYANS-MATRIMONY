@@ -161,7 +161,11 @@ export default function App() {
             profileId={viewingProfileId}
             currentMember={currentMember}
             onBack={() => {
-              window.location.hash = '#matches'
+              if (window.history.length > 1) {
+                window.history.back()
+              } else {
+                window.location.hash = currentMember ? '#matches' : '#admin'
+              }
             }}
           />
         ) : isChangePasswordView ? (

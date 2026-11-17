@@ -265,9 +265,18 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
             </div>
           </nav>
 
-          {/* Logged in Member Profile & Logout */}
+          {/* Logged in Member Profile & View My Profile */}
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="flex items-center gap-2.5 bg-white pl-2 pr-3.5 py-1.5 rounded-full border border-[#eadfce] shadow-xs">
+            <button
+              type="button"
+              onClick={() => {
+                if (currentMember?.id) {
+                  window.location.hash = `#profile/${currentMember.id}`
+                }
+              }}
+              className="flex items-center gap-2.5 bg-white hover:bg-[#FAF7F1] pl-2 pr-3.5 py-1.5 rounded-full border border-[#eadfce] hover:border-[#701C35]/50 shadow-xs cursor-pointer transition text-left group"
+              title="Click to view your own complete profile"
+            >
               <img
                 src={
                   currentMember?.photo ||
@@ -276,18 +285,18 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200')
                 }
                 alt={currentMember?.name || 'Member'}
-                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover border border-[#701C35]/30"
+                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover border border-[#701C35]/30 group-hover:scale-105 transition"
               />
               <div className="text-left hidden sm:block">
-                <div className="text-xs font-bold text-gray-900 leading-tight max-w-[120px] truncate">
+                <div className="text-xs font-bold text-gray-900 leading-tight max-w-[120px] truncate group-hover:text-[#701C35]">
                   {currentMember?.name || 'Member'}
                 </div>
-                <div className="text-[10px] font-semibold text-emerald-700 flex items-center gap-0.5">
-                  <ShieldCheck size={11} className="text-emerald-600" />
-                  <span>Verified {currentMember?.gender || 'Member'}</span>
+                <div className="text-[10px] font-semibold text-[#701C35] flex items-center gap-1">
+                  <Eye size={10} />
+                  <span>View My Profile</span>
                 </div>
               </div>
-            </div>
+            </button>
 
             <button
               onClick={onLogout}
@@ -534,6 +543,14 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20" />
 
+                    {/* Hover "View Profile" Pill Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                      <span className="px-4 py-2 rounded-full bg-white/95 backdrop-blur-md text-[#701C35] font-bold text-xs shadow-xl flex items-center gap-1.5 border border-[#eadfce] transform group-hover:scale-105 transition-transform">
+                        <Eye size={15} />
+                        <span>View Profile</span>
+                      </span>
+                    </div>
+
                     {/* Top Badges */}
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white tracking-wide border border-white/20">
@@ -606,27 +623,31 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="pt-2 border-t border-[#eadfce] flex items-center gap-2">
+                    <div className="pt-2 border-t border-[#eadfce] grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (onViewProfile) onViewProfile(p.id)
+                          else window.location.hash = `#profile/${p.id}`
+                        }}
+                        className="w-full py-2.5 px-2 rounded-xl border border-[#701C35] bg-white hover:bg-[#701C35] text-[#701C35] hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition duration-200 cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
+                        title="View Full Profile Details"
+                      >
+                        <Eye size={14} />
+                        <span>View Profile</span>
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => handleSendInterest(p)}
-                        className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs ${
+                        className={`w-full py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition duration-200 cursor-pointer shadow-xs active:scale-95 ${
                           isInterestSent
                             ? 'bg-emerald-600 text-white'
                             : 'bg-[#701C35] hover:bg-[#5C1429] text-white'
                         }`}
                       >
                         <Heart size={14} fill={isInterestSent ? 'white' : 'none'} />
-                        <span>{isInterestSent ? 'Interest Sent' : 'Connect'}</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setViewingProfile(p)}
-                        className="py-2.5 px-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs flex items-center justify-center transition cursor-pointer"
-                        title="View Full Profile Details"
-                      >
-                        <Eye size={14} />
+                        <span>{isInterestSent ? 'Connected' : 'Connect'}</span>
                       </button>
                     </div>
                   </div>

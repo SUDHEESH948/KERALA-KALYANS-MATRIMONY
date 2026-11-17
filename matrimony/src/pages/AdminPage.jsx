@@ -1029,6 +1029,15 @@ export default function AdminPage({ onExit }) {
                           <td className="px-4 py-3 text-right">
                             <div className="flex items-center justify-end gap-1.5">
                               <button
+                                onClick={() => {
+                                  window.location.hash = `#profile/${p.id}`
+                                }}
+                                className="p-1.5 rounded text-gray-600 hover:text-[#701C35] hover:bg-[#701C35]/10 transition cursor-pointer flex items-center gap-1"
+                                title="View Complete Profile"
+                              >
+                                <Eye size={15} />
+                              </button>
+                              <button
                                 onClick={() => setEditingProfile(p)}
                                 className="p-1.5 rounded text-gray-500 hover:text-[#701C35] hover:bg-gray-100 transition cursor-pointer"
                                 title="Edit Profile"
