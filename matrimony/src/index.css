@@ -9,8 +9,17 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Times New Normal';
+  src: url('/fonts/TimesNewNormal.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-zaslia: "Zaslia", "Playfair Display", Georgia, serif;
+  --font-times-normal: "Times New Normal", "Playfair Display", Georgia, serif;
   --font-serif: "Playfair Display", Georgia, serif;
   --font-display: "Playfair Display", Georgia, serif;
   --font-heading: "Playfair Display", Georgia, serif;
@@ -48,6 +57,11 @@ body {
 /* Zaslia Display font - exclusively for "Choose Your Forever" */
 .font-zaslia {
   font-family: 'Zaslia', 'Playfair Display', Georgia, serif !important;
+}
+
+/* Times New Normal font - for Trust and Statistics numbers & branding */
+.font-times-normal, .times-normal {
+  font-family: 'Times New Normal', 'Times New Roman', 'Playfair Display', Georgia, serif !important;
 }
 
 /* Headings (Logo, Main Section Headings): Playfair Display */

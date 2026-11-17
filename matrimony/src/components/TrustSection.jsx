@@ -24,11 +24,11 @@ export default function TrustSection({ platformStats }) {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className="rounded-xl sm:rounded-2xl border border-[#eadfce] bg-white p-3 sm:p-6 text-center transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <Icon className="mx-auto mb-1.5 sm:mb-4 text-[#B28D53]" size={20} />
-              <h3 className="serif text-lg sm:text-3xl font-bold text-[#701C35]">
+              <Icon className="mx-auto mb-1.5 sm:mb-4 text-[#B28D53]" size={22} />
+              <h3 className="font-times-normal text-2xl sm:text-4xl lg:text-[40px] font-bold text-[#701C35] tracking-tight leading-none my-1 sm:my-2">
                 <AnimatedCounter target={stat.target} suffix={stat.suffix} duration={2.2} />
               </h3>
-              <p className="font-montserrat mt-0.5 sm:mt-1 text-[10px] font-semibold text-gray-500 sm:text-sm tracking-wide">{stat.label}</p>
+              <p className="font-montserrat mt-1 sm:mt-1.5 text-xs sm:text-sm font-semibold text-gray-600 tracking-wide">{stat.label}</p>
             </motion.div>
           )
         })}
