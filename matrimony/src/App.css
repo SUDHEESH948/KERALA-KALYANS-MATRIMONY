@@ -418,9 +418,9 @@ nav .wrap {
 }
 
 .stat .n {
-  font-family: var(--font-serif);
-  font-size: 34px;
-  font-weight: 700;
+  font-family: 'Times New Normal', 'Times New Roman', Times, Georgia, serif;
+  font-size: 38px;
+  font-weight: 400;
   color: var(--burg);
   line-height: 1.1;
   margin: 6px 0 4px;
