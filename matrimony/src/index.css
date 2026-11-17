@@ -27,6 +27,7 @@
   --font-montserrat: "Montserrat", system-ui, -apple-system, sans-serif;
   --font-nav: "Montserrat", system-ui, -apple-system, sans-serif;
   --font-subhead: "Montserrat", system-ui, -apple-system, sans-serif;
+  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
 }
@@ -78,6 +79,22 @@ body {
 /* Raleway Font Style - For How It Works and modern clean typography */
 .font-raleway, #how-it-works, #how-it-works h2, #how-it-works h3, #how-it-works p, #how-it-works span {
   font-family: 'Raleway', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Inter font style - explicitly applied to Admin Page, Profile View, Login, and Register */
+.font-inter,
+.font-inter *,
+.admin-page,
+.admin-page *,
+.profile-details-page,
+.profile-details-page *,
+.profile-view-modal,
+.profile-view-modal *,
+.login-modal,
+.login-modal *,
+.register-modal,
+.register-modal * {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
 /* Body & Search Bar Inputs: Inter */

@@ -118,7 +118,7 @@ export default function MemberLoginModal({
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-4 font-montserrat"
+          className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-4 font-inter login-modal"
         >
           {/* Header Banner */}
           <div className="bg-[#701C35] px-5 py-4 text-white flex items-center justify-between">

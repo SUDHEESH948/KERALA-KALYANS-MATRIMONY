@@ -537,7 +537,7 @@ export default function AdminPage({ onExit }) {
   // ----------------------------------------------------
   if (!token) {
     return (
-      <div className="min-h-screen bg-[#FAF7F1] flex flex-col justify-center items-center p-4">
+      <div className="min-h-screen bg-[#FAF7F1] flex flex-col justify-center items-center p-4 font-inter admin-page">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-[#eadfce] p-8">
           <div className="text-center mb-6">
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#701C35] text-white mb-3">
@@ -546,7 +546,7 @@ export default function AdminPage({ onExit }) {
             <h1 className="serif font-serif text-2xl sm:text-3xl font-bold text-[#701C35]">
               Apremiya Admin
             </h1>
-            <p className="font-montserrat text-xs tracking-[2px] font-semibold text-[#9C8158] mt-1">
+            <p className="font-inter text-xs tracking-[2px] font-semibold text-[#9C8158] mt-1">
               PORTAL CONTROL PANEL
             </p>
           </div>
@@ -558,7 +558,7 @@ export default function AdminPage({ onExit }) {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4 font-montserrat">
+          <form onSubmit={handleLogin} className="space-y-4 font-inter">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
                 Admin Email
@@ -617,7 +617,7 @@ export default function AdminPage({ onExit }) {
   // MAIN ADMIN DASHBOARD
   // ----------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#F7F4EE] text-gray-800">
+    <div className="min-h-screen bg-[#F7F4EE] text-gray-800 font-inter admin-page">
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-[#701C35] text-white shadow-md">
         <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
@@ -629,13 +629,13 @@ export default function AdminPage({ onExit }) {
               <h2 className="serif text-base sm:text-xl font-bold leading-tight truncate">
                 Apremiya
               </h2>
-              <p className="font-montserrat text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[#E8CA91] font-semibold truncate">
+              <p className="font-inter text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[#E8CA91] font-semibold truncate">
                 ADMIN CONSOLE
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-3 font-montserrat text-xs flex-shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 font-inter text-xs flex-shrink-0">
             <div className="hidden md:block text-right">
               <p className="font-semibold truncate max-w-[120px]">
                 {adminUser?.name || "Administrator"}
@@ -690,7 +690,7 @@ export default function AdminPage({ onExit }) {
       {/* Main Container */}
       <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-4 sm:py-6">
         {/* Navigation Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-[#eadfce] pb-4 font-montserrat">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-[#eadfce] pb-4 font-inter">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
             {[
               { id: "profiles", label: "Profiles", count: profiles.length },
@@ -739,7 +739,7 @@ export default function AdminPage({ onExit }) {
         {/* TAB 1: PROFILES MANAGEMENT */}
         {activeTab === "profiles" && (
           <div className="space-y-4 sm:space-y-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 font-montserrat">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 font-inter">
               <div
                 onClick={() => {
                   setStatusFilter("all");
@@ -819,7 +819,7 @@ export default function AdminPage({ onExit }) {
               </div>
             </div>
 
-            <div className="bg-white p-3 sm:p-4 rounded-xl border border-[#eadfce] shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 font-montserrat text-xs">
+            <div className="bg-white p-3 sm:p-4 rounded-xl border border-[#eadfce] shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 font-inter text-xs">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full">
                 <div className="relative flex-1 min-w-0 w-full">
                   <Search
@@ -869,7 +869,7 @@ export default function AdminPage({ onExit }) {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#eadfce] shadow-sm overflow-hidden font-montserrat">
+            <div className="bg-white rounded-xl border border-[#eadfce] shadow-sm overflow-hidden font-inter">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-[#FAF7F1] border-b border-[#eadfce] text-gray-600 font-semibold uppercase tracking-wider text-[10px]">
@@ -887,7 +887,7 @@ export default function AdminPage({ onExit }) {
                     {filteredProfiles.length === 0 ? (
                       <tr>
                         <td colSpan="7" className="text-center py-12 px-4">
-                          <div className="max-w-sm mx-auto space-y-2 font-montserrat">
+                          <div className="max-w-sm mx-auto space-y-2 font-inter">
                             <p className="text-sm font-bold text-gray-700">
                               No profiles matching current filters
                             </p>
@@ -1067,7 +1067,7 @@ export default function AdminPage({ onExit }) {
 
         {/* TAB 2: LEADS & INQUIRIES */}
         {activeTab === "inquiries" && (
-          <div className="space-y-4 font-montserrat">
+          <div className="space-y-4 font-inter">
             <div className="bg-white p-4 rounded-xl border border-[#eadfce] shadow-sm flex items-center justify-between">
               <div>
                 <h3 className="serif text-xl font-bold text-[#701C35]">
@@ -1178,7 +1178,7 @@ export default function AdminPage({ onExit }) {
 
         {/* TAB 3: NOTIFICATIONS & LIVE ACTIVITY STREAM */}
         {activeTab === "notifications" && (
-          <div className="space-y-6 font-montserrat">
+          <div className="space-y-6 font-inter">
             {/* Header banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-xl border border-[#eadfce] shadow-sm">
               <div className="flex items-center gap-3">
@@ -1365,7 +1365,7 @@ export default function AdminPage({ onExit }) {
 
         {/* TAB 4: PLATFORM STATS & METRICS */}
         {activeTab === "settings" && (
-          <div className="max-w-2xl bg-white p-6 rounded-xl border border-[#eadfce] shadow-sm font-montserrat">
+          <div className="max-w-2xl bg-white p-6 rounded-xl border border-[#eadfce] shadow-sm font-inter">
             <h3 className="serif text-xl font-bold text-[#701C35]">
               Homepage Statistics Control
             </h3>
@@ -1457,7 +1457,7 @@ export default function AdminPage({ onExit }) {
       {/* EDIT PROFILE MODAL */}
       {editingProfile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#eadfce] my-8 font-montserrat">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#eadfce] my-8 font-inter">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <h3 className="serif text-xl font-bold text-[#701C35]">
                 Edit Profile ({editingProfile.id})
@@ -1702,7 +1702,7 @@ export default function AdminPage({ onExit }) {
       {/* CUSTOM CONFIRMATION MODAL (NO BROWSER POPUPS/ALERTS) */}
       {confirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-[#eadfce] font-montserrat my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-[#eadfce] font-inter my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4">
               <AlertTriangle size={28} />
             </div>
@@ -1734,7 +1734,7 @@ export default function AdminPage({ onExit }) {
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] font-montserrat my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] font-inter my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4">
               <Key size={26} />
             </div>
@@ -1810,7 +1810,7 @@ export default function AdminPage({ onExit }) {
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] font-montserrat my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] font-inter my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4">
               <Key size={26} />
             </div>

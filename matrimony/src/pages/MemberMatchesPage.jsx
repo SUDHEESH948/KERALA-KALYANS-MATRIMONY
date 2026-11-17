@@ -703,7 +703,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
       {/* 5. VIEW FULL PROFILE MODAL */}
       {viewingProfile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto">
-          <div className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] font-montserrat my-8 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] font-inter profile-view-modal my-8 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Header Image Cover */}
             <div className="relative h-48 sm:h-56 bg-gray-900 overflow-hidden">
               <img

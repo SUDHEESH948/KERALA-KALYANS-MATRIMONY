@@ -181,7 +181,7 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-2 sm:my-6 font-montserrat"
+          className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-2 sm:my-6 font-inter register-modal"
         >
           {/* Header Banner */}
           <div className="bg-[#701C35] px-3.5 sm:px-8 py-3.5 sm:py-5 text-white flex items-center justify-between">
@@ -234,7 +234,7 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
                   Thank you, <b>{name}</b>. Once our administrator reviews and approves your account, your approval notice with login credentials will be dispatched to <b>{email}</b>.
                 </p>
 
-                <div className="bg-[#FAF7F1] p-4 rounded-xl border border-[#eadfce] text-left text-xs space-y-2 max-w-md mx-auto font-montserrat">
+                <div className="bg-[#FAF7F1] p-4 rounded-xl border border-[#eadfce] text-left text-xs space-y-2 max-w-md mx-auto font-inter">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 font-semibold">Account Status:</span>
                     <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
