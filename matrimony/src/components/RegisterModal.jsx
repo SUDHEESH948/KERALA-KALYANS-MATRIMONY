@@ -28,6 +28,7 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
   const [gender, setGender] = useState("Bride");
   const [age, setAge] = useState(25);
   const [height, setHeight] = useState("5'5\"");
+  const [marriageType, setMarriageType] = useState("Never Married");
   const [religion, setReligion] = useState("Hindu");
   const [caste, setCaste] = useState("");
   const [motherTongue, setMotherTongue] = useState("Malayalam");
@@ -110,6 +111,8 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
         gender,
         age: Number(age) || 25,
         height,
+        marriageType,
+        maritalStatus: marriageType,
         religion,
         caste: caste.trim(),
         motherTongue,
@@ -424,8 +427,8 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
                   </div>
                 </div>
 
-                {/* Age & Height */}
-                <div className="grid grid-cols-2 gap-3">
+                {/* Age, Height & Marriage Type */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-gray-700 font-semibold mb-1">
                       Age *
@@ -473,6 +476,24 @@ export default function RegisterModal({ isOpen, onClose, initialPreferences = nu
                           {h}
                         </option>
                       ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-1">
+                      Marriage Type *
+                    </label>
+                    <select
+                      value={marriageType}
+                      onChange={(e) => setMarriageType(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#701C35] font-medium"
+                    >
+                      <option value="Never Married">Never Married</option>
+                      <option value="Divorced">Divorced</option>
+                      <option value="Widowed">Widowed</option>
+                      <option value="Awaiting Divorce">Awaiting Divorce</option>
+                      <option value="Separated">Separated</option>
+                      <option value="Second Marriage">Second Marriage</option>
                     </select>
                   </div>
                 </div>

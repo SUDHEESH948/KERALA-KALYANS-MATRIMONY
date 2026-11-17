@@ -35,6 +35,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
   const [strictSameReligion, setStrictSameReligion] = useState(true)
   const [strictSameCaste, setStrictSameCaste] = useState(false)
   const [selectedCaste, setSelectedCaste] = useState('all')
+  const [selectedMarriageType, setSelectedMarriageType] = useState('all')
   const [minAge, setMinAge] = useState(18)
   const [maxAge, setMaxAge] = useState(40)
 
@@ -140,7 +141,15 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
         }
       }
 
-      // 5. Search Query matching
+      // 5. Marriage Type filter
+      if (selectedMarriageType !== 'all') {
+        const pType = (p.marriageType || p.maritalStatus || 'Never Married').toLowerCase()
+        if (pType !== selectedMarriageType.toLowerCase()) {
+          return false
+        }
+      }
+
+      // 6. Search Query matching
       if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase()
         const matchesQ =
@@ -159,7 +168,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
       return true
     })
-  }, [profiles, isMemberMale, memberReligion, strictSameReligion, memberCaste, strictSameCaste, selectedCaste, searchQuery, minAge, maxAge, currentMember])
+  }, [profiles, isMemberMale, memberReligion, strictSameReligion, memberCaste, strictSameCaste, selectedCaste, selectedMarriageType, searchQuery, minAge, maxAge, currentMember])
 
   // Extract unique castes available among matched religion profiles for filter dropdown
   const availableCastes = useMemo(() => {
@@ -443,8 +452,26 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 </div>
               )}
 
+              {/* Marriage Type Filter Dropdown */}
+              <div className="relative">
+                <select
+                  value={selectedMarriageType}
+                  onChange={(e) => setSelectedMarriageType(e.target.value)}
+                  className="appearance-none bg-white border border-gray-200 px-3.5 py-2.5 pr-8 rounded-xl font-medium text-gray-700 focus:outline-none focus:border-[#701C35] text-xs cursor-pointer shadow-xs"
+                >
+                  <option value="all">All Marriage Types</option>
+                  <option value="Never Married">Never Married</option>
+                  <option value="Divorced">Divorced</option>
+                  <option value="Widowed">Widowed</option>
+                  <option value="Awaiting Divorce">Awaiting Divorce</option>
+                  <option value="Separated">Separated</option>
+                  <option value="Second Marriage">Second Marriage</option>
+                </select>
+                <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              </div>
+
               {/* Clear all filters */}
-              {(searchQuery || !strictSameReligion || strictSameCaste || selectedCaste !== 'all') && (
+              {(searchQuery || !strictSameReligion || strictSameCaste || selectedCaste !== 'all' || selectedMarriageType !== 'all') && (
                 <button
                   type="button"
                   onClick={() => {
@@ -452,6 +479,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     setStrictSameReligion(true)
                     setStrictSameCaste(false)
                     setSelectedCaste('all')
+                    setSelectedMarriageType('all')
                   }}
                   className="px-3 py-2 text-xs font-semibold text-[#701C35] hover:underline cursor-pointer"
                 >
@@ -479,6 +507,11 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 Caste: {selectedCaste}
               </span>
             ) : null}
+            {selectedMarriageType !== 'all' && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-800 border border-rose-200 text-[11px] font-semibold">
+                Status: {selectedMarriageType}
+              </span>
+            )}
             <span className="text-gray-400 text-[11px] ml-auto">
               Found <b>{matchedProfiles.length}</b> verified matches
             </span>
@@ -552,10 +585,15 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     </div>
 
                     {/* Top Badges */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white tracking-wide border border-white/20">
-                        {p.gender}
-                      </span>
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white tracking-wide border border-white/20">
+                          {p.gender}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[10px] font-bold text-[#701C35] shadow-xs border border-[#eadfce]">
+                          {p.marriageType || p.maritalStatus || 'Never Married'}
+                        </span>
+                      </div>
 
                       <button
                         type="button"
@@ -563,7 +601,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                           e.stopPropagation()
                           handleToggleShortlist(p)
                         }}
-                        className={`p-2 rounded-full backdrop-blur-md transition cursor-pointer ${
+                        className={`p-2 rounded-full backdrop-blur-md transition cursor-pointer pointer-events-auto ${
                           isSaved
                             ? 'bg-amber-400 text-white shadow-md'
                             : 'bg-black/40 text-white hover:bg-black/60'
@@ -593,13 +631,17 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                   {/* Profile Details Body */}
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3.5 text-xs">
                     <div className="space-y-2.5">
-                      {/* Community / Religion & Caste */}
-                      <div className="flex items-center gap-2 text-gray-700">
+                      {/* Community / Religion & Caste & Marriage Type */}
+                      <div className="flex items-center gap-1.5 flex-wrap text-gray-700">
                         <span className="font-bold text-[#701C35] bg-[#FAF7F1] px-2 py-0.5 rounded border border-[#eadfce]">
                           {p.religion}
                         </span>
                         <span className="text-gray-600 truncate">
                           {p.caste ? `${p.caste}` : p.motherTongue}
+                        </span>
+                        <span className="text-gray-300">·</span>
+                        <span className="text-gray-500 font-medium">
+                          {p.marriageType || p.maritalStatus || 'Never Married'}
                         </span>
                       </div>
 

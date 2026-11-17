@@ -52,7 +52,7 @@ export const generateSecureTempPassword = () => {
 
 export const getProfiles = async (req, res) => {
   try {
-    const { search, gender, religion, status, verified, isApproved } = req.query
+    const { search, gender, religion, status, verified, isApproved, marriageType, maritalStatus } = req.query
     const query = {}
 
     if (search) {
@@ -64,6 +64,11 @@ export const getProfiles = async (req, res) => {
         { location: regex },
         { caste: regex }
       ]
+    }
+
+    const mType = marriageType || maritalStatus
+    if (mType && mType !== 'all') {
+      query.marriageType = new RegExp(`^${mType.trim()}$`, 'i')
     }
 
     if (gender && gender !== 'all') {
@@ -123,6 +128,8 @@ export const createProfile = async (req, res) => {
       gender,
       age,
       height,
+      marriageType,
+      maritalStatus,
       religion,
       caste,
       motherTongue,
@@ -172,6 +179,8 @@ export const createProfile = async (req, res) => {
       gender: gender || 'Bride',
       age: Number(age) || 25,
       height: height || "5'5\"",
+      marriageType: (marriageType || maritalStatus || 'Never Married').trim(),
+      maritalStatus: (maritalStatus || marriageType || 'Never Married').trim(),
       religion: religion || 'Hindu',
       caste: caste ? caste.trim() : '',
       motherTongue: motherTongue || 'Malayalam',

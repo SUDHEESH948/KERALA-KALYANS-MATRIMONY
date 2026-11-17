@@ -26,6 +26,16 @@ const profileSchema = new mongoose.Schema(
       type: String,
       default: "5'5\""
     },
+    marriageType: {
+      type: String,
+      default: 'Never Married',
+      trim: true
+    },
+    maritalStatus: {
+      type: String,
+      default: 'Never Married',
+      trim: true
+    },
     religion: {
       type: String,
       default: 'Hindu'

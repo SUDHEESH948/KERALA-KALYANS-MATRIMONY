@@ -941,7 +941,7 @@ export default function AdminPage({ onExit }) {
                               </div>
                               <span className="text-[10px] text-gray-400">
                                 {p.phone ? `${p.phone} · ` : ""}
-                                {p.id} · {p.gender}
+                                {p.id} · {p.gender} · <span className="text-[#701C35] font-medium">{p.marriageType || p.maritalStatus || 'Never Married'}</span>
                               </span>
                             </div>
                           </td>
@@ -1537,6 +1537,28 @@ export default function AdminPage({ onExit }) {
                     className="w-full px-3 py-2 rounded border border-gray-300"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold mb-1">Marriage Type</label>
+                <select
+                  value={editingProfile.marriageType || editingProfile.maritalStatus || "Never Married"}
+                  onChange={(e) =>
+                    setEditingProfile({
+                      ...editingProfile,
+                      marriageType: e.target.value,
+                      maritalStatus: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded border border-gray-300 bg-white"
+                >
+                  <option value="Never Married">Never Married</option>
+                  <option value="Divorced">Divorced</option>
+                  <option value="Widowed">Widowed</option>
+                  <option value="Awaiting Divorce">Awaiting Divorce</option>
+                  <option value="Separated">Separated</option>
+                  <option value="Second Marriage">Second Marriage</option>
+                </select>
               </div>
 
               <div className="grid grid-cols-2 gap-3">

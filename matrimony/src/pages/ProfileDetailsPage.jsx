@@ -196,7 +196,7 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
               {/* Bottom Photo Overlay */}
               <div className="absolute bottom-4 left-4 right-4 text-white">
                 <p className="text-xs text-amber-200 font-semibold tracking-wide">
-                  {profile.religion} · {profile.caste || profile.motherTongue}
+                  {profile.religion} · {profile.caste || profile.motherTongue} · {profile.marriageType || profile.maritalStatus || 'Never Married'}
                 </p>
                 <h1 className="serif text-2xl sm:text-3xl font-bold leading-tight mt-0.5">
                   {profile.name}
@@ -228,10 +228,15 @@ export default function ProfileDetailsPage({ profileId, onBack, currentMember })
                 </div>
 
                 {/* Grid of Key Attributes */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 font-montserrat text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 font-montserrat text-xs">
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Age &amp; Height</span>
                     <span className="font-bold text-gray-900 text-sm mt-0.5 block">{profile.age} yrs · {profile.height}</span>
+                  </div>
+
+                  <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Marriage Type</span>
+                    <span className="font-bold text-[#701C35] text-sm mt-0.5 block">{profile.marriageType || profile.maritalStatus || 'Never Married'}</span>
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
