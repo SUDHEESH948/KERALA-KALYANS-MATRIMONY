@@ -9,11 +9,13 @@ import MembershipSection from '../components/MembershipSection'
 import FooterSection from '../components/FooterSection'
 import RegisterModal from '../components/RegisterModal'
 import MemberLoginModal from '../components/MemberLoginModal'
+import TermsDisclaimerModal from '../components/TermsDisclaimerModal'
 import { API_BASE } from '../config/api'
 
 export default function HomePage({ onOpenAdmin, onOpenMatches }) {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
+  const [isTermsOpen, setIsTermsOpen] = useState(false)
   const [currentMember, setCurrentMember] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('apremiya_member_user') || 'null')
@@ -142,13 +144,17 @@ export default function HomePage({ onOpenAdmin, onOpenMatches }) {
       {/* 6. Success Stories Section */}
       <StoriesSection />
 
-      {/* 7. Membership Section */}
-      <MembershipSection onOpenRegister={() => setIsRegisterOpen(true)} />
+      {/* 7. Membership & Policy Section */}
+      <MembershipSection
+        onOpenRegister={() => setIsRegisterOpen(true)}
+        onOpenTerms={() => setIsTermsOpen(true)}
+      />
 
       {/* 8. Footer Section */}
       <FooterSection
         onOpenAdmin={onOpenAdmin}
         onOpenRegister={() => setIsRegisterOpen(true)}
+        onOpenTerms={() => setIsTermsOpen(true)}
       />
 
       {/* 9. Interactive Luxury Registration Modal */}
@@ -189,6 +195,12 @@ export default function HomePage({ onOpenAdmin, onOpenMatches }) {
           setIsLoginOpen(false)
           setIsRegisterOpen(true)
         }}
+      />
+
+      {/* 11. Terms, Policy & Legal Disclaimer Modal */}
+      <TermsDisclaimerModal
+        isOpen={isTermsOpen}
+        onClose={() => setIsTermsOpen(false)}
       />
     </div>
   )

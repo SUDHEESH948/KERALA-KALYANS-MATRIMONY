@@ -20,6 +20,7 @@ import {
 
 import { API_BASE } from "../config/api";
 import { useNotification } from "../context/NotificationContext";
+import TermsDisclaimerModal from "./TermsDisclaimerModal";
 
 export default function RegisterModal({
   isOpen,
@@ -27,6 +28,7 @@ export default function RegisterModal({
   initialPreferences = null,
 }) {
   const { addNotification } = useNotification();
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const [profileFor, setProfileFor] = useState("Self");
   const [name, setName] = useState("");
   const [gender, setGender] = useState("Bride");
@@ -449,6 +451,15 @@ export default function RegisterModal({
                         Groom (Male)
                       </button>
                     </div>
+                    {gender === "Bride" ? (
+                      <p className="text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1">
+                        <span>✨ Free Registration for Girls' Profiles · No Charges</span>
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-amber-800 font-semibold mt-1 flex items-center gap-1">
+                        <span>📋 One-Time Fee · 6 Profiles Every Saturday (3 Months)</span>
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -686,11 +697,42 @@ export default function RegisterModal({
                   </div>
                 </div>
 
-                {/* Terms notice */}
-                <p className="text-[11px] text-gray-400 pt-1">
-                  By clicking Register, you agree to our Terms of Service and
-                  Privacy Policy. All profiles undergo manual verification.
-                </p>
+                {/* Registration & Privacy Disclaimer Box */}
+                <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-3 sm:p-3.5 space-y-2 text-[11px] text-gray-700">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#701C35] flex items-center gap-1.5">
+                      <ShieldCheck size={14} className="text-[#701C35]" />
+                      <span>Registration Terms &amp; Privacy Notice</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowTermsModal(true)}
+                      className="text-[#701C35] font-semibold hover:underline text-[10px] cursor-pointer"
+                    >
+                      View Full Policy →
+                    </button>
+                  </div>
+                  <ul className="space-y-1 text-gray-600 list-disc list-inside leading-relaxed">
+                    <li>
+                      <b>Fee Policy:</b> Only a one-time non-refundable fee. <b className="text-emerald-700">Free registration for girls&apos; profiles.</b>
+                    </li>
+                    <li>
+                      <b>Profile Services:</b> 6 verified profiles sent every Saturday during the 3-month period.
+                    </li>
+                    <li>
+                      <b>Zero Commission:</b> No extra payments like ₹25,000 or ₹50,000 once the marriage is fixed.
+                    </li>
+                    <li>
+                      <b>Voluntary:</b> Customers register voluntarily. No 100% guarantee that we will conduct the marriage.
+                    </li>
+                    <li className="text-red-700">
+                      <b>Privacy &amp; Legal:</b> Profiles are strictly for personal use only. Sharing or forwarding is strictly prohibited. Strict legal action will be taken against violators.
+                    </li>
+                  </ul>
+                  <p className="text-[10px] text-gray-400 pt-1 border-t border-[#eadfce]">
+                    By clicking Complete Registration, you agree to our Terms of Service, Privacy Policy &amp; Legal Disclaimer.
+                  </p>
+                </div>
 
                 {/* Submit button */}
                 <button
@@ -706,6 +748,12 @@ export default function RegisterModal({
             )}
           </div>
         </motion.div>
+
+        {/* Full Terms & Legal Disclaimer Modal */}
+        <TermsDisclaimerModal
+          isOpen={showTermsModal}
+          onClose={() => setShowTermsModal(false)}
+        />
       </div>
     </AnimatePresence>
   );
