@@ -1,7 +1,4 @@
-import { useState } from 'react'
-
 export default function FloatingWhatsAppButton() {
-  const [isHovered, setIsHovered] = useState(false)
   const whatsappNumber = '917907348468'
   const displayPhone = '(+91) 79073 48468'
   const message = encodeURIComponent('Hello Kerala Kalyans Matrimony, I am interested in registration and profile services.')
@@ -10,41 +7,25 @@ export default function FloatingWhatsAppButton() {
   return (
     <aside
       aria-label="WhatsApp Contact Support"
-      className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 group font-inter"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40 font-inter"
     >
-      {/* Floating Pill Label */}
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hidden sm:flex items-center gap-2 bg-white text-gray-800 px-3.5 py-2 rounded-full shadow-xl border border-emerald-200 hover:border-emerald-500 transition-all duration-300 transform group-hover:scale-105"
-      >
-        <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-        <div className="text-left leading-tight">
-          <p className="text-[11px] font-bold text-gray-900">Now on WhatsApp!</p>
-          <p className="text-[10px] text-emerald-700 font-semibold">{displayPhone}</p>
-        </div>
-      </a>
-
       {/* Floating Circular WhatsApp Button */}
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="relative flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-2xl hover:shadow-emerald-500/40 transition-all duration-300 transform group-hover:scale-110 active:scale-95 cursor-pointer"
+        className="relative flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-2xl hover:shadow-emerald-500/40 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
         title={`Chat with Kerala Kalyans on WhatsApp: ${displayPhone}`}
         aria-label="Chat on WhatsApp"
       >
         {/* Soft ripple pulse */}
-        <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-40 animate-ping pointer-events-none" />
+        <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-35 animate-ping pointer-events-none" />
 
         {/* WhatsApp Vector Icon */}
         <svg
           viewBox="0 0 24 24"
-          width="30"
-          height="30"
+          width="32"
+          height="32"
           fill="currentColor"
           className="relative z-10"
         >

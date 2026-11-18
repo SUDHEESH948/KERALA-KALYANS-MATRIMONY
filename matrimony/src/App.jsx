@@ -189,8 +189,8 @@ export default function App() {
         )}
         {/* Global Common Notification Pop-up Stack & Center Drawer */}
         <NotificationCenterModal onNavigateAdmin={openAdmin} />
-        {/* Floating WhatsApp Contact Button */}
-        <FloatingWhatsAppButton />
+        {/* Floating WhatsApp Contact Button (Hidden on Admin Page) */}
+        {!isAdminView && <FloatingWhatsAppButton />}
       </div>
     </NotificationProvider>
   )
