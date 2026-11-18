@@ -6,6 +6,7 @@ import MemberMatchesPage from './pages/MemberMatchesPage'
 import ProfileDetailsPage from './pages/ProfileDetailsPage'
 import { NotificationProvider } from './context/NotificationContext'
 import NotificationCenterModal from './components/NotificationCenterModal'
+import FloatingWhatsAppButton from './components/FloatingWhatsAppButton'
 
 export default function App() {
   const [currentMember, setCurrentMember] = useState(() => {
@@ -188,6 +189,8 @@ export default function App() {
         )}
         {/* Global Common Notification Pop-up Stack & Center Drawer */}
         <NotificationCenterModal onNavigateAdmin={openAdmin} />
+        {/* Floating WhatsApp Contact Button */}
+        <FloatingWhatsAppButton />
       </div>
     </NotificationProvider>
   )
