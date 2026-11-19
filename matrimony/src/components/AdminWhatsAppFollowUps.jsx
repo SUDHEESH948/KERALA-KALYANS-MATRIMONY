@@ -49,16 +49,16 @@ export default function AdminWhatsAppFollowUps({ profiles, isLoading, lastRefres
 
   return (
     <section className="rounded-2xl border border-[var(--admin-border)] bg-white p-4 sm:p-6">
-      <h2 className="text-xl text-[var(--admin-ink)] sm:text-2xl">
+      <h2 className="text-xl text-[var(--admin-gold-ink)] sm:text-2xl">
         Six-month WhatsApp follow-ups
       </h2>
-      <p className="mt-2 text-sm text-gray-600">
+      <p className="mt-2 text-sm text-[var(--admin-gold-text)]">
         Customers appear here once six calendar months have passed since registration.
         Open WhatsApp to review and send the prepared message.
       </p>
 
       {followUps.length === 0 ? (
-        <p className="mt-5 text-sm text-gray-600">
+        <p className="mt-5 text-sm text-[var(--admin-gold-text)]">
           {isLoading ? "Loading customers…" : "No customers have reached six months yet."}
         </p>
       ) : (
@@ -70,16 +70,16 @@ export default function AdminWhatsAppFollowUps({ profiles, isLoading, lastRefres
             return (
               <li key={profile._id || profile.id} className="flex flex-wrap items-center justify-between gap-3 py-4">
                 <div className="min-w-0">
-                  <h3 className="card-title break-words text-base text-[var(--admin-ink)]">
+                  <h3 className="card-title break-words text-base text-[var(--admin-gold-ink)]">
                     {profile.name || "Customer"}
                   </h3>
-                  <p className="mt-1 text-xs text-gray-600">
+                  <p className="mt-1 text-xs text-[var(--admin-gold-text)]">
                     Registered {displayDay.format(registered)} · Reached six months {displayDay.format(due)}
                   </p>
                 </div>
                 {number ? (
                   <a
-                    className="cta inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-3 py-2 text-sm text-white hover:bg-emerald-800"
+                    className="cta inline-flex items-center gap-2 rounded-lg bg-[var(--admin-gold)] px-3 py-2 text-sm text-[var(--admin-gold-ink)] hover:bg-[var(--admin-gold-hover)]"
                     href={`https://wa.me/${number}?text=${encodeURIComponent(message)}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -88,7 +88,7 @@ export default function AdminWhatsAppFollowUps({ profiles, isLoading, lastRefres
                     <MessageSquare size={16} aria-hidden="true" /> Open WhatsApp
                   </a>
                 ) : (
-                  <span className="text-xs text-gray-600">No valid WhatsApp number</span>
+                  <span className="text-xs text-[var(--admin-gold-text)]">No valid WhatsApp number</span>
                 )}
               </li>
             );

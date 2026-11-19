@@ -553,7 +553,7 @@ export default function AdminPage({ onExit }) {
               alt="Kerala Kalyans Matrimony"
               className="h-12 w-auto mx-auto object-contain mb-3"
             />
-            <h1 className="text-2xl sm:text-3xl text-[var(--admin-ink)]">
+            <h1 className="text-2xl sm:text-3xl text-[var(--admin-gold-ink)]">
               Kerala Kalyans Admin
             </h1>
             <p className="text-xs tracking-[2px] font-semibold text-[var(--admin-gold-text)] mt-1">
@@ -562,7 +562,7 @@ export default function AdminPage({ onExit }) {
           </div>
 
           {loginError && (
-            <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-xs text-red-600 flex items-center gap-2">
+            <div className="mb-4 rounded-lg bg-[var(--admin-surface)] border border-[var(--admin-border)] p-3 text-xs text-[var(--admin-gold-text)] flex items-center gap-2">
               <AlertCircle size={16} className="flex-shrink-0" />
               <span>{loginError}</span>
             </div>
@@ -570,7 +570,7 @@ export default function AdminPage({ onExit }) {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs text-gray-700 mb-1">
+              <label className="block text-xs text-[var(--admin-gold-ink)] mb-1">
                 Admin Email
               </label>
               <input
@@ -578,11 +578,11 @@ export default function AdminPage({ onExit }) {
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)] focus:ring-1 focus:ring-[var(--admin-ink)]"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[var(--admin-border)] text-sm focus:outline-none focus:border-[var(--admin-gold-ink)] focus:ring-1 focus:ring-[var(--admin-gold-ink)]"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-700 mb-1">
+              <label className="block text-xs text-[var(--admin-gold-ink)] mb-1">
                 Password
               </label>
               <input
@@ -590,14 +590,14 @@ export default function AdminPage({ onExit }) {
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)] focus:ring-1 focus:ring-[var(--admin-ink)]"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[var(--admin-border)] text-sm focus:outline-none focus:border-[var(--admin-gold-ink)] focus:ring-1 focus:ring-[var(--admin-gold-ink)]"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full mt-2 py-3 rounded-lg bg-[var(--admin-gold)] hover:bg-[var(--admin-gold-hover)] text-[var(--admin-ink)] font-semibold text-sm transition shadow-md cursor-pointer disabled:opacity-50"
+              className="w-full mt-2 py-3 rounded-lg bg-[var(--admin-gold)] hover:bg-[var(--admin-gold-hover)] text-[var(--admin-gold-ink)] font-semibold text-sm transition shadow-md cursor-pointer disabled:opacity-50"
             >
               {isLoggingIn
                 ? "Verifying Credentials..."
@@ -605,11 +605,11 @@ export default function AdminPage({ onExit }) {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-gray-100 flex items-center justify-end text-xs">
+          <div className="mt-6 pt-5 border-t border-[var(--admin-border)] flex items-center justify-end text-xs">
             {onExit && (
               <button
                 onClick={onExit}
-                className="text-[var(--admin-ink)] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                className="text-[var(--admin-gold-ink)] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
               >
                 <ArrowLeft size={14} /> Back to Site
               </button>
@@ -624,9 +624,9 @@ export default function AdminPage({ onExit }) {
   // MAIN ADMIN DASHBOARD
   // ----------------------------------------------------
   return (
-    <div className="min-h-screen bg-[var(--admin-canvas)] text-gray-800 admin-page">
+    <div className="min-h-screen bg-[var(--admin-canvas)] text-[var(--admin-gold-ink)] admin-page">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-40 bg-[var(--admin-ink)] text-white shadow-md">
+      <header className="sticky top-0 z-40 border-b border-[var(--admin-border)] bg-white text-[var(--admin-gold-ink)] shadow-sm">
         <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <img
@@ -638,7 +638,7 @@ export default function AdminPage({ onExit }) {
               <h2 className="text-base sm:text-xl leading-tight truncate">
                 Kerala Kalyans
               </h2>
-              <p className="text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[var(--admin-gold-light)] font-semibold truncate">
+              <p className="text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[var(--admin-gold-text)] font-semibold truncate">
                 ADMIN CONSOLE
               </p>
             </div>
@@ -649,7 +649,7 @@ export default function AdminPage({ onExit }) {
               <p className="font-semibold truncate max-w-[120px]">
                 {adminUser?.name || "Administrator"}
               </p>
-              <p className="text-[10px] text-[var(--admin-gold-light)] truncate max-w-[120px]">
+              <p className="text-[10px] text-[var(--admin-gold-text)] truncate max-w-[120px]">
                 {adminUser?.email}
               </p>
             </div>
@@ -659,15 +659,15 @@ export default function AdminPage({ onExit }) {
               onClick={() => setActiveTab("notifications")}
               className={`relative flex items-center gap-1 px-2.5 py-1.5 rounded-md transition cursor-pointer font-semibold ${
                 activeTab === "notifications"
-                  ? "bg-[var(--admin-gold)] text-[var(--admin-ink)]"
-                  : "bg-white/10 hover:bg-white/20 text-white"
+                  ? "bg-[var(--admin-gold)] text-[var(--admin-gold-ink)]"
+                  : "bg-[var(--admin-surface)] hover:bg-[var(--admin-gold-light)] text-[var(--admin-gold-ink)]"
               }`}
               title="Notifications Center"
             >
               <Bell size={15} />
               <span className="hidden md:inline">Notifications</span>
               {unreadCount > 0 && (
-                <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white shadow-xs animate-pulse">
+                <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-[var(--admin-gold-strong)] text-[9px] font-bold text-white shadow-xs animate-pulse">
                   {unreadCount}
                 </span>
               )}
@@ -676,7 +676,7 @@ export default function AdminPage({ onExit }) {
             {onExit && (
               <button
                 onClick={onExit}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-white/10 hover:bg-white/20 transition cursor-pointer font-semibold"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-[var(--admin-surface)] hover:bg-[var(--admin-gold-light)] transition cursor-pointer font-semibold"
                 title="View Main Website"
               >
                 <ArrowLeft size={13} />
@@ -686,7 +686,7 @@ export default function AdminPage({ onExit }) {
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-red-600/80 hover:bg-red-700 transition cursor-pointer font-semibold"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white transition cursor-pointer font-semibold"
               title="Sign Out"
             >
               <LogOut size={13} />
@@ -723,8 +723,8 @@ export default function AdminPage({ onExit }) {
                 onClick={() => setActiveTab(tab.id)}
                 className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === tab.id
-                    ? "bg-[var(--admin-ink)] text-white shadow-md"
-                    : "bg-white text-gray-600 hover:bg-[var(--admin-surface)] border border-[var(--admin-border)]"
+                    ? "bg-[var(--admin-gold-strong)] text-white shadow-md"
+                    : "bg-white text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] border border-[var(--admin-border)]"
                 }`}
               >
                 <span>{tab.label}</span>
@@ -734,8 +734,8 @@ export default function AdminPage({ onExit }) {
                       activeTab === tab.id
                         ? "bg-white/25 text-white"
                         : tab.isBadge && tab.count > 0
-                          ? "bg-[var(--admin-ink)] text-white"
-                          : "bg-gray-200 text-gray-700"
+                          ? "bg-[var(--admin-gold-strong)] text-white"
+                          : "bg-[var(--admin-surface)] text-[var(--admin-gold-ink)]"
                     }`}
                   >
                     {tab.count}
@@ -766,15 +766,15 @@ export default function AdminPage({ onExit }) {
                 }}
                 className={`p-3 sm:p-4 rounded-xl border transition cursor-pointer shadow-xs ${
                   statusFilter === "all" && !searchQuery
-                    ? "bg-white border-[var(--admin-ink)] ring-2 ring-[var(--admin-ink)]/20"
-                    : "bg-white border-[var(--admin-border)] hover:border-[var(--admin-ink)]/50"
+                    ? "bg-white border-[var(--admin-gold-ink)] ring-2 ring-[var(--admin-gold-ink)]/20"
+                    : "bg-white border-[var(--admin-border)] hover:border-[var(--admin-gold-ink)]/50"
                 }`}
                 title="Click to view all registrations"
               >
-                <p className="text-[10px] sm:text-xs text-gray-500 font-semibold truncate">
+                <p className="text-[10px] sm:text-xs text-[var(--admin-gold-text)] font-semibold truncate">
                   Total Registrations
                 </p>
-                <h3 className="text-xl sm:text-2xl text-[var(--admin-ink)] mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-ink)] mt-0.5">
                   {profiles.length}
                 </h3>
               </div>
@@ -782,15 +782,15 @@ export default function AdminPage({ onExit }) {
                 onClick={() => setStatusFilter("pending")}
                 className={`p-3 sm:p-4 rounded-xl border transition cursor-pointer shadow-xs ${
                   statusFilter === "pending"
-                    ? "bg-amber-50 border-amber-500 ring-2 ring-amber-400/30"
-                    : "bg-amber-50/50 border-amber-200 hover:border-amber-400"
+                    ? "bg-[var(--admin-surface)] border-[var(--admin-gold)] ring-2 ring-[var(--admin-gold)]/30"
+                    : "bg-[var(--admin-surface)]/50 border-[var(--admin-border)] hover:border-[var(--admin-gold)]"
                 }`}
                 title="Click to view pending approval registrations"
               >
-                <p className="text-[10px] sm:text-xs text-amber-800 font-semibold truncate">
+                <p className="text-[10px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
                   Pending Approval
                 </p>
-                <h3 className="text-xl sm:text-2xl text-amber-600 mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-text)] mt-0.5">
                   {
                     profiles.filter(
                       (p) =>
@@ -807,15 +807,15 @@ export default function AdminPage({ onExit }) {
                 onClick={() => setStatusFilter("approved")}
                 className={`p-3 sm:p-4 rounded-xl border transition cursor-pointer shadow-xs ${
                   statusFilter === "approved"
-                    ? "bg-emerald-50 border-emerald-500 ring-2 ring-emerald-400/30"
-                    : "bg-emerald-50/40 border-emerald-200 hover:border-emerald-400"
+                    ? "bg-[var(--admin-surface)] border-[var(--admin-gold)] ring-2 ring-[var(--admin-gold)]/30"
+                    : "bg-[var(--admin-surface)]/40 border-[var(--admin-border)] hover:border-[var(--admin-gold)]"
                 }`}
                 title="Click to view approved active members"
               >
-                <p className="text-[10px] sm:text-xs text-emerald-800 font-semibold truncate">
+                <p className="text-[10px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
                   Approved & Active
                 </p>
-                <h3 className="text-xl sm:text-2xl text-emerald-600 mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-text)] mt-0.5">
                   {profiles.filter((p) => p.isApproved || p.verified).length}
                 </h3>
               </div>
@@ -823,15 +823,15 @@ export default function AdminPage({ onExit }) {
                 onClick={() => setStatusFilter("rejected")}
                 className={`p-3 sm:p-4 rounded-xl border transition cursor-pointer shadow-xs ${
                   statusFilter === "rejected"
-                    ? "bg-red-50 border-red-500 ring-2 ring-red-400/30"
-                    : "bg-red-50/40 border-red-200 hover:border-red-400"
+                    ? "bg-[var(--admin-surface)] border-[var(--admin-gold)] ring-2 ring-[var(--admin-gold)]/30"
+                    : "bg-[var(--admin-surface)]/40 border-[var(--admin-border)] hover:border-[var(--admin-gold)]"
                 }`}
                 title="Click to view rejected applications"
               >
-                <p className="text-[10px] sm:text-xs text-red-800 font-semibold truncate">
+                <p className="text-[10px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
                   Rejected
                 </p>
-                <h3 className="text-xl sm:text-2xl text-red-600 mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-text)] mt-0.5">
                   {profiles.filter((p) => p.status === "rejected").length}
                 </h3>
               </div>
@@ -842,20 +842,20 @@ export default function AdminPage({ onExit }) {
                 <div className="relative flex-1 min-w-0 w-full">
                   <Search
                     size={14}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--admin-gold-text)]"
                   />
                   <input
                     type="text"
                     placeholder="Search name, email, phone, city..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-8 pr-8 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[var(--admin-ink)] text-xs"
+                    className="w-full pl-8 pr-8 py-2 rounded-lg border border-[var(--admin-border)] focus:outline-none focus:border-[var(--admin-gold-ink)] text-xs"
                   />
                   {searchQuery && (
                     <button
                       type="button"
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-text)] p-0.5"
                     >
                       <X size={13} />
                     </button>
@@ -866,7 +866,7 @@ export default function AdminPage({ onExit }) {
                   <select
                     value={genderFilter}
                     onChange={(e) => setGenderFilter(e.target.value)}
-                    className="w-full sm:w-auto px-2.5 py-2 rounded-lg border border-gray-200 bg-white font-medium focus:outline-none text-xs"
+                    className="w-full sm:w-auto px-2.5 py-2 rounded-lg border border-[var(--admin-border)] bg-white font-medium focus:outline-none text-xs"
                   >
                     <option value="all">All Genders</option>
                     <option value="Bride">Brides</option>
@@ -876,7 +876,7 @@ export default function AdminPage({ onExit }) {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full sm:w-auto px-2.5 py-2 rounded-lg border border-gray-200 bg-white font-medium focus:outline-none text-xs"
+                    className="w-full sm:w-auto px-2.5 py-2 rounded-lg border border-[var(--admin-border)] bg-white font-medium focus:outline-none text-xs"
                   >
                     <option value="all">All Registrations</option>
                     <option value="pending">Pending Approval</option>
@@ -890,7 +890,7 @@ export default function AdminPage({ onExit }) {
             <div className="bg-white rounded-xl border border-[var(--admin-border)] shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[var(--admin-surface)] border-b border-[var(--admin-border)] text-gray-600 font-semibold uppercase tracking-wider text-[10px]">
+                  <thead className="bg-[var(--admin-surface)] border-b border-[var(--admin-border)] text-[var(--admin-gold-text)] font-semibold uppercase tracking-wider text-[10px]">
                     <tr>
                       <th className="px-4 py-3">Profile</th>
                       <th className="px-4 py-3">Age & Height</th>
@@ -901,15 +901,15 @@ export default function AdminPage({ onExit }) {
                       <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-[var(--admin-border)]">
                     {filteredProfiles.length === 0 ? (
                       <tr>
                         <td colSpan="7" className="text-center py-12 px-4">
                           <div className="max-w-sm mx-auto space-y-2">
-                            <p className="text-sm font-bold text-gray-700">
+                            <p className="text-sm font-bold text-[var(--admin-gold-ink)]">
                               No profiles matching current filters
                             </p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-[var(--admin-gold-text)]">
                               {searchQuery
                                 ? `No results found for "${searchQuery}".`
                                 : statusFilter !== "all"
@@ -923,7 +923,7 @@ export default function AdminPage({ onExit }) {
                                 setGenderFilter("all");
                                 setStatusFilter("all");
                               }}
-                              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
+                              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
                             >
                               <RefreshCw size={13} />
                               <span>
@@ -937,7 +937,7 @@ export default function AdminPage({ onExit }) {
                       filteredProfiles.map((p) => (
                         <tr
                           key={p.id}
-                          className="hover:bg-amber-50/40 transition"
+                          className="hover:bg-[var(--admin-surface)]/40 transition"
                         >
                           <td className="px-4 py-3.5 flex items-center gap-3">
                             <img
@@ -946,23 +946,23 @@ export default function AdminPage({ onExit }) {
                               className="h-10 w-10 rounded-full object-cover border border-[var(--admin-border)]"
                             />
                             <div>
-                              <div className="font-semibold text-gray-900 text-sm flex items-center gap-1.5">
+                              <div className="font-semibold text-[var(--admin-gold-ink)] text-sm flex items-center gap-1.5">
                                 <span>{p.name}</span>
                                 {(p.isApproved || p.verified) && (
                                   <ShieldCheck
                                     size={14}
-                                    className="text-emerald-600"
+                                    className="text-[var(--admin-gold-text)]"
                                     title="Approved & Verified Member"
                                   />
                                 )}
                               </div>
-                              <div className="text-[11px] text-[var(--admin-ink)] font-medium truncate max-w-[190px]">
+                              <div className="text-[11px] text-[var(--admin-gold-ink)] font-medium truncate max-w-[190px]">
                                 {p.email}
                               </div>
-                              <span className="text-[10px] text-gray-400">
+                              <span className="text-[10px] text-[var(--admin-gold-text)]">
                                 {p.phone ? `${p.phone} · ` : ""}
                                 {p.id} · {p.gender} ·{" "}
-                                <span className="text-[var(--admin-ink)] font-medium">
+                                <span className="text-[var(--admin-gold-ink)] font-medium">
                                   {p.marriageType ||
                                     p.maritalStatus ||
                                     "Never Married"}
@@ -970,33 +970,33 @@ export default function AdminPage({ onExit }) {
                               </span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-gray-700">
+                          <td className="px-4 py-3 text-[var(--admin-gold-ink)]">
                             <div>{p.age} yrs</div>
-                            <div className="text-[10px] text-gray-400">
+                            <div className="text-[10px] text-[var(--admin-gold-text)]">
                               {p.height}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-gray-700">
+                          <td className="px-4 py-3 text-[var(--admin-gold-ink)]">
                             <div>{p.religion}</div>
-                            <div className="text-[10px] text-gray-400">
+                            <div className="text-[10px] text-[var(--admin-gold-text)]">
                               {p.caste || p.motherTongue}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-gray-700">
-                            <div className="font-medium text-gray-900">
+                          <td className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                            <div className="font-medium text-[var(--admin-gold-ink)]">
                               {p.profession}
                             </div>
-                            <div className="text-[10px] text-gray-400">
+                            <div className="text-[10px] text-[var(--admin-gold-text)]">
                               {p.education}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-gray-700">
+                          <td className="px-4 py-3 text-[var(--admin-gold-ink)]">
                             {p.location}
                           </td>
                           <td className="px-4 py-3 text-center">
                             {p.status === "rejected" ? (
                               <div className="flex flex-col items-center gap-1">
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] border border-[var(--admin-border)]">
                                   <XCircle size={12} />
                                   <span>Rejected</span>
                                 </span>
@@ -1004,7 +1004,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleApproveProfile(p.id, p.name)
                                   }
-                                  className="text-[10px] text-[var(--admin-ink)] hover:underline font-semibold cursor-pointer"
+                                  className="text-[10px] text-[var(--admin-gold-ink)] hover:underline font-semibold cursor-pointer"
                                   title="Re-approve application"
                                 >
                                   Re-Approve
@@ -1012,7 +1012,7 @@ export default function AdminPage({ onExit }) {
                               </div>
                             ) : p.isApproved || p.verified ? (
                               <div className="flex flex-col items-center gap-1">
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] border border-[var(--admin-border)]">
                                   <CheckCircle2 size={12} />
                                   <span>Approved</span>
                                 </span>
@@ -1020,7 +1020,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleResendApproval(p.id, p.name)
                                   }
-                                  className="text-[9px] text-[var(--admin-ink)] hover:underline font-medium cursor-pointer"
+                                  className="text-[9px] text-[var(--admin-gold-ink)] hover:underline font-medium cursor-pointer"
                                   title="Resend temporary login credentials email"
                                 >
                                   Resend Email
@@ -1032,7 +1032,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleApproveProfile(p.id, p.name)
                                   }
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white shadow-xs transition cursor-pointer"
                                   title="Approve user, hash temporary password & send approval email"
                                 >
                                   <CheckCircle2 size={13} />
@@ -1042,7 +1042,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleRejectProfile(p.id, p.name)
                                   }
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-[var(--admin-surface)] hover:bg-[var(--admin-surface)] text-[var(--admin-gold-text)] border border-[var(--admin-border)] transition cursor-pointer"
                                   title="Reject registration & notify applicant"
                                 >
                                   <XCircle size={13} />
@@ -1057,14 +1057,14 @@ export default function AdminPage({ onExit }) {
                                 onClick={() => {
                                   window.location.hash = `#profile/${p.id}`;
                                 }}
-                                className="p-1.5 rounded text-gray-600 hover:text-[var(--admin-ink)] hover:bg-[var(--admin-ink)]/10 transition cursor-pointer flex items-center gap-1"
+                                className="p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-ink)] hover:bg-[var(--admin-gold)]/15 transition cursor-pointer flex items-center gap-1"
                                 title="View Complete Profile"
                               >
                                 <Eye size={15} />
                               </button>
                               <button
                                 onClick={() => setEditingProfile(p)}
-                                className="p-1.5 rounded text-gray-500 hover:text-[var(--admin-ink)] hover:bg-gray-100 transition cursor-pointer"
+                                className="p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-ink)] hover:bg-[var(--admin-surface)] transition cursor-pointer"
                                 title="Edit Profile"
                               >
                                 <Edit3 size={15} />
@@ -1073,7 +1073,7 @@ export default function AdminPage({ onExit }) {
                                 onClick={() =>
                                   promptDeleteProfile(p.id, p.name)
                                 }
-                                className="p-1.5 rounded text-gray-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
+                                className="p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] transition cursor-pointer"
                                 title="Delete Profile"
                               >
                                 <Trash2 size={15} />
@@ -1095,22 +1095,22 @@ export default function AdminPage({ onExit }) {
           <div className="space-y-4">
             <div className="bg-white p-4 rounded-xl border border-[var(--admin-border)] shadow-sm flex items-center justify-between">
               <div>
-                <h3 className="text-xl text-[var(--admin-ink)]">
+                <h3 className="text-xl text-[var(--admin-gold-ink)]">
                   Website Inquiries & Search Leads
                 </h3>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[var(--admin-gold-text)]">
                   Live submissions received through the homepage search bar and
                   registration links.
                 </p>
               </div>
-              <span className="px-3 py-1 rounded-full bg-[var(--admin-ink)] text-white text-xs font-semibold">
+              <span className="px-3 py-1 rounded-full bg-[var(--admin-gold-strong)] text-white text-xs font-semibold">
                 {inquiries.length} Total Leads
               </span>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {inquiries.length === 0 ? (
-                <div className="col-span-full py-12 text-center text-gray-400 bg-white rounded-xl border border-[var(--admin-border)]">
+                <div className="col-span-full py-12 text-center text-[var(--admin-gold-text)] bg-white rounded-xl border border-[var(--admin-border)]">
                   No inquiries recorded yet. Test by submitting from the home
                   page!
                 </div>
@@ -1121,16 +1121,16 @@ export default function AdminPage({ onExit }) {
                     className="bg-white p-5 rounded-xl border border-[var(--admin-border)] shadow-sm space-y-3"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-gray-400">
+                      <span className="text-[10px] font-bold text-[var(--admin-gold-text)]">
                         {inq.id}
                       </span>
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                           inq.status === "New"
-                            ? "bg-red-100 text-red-700"
+                            ? "bg-[var(--admin-surface)] text-[var(--admin-gold-ink)]"
                             : inq.status === "Contacted"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-gray-100 text-gray-700"
+                              ? "bg-[var(--admin-surface)] text-[var(--admin-gold-ink)]"
+                              : "bg-[var(--admin-surface)] text-[var(--admin-gold-ink)]"
                         }`}
                       >
                         {inq.status}
@@ -1138,17 +1138,17 @@ export default function AdminPage({ onExit }) {
                     </div>
 
                     <div>
-                      <h4 className="card-title text-gray-900 text-sm">
+                      <h4 className="card-title text-[var(--admin-gold-ink)] text-sm">
                         {inq.name}
                       </h4>
-                      <p className="text-xs text-gray-500 mt-0.5">
+                      <p className="text-xs text-[var(--admin-gold-text)] mt-0.5">
                         Looking for a{" "}
-                        <b className="text-gray-800">{inq.lookingFor}</b> · Aged{" "}
+                        <b className="text-[var(--admin-gold-ink)]">{inq.lookingFor}</b> · Aged{" "}
                         {inq.ageRange}
                       </p>
                     </div>
 
-                    <div className="text-xs text-gray-600 space-y-1 bg-[var(--admin-surface)] p-2.5 rounded-lg border border-[var(--admin-border)]/60">
+                    <div className="text-xs text-[var(--admin-gold-text)] space-y-1 bg-[var(--admin-surface)] p-2.5 rounded-lg border border-[var(--admin-border)]/60">
                       <div>
                         <b>Religion:</b> {inq.religion || "Any"}
                       </div>
@@ -1156,30 +1156,30 @@ export default function AdminPage({ onExit }) {
                         <b>Mother Tongue:</b> {inq.motherTongue || "Any"}
                       </div>
                       {inq.phone && (
-                        <div className="flex items-center gap-1.5 text-gray-700">
+                        <div className="flex items-center gap-1.5 text-[var(--admin-gold-ink)]">
                           <Phone size={12} className="text-[var(--admin-gold-text)]" />{" "}
                           {inq.phone}
                         </div>
                       )}
                       {inq.email && (
-                        <div className="flex items-center gap-1.5 text-gray-700">
+                        <div className="flex items-center gap-1.5 text-[var(--admin-gold-ink)]">
                           <Mail size={12} className="text-[var(--admin-gold-text)]" />{" "}
                           {inq.email}
                         </div>
                       )}
-                      <div className="flex items-center gap-1 text-[10px] text-gray-400 pt-1">
+                      <div className="flex items-center gap-1 text-[10px] text-[var(--admin-gold-text)] pt-1">
                         <Calendar size={11} />{" "}
                         {new Date(inq.date).toLocaleDateString()}
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <div className="flex items-center justify-between pt-2 border-t border-[var(--admin-border)]">
                       <select
                         value={inq.status}
                         onChange={(e) =>
                           handleInquiryStatus(inq.id, e.target.value)
                         }
-                        className="text-xs px-2 py-1 rounded border border-gray-200 bg-white cursor-pointer"
+                        className="text-xs px-2 py-1 rounded border border-[var(--admin-border)] bg-white cursor-pointer"
                       >
                         <option value="New">Mark New</option>
                         <option value="Contacted">Mark Contacted</option>
@@ -1188,7 +1188,7 @@ export default function AdminPage({ onExit }) {
 
                       <button
                         onClick={() => promptDeleteInquiry(inq.id, inq.name)}
-                        className="text-gray-400 hover:text-red-600 p-1 cursor-pointer transition"
+                        className="text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-text)] p-1 cursor-pointer transition"
                         title="Delete Inquiry"
                       >
                         <Trash2 size={14} />
@@ -1207,14 +1207,14 @@ export default function AdminPage({ onExit }) {
             {/* Header banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-xl border border-[var(--admin-border)] shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--admin-ink)] text-white flex-shrink-0 shadow-md">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--admin-gold-strong)] text-white flex-shrink-0 shadow-md">
                   <BellRing size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl sm:text-2xl text-[var(--admin-ink)]">
+                  <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-ink)]">
                     Notification Center
                   </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-[var(--admin-gold-text)] mt-0.5">
                     Real-time stream of member registrations, inquiry leads, and
                     platform activity.
                   </p>
@@ -1225,15 +1225,15 @@ export default function AdminPage({ onExit }) {
                 <button
                   onClick={markAllNotificationsAsRead}
                   disabled={notifications.filter((n) => !n.isRead).length === 0}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-white border border-[var(--admin-border)] hover:bg-[var(--admin-surface)] text-gray-700 transition cursor-pointer disabled:opacity-40"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-white border border-[var(--admin-border)] hover:bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] transition cursor-pointer disabled:opacity-40"
                 >
-                  <Check size={14} className="text-emerald-600" />
+                  <Check size={14} className="text-[var(--admin-gold-text)]" />
                   <span>Mark All Read</span>
                 </button>
                 <button
                   onClick={clearAllNotifications}
                   disabled={notifications.length === 0}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 border border-red-200 transition cursor-pointer disabled:opacity-40"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] border border-[var(--admin-border)] transition cursor-pointer disabled:opacity-40"
                 >
                   <Trash2 size={14} />
                   <span>Clear All</span>
@@ -1262,8 +1262,8 @@ export default function AdminPage({ onExit }) {
                   onClick={() => setNotifFilter(f.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                     notifFilter === f.id
-                      ? "bg-[var(--admin-ink)] text-white shadow-xs"
-                      : "bg-white text-gray-600 border border-[var(--admin-border)] hover:bg-[var(--admin-surface)]"
+                      ? "bg-[var(--admin-gold-strong)] text-white shadow-xs"
+                      : "bg-white text-[var(--admin-gold-text)] border border-[var(--admin-border)] hover:bg-[var(--admin-surface)]"
                   }`}
                 >
                   {f.label}
@@ -1278,12 +1278,12 @@ export default function AdminPage({ onExit }) {
                 if (notifFilter === "read") return n.isRead;
                 return true;
               }).length === 0 ? (
-                <div className="bg-white rounded-xl border border-[var(--admin-border)] p-12 text-center text-gray-400">
-                  <Bell size={36} className="mx-auto mb-3 text-gray-300" />
-                  <p className="text-sm font-semibold text-gray-600">
+                <div className="bg-white rounded-xl border border-[var(--admin-border)] p-12 text-center text-[var(--admin-gold-text)]">
+                  <Bell size={36} className="mx-auto mb-3 text-[var(--admin-gold-text)]" />
+                  <p className="text-sm font-semibold text-[var(--admin-gold-text)]">
                     No notifications found
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-[var(--admin-gold-text)] mt-1">
                     When users register on the home page or submit inquiries,
                     pop messages and logs will appear here.
                   </p>
@@ -1306,19 +1306,7 @@ export default function AdminPage({ onExit }) {
                       }`}
                     >
                       <div className="flex items-start gap-3 flex-1">
-                        <div
-                          className={`p-2.5 rounded-xl flex-shrink-0 ${
-                            notif.type === "registration"
-                              ? "bg-[var(--admin-ink)] text-white"
-                              : notif.type === "inquiry"
-                                ? "bg-blue-600 text-white"
-                                : notif.type === "verified"
-                                  ? "bg-emerald-600 text-white"
-                                  : notif.type === "delete"
-                                    ? "bg-red-500 text-white"
-                                    : "bg-[var(--admin-gold-text)] text-white"
-                          }`}
-                        >
+                        <div className="p-2.5 rounded-xl flex-shrink-0 bg-[var(--admin-gold-strong)] text-white">
                           {notif.type === "registration" ? (
                             <UserPlus size={18} />
                           ) : notif.type === "inquiry" ? (
@@ -1334,20 +1322,20 @@ export default function AdminPage({ onExit }) {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h4 className="card-title text-xs sm:text-sm text-gray-900">
+                            <h4 className="card-title text-xs sm:text-sm text-[var(--admin-gold-ink)]">
                               {notif.title}
                             </h4>
                             {!notif.isRead && (
                               <span
-                                className="h-2 w-2 rounded-full bg-[var(--admin-ink)] inline-block"
+                                className="h-2 w-2 rounded-full bg-[var(--admin-gold-strong)] inline-block"
                                 title="Unread"
                               />
                             )}
                           </div>
-                          <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                          <p className="text-xs text-[var(--admin-gold-text)] mt-1 leading-relaxed">
                             {notif.message}
                           </p>
-                          <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
+                          <div className="flex items-center gap-3 mt-2 text-[10px] text-[var(--admin-gold-text)]">
                             <span>
                               {new Date(notif.timestamp).toLocaleString()}
                             </span>
@@ -1361,7 +1349,7 @@ export default function AdminPage({ onExit }) {
                                   if (notif.action.search)
                                     setSearchQuery(notif.action.search);
                                 }}
-                                className="font-semibold text-[var(--admin-ink)] hover:underline cursor-pointer"
+                                className="font-semibold text-[var(--admin-gold-ink)] hover:underline cursor-pointer"
                               >
                                 Go to{" "}
                                 {notif.action.tab === "profiles"
@@ -1379,7 +1367,7 @@ export default function AdminPage({ onExit }) {
                           e.stopPropagation();
                           deleteNotification(notif.id);
                         }}
-                        className="text-gray-300 hover:text-red-600 p-1 rounded-full cursor-pointer transition"
+                        className="text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-text)] p-1 rounded-full cursor-pointer transition"
                         title="Delete notification"
                       >
                         <Trash2 size={14} />
@@ -1394,17 +1382,17 @@ export default function AdminPage({ onExit }) {
         {/* TAB 4: PLATFORM STATS & METRICS */}
         {activeTab === "settings" && (
           <div className="max-w-2xl bg-white p-6 rounded-xl border border-[var(--admin-border)] shadow-sm">
-            <h3 className="text-xl text-[var(--admin-ink)]">
+            <h3 className="text-xl text-[var(--admin-gold-ink)]">
               Homepage Statistics Control
             </h3>
-            <p className="text-xs text-gray-500 mt-1 mb-6">
+            <p className="text-xs text-[var(--admin-gold-text)] mt-1 mb-6">
               Update the animated numbers displayed in the live website's
               statistics counter cards.
             </p>
 
             <form onSubmit={handleSaveStats} className="space-y-4">
               <div>
-                <label className="block text-xs text-gray-700 mb-1">
+                <label className="block text-xs text-[var(--admin-gold-ink)] mb-1">
                   Verified Profiles (Target Number for %)
                 </label>
                 <input
@@ -1416,12 +1404,12 @@ export default function AdminPage({ onExit }) {
                       verifiedProfiles: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)]"
+                  className="w-full px-3 py-2 rounded-lg border border-[var(--admin-border)] text-sm focus:outline-none focus:border-[var(--admin-gold-ink)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-gray-700 mb-1">
+                <label className="block text-xs text-[var(--admin-gold-ink)] mb-1">
                   Happy Connections (Target Number for +)
                 </label>
                 <input
@@ -1433,12 +1421,12 @@ export default function AdminPage({ onExit }) {
                       happyConnections: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)]"
+                  className="w-full px-3 py-2 rounded-lg border border-[var(--admin-border)] text-sm focus:outline-none focus:border-[var(--admin-gold-ink)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-gray-700 mb-1">
+                <label className="block text-xs text-[var(--admin-gold-ink)] mb-1">
                   Registered Members (Target Number for K+)
                 </label>
                 <input
@@ -1450,12 +1438,12 @@ export default function AdminPage({ onExit }) {
                       registeredMembers: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)]"
+                  className="w-full px-3 py-2 rounded-lg border border-[var(--admin-border)] text-sm focus:outline-none focus:border-[var(--admin-gold-ink)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-gray-700 mb-1">
+                <label className="block text-xs text-[var(--admin-gold-ink)] mb-1">
                   Trusted Experience (Target Number for +)
                 </label>
                 <input
@@ -1467,13 +1455,13 @@ export default function AdminPage({ onExit }) {
                       trustedExperience: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)]"
+                  className="w-full px-3 py-2 rounded-lg border border-[var(--admin-border)] text-sm focus:outline-none focus:border-[var(--admin-gold-ink)]"
                 />
               </div>
 
               <button
                 type="submit"
-                className="mt-4 px-6 py-2.5 rounded-lg bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white font-semibold text-xs transition cursor-pointer shadow"
+                className="mt-4 px-6 py-2.5 rounded-lg bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-semibold text-xs transition cursor-pointer shadow"
               >
                 Save Platform Stats
               </button>
@@ -1484,15 +1472,15 @@ export default function AdminPage({ onExit }) {
 
       {/* EDIT PROFILE MODAL */}
       {editingProfile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--admin-gold-strong)]/35 backdrop-blur-xs p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[var(--admin-border)] my-8">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <h3 className="text-xl text-[var(--admin-ink)]">
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--admin-border)]">
+              <h3 className="text-xl text-[var(--admin-gold-ink)]">
                 Edit Profile ({editingProfile.id})
               </h3>
               <button
                 onClick={() => setEditingProfile(null)}
-                className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600"
+                className="p-1 rounded-full hover:bg-[var(--admin-surface)] text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-text)]"
               >
                 <XCircle size={20} />
               </button>
@@ -1515,7 +1503,7 @@ export default function AdminPage({ onExit }) {
                         name: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:border-[var(--admin-ink)]"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)] focus:outline-none focus:border-[var(--admin-gold-ink)]"
                   />
                 </div>
                 <div>
@@ -1528,7 +1516,7 @@ export default function AdminPage({ onExit }) {
                         gender: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300 bg-white"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)] bg-white"
                   >
                     <option value="Bride">Bride</option>
                     <option value="Groom">Groom</option>
@@ -1548,7 +1536,7 @@ export default function AdminPage({ onExit }) {
                         age: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
                   />
                 </div>
                 <div>
@@ -1562,7 +1550,7 @@ export default function AdminPage({ onExit }) {
                         height: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
                   />
                 </div>
               </div>
@@ -1584,7 +1572,7 @@ export default function AdminPage({ onExit }) {
                       maritalStatus: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2 rounded border border-gray-300 bg-white"
+                  className="w-full px-3 py-2 rounded border border-[var(--admin-border)] bg-white"
                 >
                   <option value="Never Married">Never Married</option>
                   <option value="Divorced">Divorced</option>
@@ -1606,7 +1594,7 @@ export default function AdminPage({ onExit }) {
                         religion: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300 bg-white"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)] bg-white"
                   >
                     <option>Hindu</option>
                     <option>Christian</option>
@@ -1626,7 +1614,7 @@ export default function AdminPage({ onExit }) {
                         caste: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
                   />
                 </div>
               </div>
@@ -1643,7 +1631,7 @@ export default function AdminPage({ onExit }) {
                         education: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
                   />
                 </div>
                 <div>
@@ -1657,7 +1645,7 @@ export default function AdminPage({ onExit }) {
                         profession: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
                   />
                 </div>
               </div>
@@ -1673,7 +1661,7 @@ export default function AdminPage({ onExit }) {
                       location: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2 rounded border border-gray-300"
+                  className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
                 />
               </div>
 
@@ -1688,7 +1676,7 @@ export default function AdminPage({ onExit }) {
                       photo: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2 rounded border border-gray-300"
+                  className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
                 />
               </div>
 
@@ -1703,7 +1691,7 @@ export default function AdminPage({ onExit }) {
                       verified: e.target.checked,
                     })
                   }
-                  className="rounded text-[var(--admin-ink)]"
+                  className="rounded text-[var(--admin-gold-ink)]"
                 />
                 <label
                   htmlFor="editVerifiedCheck"
@@ -1713,17 +1701,17 @@ export default function AdminPage({ onExit }) {
                 </label>
               </div>
 
-              <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-2 pt-4 border-t border-[var(--admin-border)]">
                 <button
                   type="button"
                   onClick={() => setEditingProfile(null)}
-                  className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-50 font-semibold cursor-pointer"
+                  className="px-4 py-2 rounded border border-[var(--admin-border)] hover:bg-[var(--admin-surface)] font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white font-semibold transition cursor-pointer shadow"
+                  className="px-5 py-2 rounded bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-semibold transition cursor-pointer shadow"
                 >
                   Update Profile
                 </button>
@@ -1735,29 +1723,29 @@ export default function AdminPage({ onExit }) {
 
       {/* CUSTOM CONFIRMATION MODAL (NO BROWSER POPUPS/ALERTS) */}
       {confirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--admin-gold-strong)]/35 backdrop-blur-xs p-4 overflow-y-auto">
           <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--admin-surface)] text-[var(--admin-gold-text)] mb-4">
               <AlertTriangle size={28} />
             </div>
-            <h3 className="text-xl text-center text-gray-900">
+            <h3 className="text-xl text-center text-[var(--admin-gold-ink)]">
               {confirmModal.title}
             </h3>
-            <p className="mt-2 text-xs text-center text-gray-500 leading-relaxed max-w-xs mx-auto">
+            <p className="mt-2 text-xs text-center text-[var(--admin-gold-text)] leading-relaxed max-w-xs mx-auto">
               {confirmModal.message}
             </p>
             <div className="mt-6 flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={() => setConfirmModal(null)}
-                className="w-1/2 px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-semibold text-xs hover:bg-gray-50 transition cursor-pointer"
+                className="w-1/2 px-4 py-2.5 rounded-xl border border-[var(--admin-border)] text-[var(--admin-gold-ink)] font-semibold text-xs hover:bg-[var(--admin-surface)] transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={confirmModal.onConfirm}
-                className="w-1/2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-red-600/20"
+                className="w-1/2 px-4 py-2.5 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[var(--admin-gold)]/20"
               >
                 {confirmModal.confirmText || "Confirm Delete"}
               </button>
@@ -1767,30 +1755,30 @@ export default function AdminPage({ onExit }) {
       )}
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--admin-gold-strong)]/35 backdrop-blur-xs p-4 overflow-y-auto">
           <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--admin-surface)] text-[var(--admin-gold-text)] mb-4">
               <Key size={26} />
             </div>
-            <h3 className="text-xl sm:text-2xl text-center text-gray-900">
+            <h3 className="text-xl sm:text-2xl text-center text-[var(--admin-gold-ink)]">
               {approvalModal.isResend
                 ? "Credentials Reissued"
                 : "Account Approved"}
             </h3>
-            <p className="mt-1 text-xs text-center text-gray-500">
-              Member: <b className="text-gray-900">{approvalModal.name}</b>
+            <p className="mt-1 text-xs text-center text-[var(--admin-gold-text)]">
+              Member: <b className="text-[var(--admin-gold-ink)]">{approvalModal.name}</b>
               {approvalModal.email && <span> ({approvalModal.email})</span>}
             </p>
 
             <div className="mt-5 bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-xl p-4">
-              <div className="flex items-center justify-between text-xs text-gray-500 font-semibold mb-1">
+              <div className="flex items-center justify-between text-xs text-[var(--admin-gold-text)] font-semibold mb-1">
                 <span>Temporary Password</span>
-                <span className="text-[10px] text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] text-[var(--admin-gold-ink)] bg-[var(--admin-surface)] border border-[var(--admin-gold)] px-2 py-0.5 rounded-full font-bold">
                   ⏱️ Expires in 10 mins
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[var(--admin-border)]">
-                <code className="font-bold text-base text-[var(--admin-ink)] tracking-wider select-all">
+                <code className="font-bold text-base text-[var(--admin-gold-ink)] tracking-wider select-all">
                   {approvalModal.temporaryPassword}
                 </code>
                 <button
@@ -1802,7 +1790,7 @@ export default function AdminPage({ onExit }) {
                     setCopiedPassword(true);
                     setTimeout(() => setCopiedPassword(false), 2000);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
                 >
                   {copiedPassword ? (
                     <>
@@ -1817,18 +1805,18 @@ export default function AdminPage({ onExit }) {
                   )}
                 </button>
               </div>
-              <p className="text-[10px] text-gray-500 mt-2">
+              <p className="text-[10px] text-[var(--admin-gold-text)] mt-2">
                 Combination of uppercase, lowercase, numbers &amp; special
                 characters. Valid for 10 minutes.
               </p>
             </div>
 
-            <div className="mt-4 p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl text-xs text-emerald-800 space-y-1">
-              <div className="flex items-center gap-1.5 font-bold text-emerald-900">
-                <CheckCircle2 size={14} className="text-emerald-600" />
+            <div className="mt-4 p-3 bg-[var(--admin-surface)]/70 border border-[var(--admin-border)] rounded-xl text-xs text-[var(--admin-gold-ink)] space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-[var(--admin-gold-ink)]">
+                <CheckCircle2 size={14} className="text-[var(--admin-gold-text)]" />
                 <span>Nodemailer Dispatched</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-emerald-700">
+              <p className="text-[11px] leading-relaxed text-[var(--admin-gold-ink)]">
                 Email has been sent to <b>{approvalModal.email}</b>. If not
                 visible in the inbox, ask the member to check their <b>Spam</b>{" "}
                 or <b>Promotions</b> folder.
@@ -1841,7 +1829,7 @@ export default function AdminPage({ onExit }) {
                 setApprovalModal(null);
                 setCopiedPassword(false);
               }}
-              className="mt-6 w-full py-2.5 rounded-xl bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[var(--admin-ink)]/20"
+              className="mt-6 w-full py-2.5 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[var(--admin-gold-ink)]/20"
             >
               Done & Close
             </button>
@@ -1850,30 +1838,30 @@ export default function AdminPage({ onExit }) {
       )}
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--admin-gold-strong)]/35 backdrop-blur-xs p-4 overflow-y-auto">
           <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--admin-surface)] text-[var(--admin-gold-text)] mb-4">
               <Key size={26} />
             </div>
-            <h3 className="text-xl sm:text-2xl text-center text-gray-900">
+            <h3 className="text-xl sm:text-2xl text-center text-[var(--admin-gold-ink)]">
               {approvalModal.isResend
                 ? "Credentials Reissued"
                 : "Account Approved"}
             </h3>
-            <p className="mt-1 text-xs text-center text-gray-500">
-              Member: <b className="text-gray-900">{approvalModal.name}</b>
+            <p className="mt-1 text-xs text-center text-[var(--admin-gold-text)]">
+              Member: <b className="text-[var(--admin-gold-ink)]">{approvalModal.name}</b>
               {approvalModal.email && <span> ({approvalModal.email})</span>}
             </p>
 
             <div className="mt-5 bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-xl p-4">
-              <div className="flex items-center justify-between text-xs text-gray-500 font-semibold mb-1">
+              <div className="flex items-center justify-between text-xs text-[var(--admin-gold-text)] font-semibold mb-1">
                 <span>Temporary Password</span>
-                <span className="text-[10px] text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] text-[var(--admin-gold-ink)] bg-[var(--admin-surface)] border border-[var(--admin-gold)] px-2 py-0.5 rounded-full font-bold">
                   ⏱️ Expires in 10 mins
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[var(--admin-border)]">
-                <code className="font-bold text-base text-[var(--admin-ink)] tracking-wider select-all">
+                <code className="font-bold text-base text-[var(--admin-gold-ink)] tracking-wider select-all">
                   {approvalModal.temporaryPassword}
                 </code>
                 <button
@@ -1885,7 +1873,7 @@ export default function AdminPage({ onExit }) {
                     setCopiedPassword(true);
                     setTimeout(() => setCopiedPassword(false), 2000);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
                 >
                   {copiedPassword ? (
                     <>
@@ -1900,18 +1888,18 @@ export default function AdminPage({ onExit }) {
                   )}
                 </button>
               </div>
-              <p className="text-[10px] text-gray-500 mt-2">
+              <p className="text-[10px] text-[var(--admin-gold-text)] mt-2">
                 Combination of uppercase, lowercase, numbers &amp; special
                 characters. Valid for 10 minutes.
               </p>
             </div>
 
-            <div className="mt-4 p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl text-xs text-emerald-800 space-y-1">
-              <div className="flex items-center gap-1.5 font-bold text-emerald-900">
-                <CheckCircle2 size={14} className="text-emerald-600" />
+            <div className="mt-4 p-3 bg-[var(--admin-surface)]/70 border border-[var(--admin-border)] rounded-xl text-xs text-[var(--admin-gold-ink)] space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-[var(--admin-gold-ink)]">
+                <CheckCircle2 size={14} className="text-[var(--admin-gold-text)]" />
                 <span>Nodemailer Dispatched</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-emerald-700">
+              <p className="text-[11px] leading-relaxed text-[var(--admin-gold-ink)]">
                 Email has been sent to <b>{approvalModal.email}</b>. If not
                 visible in the inbox, ask the member to check their <b>Spam</b>{" "}
                 or <b>Promotions</b> folder.
@@ -1924,7 +1912,7 @@ export default function AdminPage({ onExit }) {
                 setApprovalModal(null);
                 setCopiedPassword(false);
               }}
-              className="mt-6 w-full py-2.5 rounded-xl bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[var(--admin-ink)]/20"
+              className="mt-6 w-full py-2.5 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[var(--admin-gold-ink)]/20"
             >
               Done & Close
             </button>

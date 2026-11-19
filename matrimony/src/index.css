@@ -96,15 +96,17 @@ footer a:not(.cta) {
 }
 
 .admin-page {
-  --admin-ink: #2d2d2b;
-  --admin-ink-hover: #44423d;
-  --admin-canvas: #f5f4f0;
-  --admin-surface: #faf9f5;
-  --admin-border: #e3ded1;
+  --admin-gold-ink: #573b0b;
+  --admin-gold-strong: #795705;
+  --admin-gold-strong-hover: #654804;
+  --admin-canvas: #fff;
+  --admin-surface: #fff9e9;
+  --admin-border: #e6cd8d;
   --admin-gold: #e9b82f;
   --admin-gold-hover: #dba927;
-  --admin-gold-light: #f4d879;
+  --admin-gold-light: #fff0bf;
   --admin-gold-text: #795705;
+  color: var(--admin-gold-ink);
 }
 
 :where(input, select, textarea) {
