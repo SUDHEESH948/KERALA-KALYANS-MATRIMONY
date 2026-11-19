@@ -8,9 +8,9 @@ base URL, including the `/api` suffix (for example, `https://api.example.com/api
 Check that the backend responds at `/api/health`, then redeploy the frontend.
 Vite reads the variable at build time.
 
-Without that variable, production builds use same-origin `/api` and require an
-API route or rewrite there. The local Vite dev server defaults to
-`http://localhost:5000/api`.
+Without that variable, production builds use
+`https://kerala-kalyans-matrimony.onrender.com/api`. The local Vite dev server
+defaults to `http://localhost:5000/api`.
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
