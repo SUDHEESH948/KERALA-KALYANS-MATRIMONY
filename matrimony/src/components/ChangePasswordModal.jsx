@@ -101,7 +101,7 @@ export default function ChangePasswordModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto font-montserrat">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.94, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -115,7 +115,7 @@ export default function ChangePasswordModal({
                 <KeyRound size={22} />
               </div>
               <div>
-                <h3 className="serif text-xl sm:text-2xl font-bold leading-tight">
+                <h3 className="text-xl sm:text-2xl leading-tight">
                   Mandatory Password Change
                 </h3>
                 <p className="text-[11px] text-[#E8CA91] font-semibold tracking-wider uppercase">
@@ -161,7 +161,7 @@ export default function ChangePasswordModal({
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               {/* Current / Temporary Password */}
               <div>
-                <label className="block text-gray-700 font-semibold mb-1">
+                <label className="block text-gray-700 mb-1">
                   Temporary / Current Password *
                 </label>
                 <div className="relative">
@@ -172,7 +172,7 @@ export default function ChangePasswordModal({
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="Enter the temporary password from your email"
-                    className="w-full pl-9 pr-10 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] text-xs sm:text-sm font-sans"
+                    className="w-full pl-9 pr-10 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] text-xs sm:text-sm"
                   />
                   <button
                     type="button"
@@ -186,7 +186,7 @@ export default function ChangePasswordModal({
 
               {/* New Password */}
               <div>
-                <label className="block text-gray-700 font-semibold mb-1">
+                <label className="block text-gray-700 mb-1">
                   New Private Password *
                 </label>
                 <div className="relative">
@@ -197,7 +197,7 @@ export default function ChangePasswordModal({
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Create a strong new password"
-                    className="w-full pl-9 pr-10 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] text-xs sm:text-sm font-sans"
+                    className="w-full pl-9 pr-10 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] text-xs sm:text-sm"
                   />
                   <button
                     type="button"
@@ -211,7 +211,7 @@ export default function ChangePasswordModal({
 
               {/* Confirm New Password */}
               <div>
-                <label className="block text-gray-700 font-semibold mb-1">
+                <label className="block text-gray-700 mb-1">
                   Confirm New Password *
                 </label>
                 <div className="relative">
@@ -222,7 +222,7 @@ export default function ChangePasswordModal({
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repeat your new password"
-                    className="w-full pl-9 pr-10 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] text-xs sm:text-sm font-sans"
+                    className="w-full pl-9 pr-10 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] text-xs sm:text-sm"
                   />
                   <button
                     type="button"

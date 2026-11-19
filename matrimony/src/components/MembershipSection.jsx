@@ -43,14 +43,14 @@ export default function MembershipSection({ onOpenRegister, onOpenTerms }) {
   ]
 
   return (
-    <section id="membership" className="bg-[#701C35] px-3 sm:px-6 py-12 sm:py-24 text-white font-inter">
+    <section id="membership" className="bg-[#701C35] px-3 sm:px-6 py-12 sm:py-24 text-white">
       <div className="mx-auto max-w-[1240px]">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
           <p className="text-xs font-bold tracking-[3px] text-[#E8CA91] uppercase">
             TRANSPARENT &amp; ETHICAL MATCHMAKING
           </p>
-          <h2 className="serif text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight mt-2 sm:mt-3">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl leading-tight mt-2 sm:mt-3">
             Registration Fee, Service Plans &amp; Policy
           </h2>
           <p className="mt-3 text-xs sm:text-base leading-6 text-white/80 max-w-2xl mx-auto">
@@ -76,7 +76,7 @@ export default function MembershipSection({ onOpenRegister, onOpenTerms }) {
                       {p.badge}
                     </span>
                   </div>
-                  <h3 className="serif text-lg font-bold text-white mb-2 leading-snug">
+                  <h3 className="card-title text-lg text-white mb-2">
                     {p.title}
                   </h3>
                   <p className="text-xs text-white/80 leading-relaxed">

@@ -194,7 +194,7 @@ export default function RegisterModal({
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-2 sm:my-6 font-inter register-modal"
+          className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-2 sm:my-6 register-modal"
         >
           {/* Header Banner */}
           <div className="bg-[#701C35] px-3.5 sm:px-8 py-3.5 sm:py-5 text-white flex items-center justify-between">
@@ -205,7 +205,7 @@ export default function RegisterModal({
                 className="h-9 sm:h-11 w-auto object-contain bg-white rounded-lg p-1 flex-shrink-0"
               />
               <div className="min-w-0">
-                <h3 className="serif text-base sm:text-2xl font-bold leading-tight truncate">
+                <h3 className="text-base sm:text-2xl leading-tight truncate">
                   Register on Kerala Kalyans
                 </h3>
                 <p className="text-[9px] sm:text-xs text-[#E8CA91] font-semibold tracking-wide truncate">
@@ -230,7 +230,7 @@ export default function RegisterModal({
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                   <Clock size={36} />
                 </div>
-                <h4 className="serif text-2xl font-bold text-[#701C35]">
+                <h4 className="text-2xl font-bold text-[#701C35]">
                   Awaiting Admin Approval
                 </h4>
                 <div className="bg-amber-50/95 border border-amber-200 p-4 sm:p-5 rounded-xl max-w-md mx-auto shadow-xs text-center space-y-2.5">
@@ -259,7 +259,7 @@ export default function RegisterModal({
                   credentials will be dispatched to <b>{email}</b>.
                 </p>
 
-                <div className="bg-[#FAF7F1] p-4 rounded-xl border border-[#eadfce] text-left text-xs space-y-2 max-w-md mx-auto font-inter">
+                <div className="bg-[#FAF7F1] p-4 rounded-xl border border-[#eadfce] text-left text-xs space-y-2 max-w-md mx-auto">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 font-semibold">
                       Account Status:
@@ -293,7 +293,7 @@ export default function RegisterModal({
 
                 {/* Profile Created For */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1.5">
+                  <label className="block text-gray-700 mb-1.5">
                     This Profile is for
                   </label>
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
@@ -330,7 +330,7 @@ export default function RegisterModal({
                 {/* Profile Photo Section (Direct Device Upload) */}
                 <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1]/80 p-3 sm:p-4">
                   <div className="mb-2.5">
-                    <label className="block text-gray-800 font-semibold text-xs sm:text-sm">
+                    <label className="block text-gray-800 text-xs sm:text-sm">
                       Add Profile Photo
                     </label>
                     <p className="text-[10px] sm:text-[11px] text-[#9C8158] font-medium">
@@ -404,7 +404,7 @@ export default function RegisterModal({
                 {/* Name & Gender */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Full Name *
                     </label>
                     <div className="relative">
@@ -424,7 +424,7 @@ export default function RegisterModal({
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Gender *
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -466,7 +466,7 @@ export default function RegisterModal({
                 {/* Age, Height & Marriage Type */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Age *
                     </label>
                     <select
@@ -483,7 +483,7 @@ export default function RegisterModal({
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Height
                     </label>
                     <select
@@ -516,7 +516,7 @@ export default function RegisterModal({
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Marriage Type *
                     </label>
                     <select
@@ -537,7 +537,7 @@ export default function RegisterModal({
                 {/* Religion & Caste */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Religion *
                     </label>
                     <select
@@ -556,7 +556,7 @@ export default function RegisterModal({
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Caste / Community
                     </label>
                     <input
@@ -572,7 +572,7 @@ export default function RegisterModal({
                 {/* Mother Tongue & Location */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Mother Tongue *
                     </label>
                     <select
@@ -593,7 +593,7 @@ export default function RegisterModal({
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       City / Location *
                     </label>
                     <div className="relative">
@@ -616,7 +616,7 @@ export default function RegisterModal({
                 {/* Education & Profession */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Highest Education
                     </label>
                     <div className="relative">
@@ -635,7 +635,7 @@ export default function RegisterModal({
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Profession / Job
                     </label>
                     <div className="relative">
@@ -657,7 +657,7 @@ export default function RegisterModal({
                 {/* Phone & Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Mobile / WhatsApp Number *
                     </label>
                     <div className="relative">
@@ -677,7 +677,7 @@ export default function RegisterModal({
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
+                    <label className="block text-gray-700 mb-1">
                       Email Address *
                     </label>
                     <div className="relative">

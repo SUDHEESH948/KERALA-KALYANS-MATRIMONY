@@ -5,8 +5,8 @@ export default function StoriesSection() {
     <section id="stories" className="px-3 sm:px-6 py-14 sm:py-24">
       <div className="mx-auto max-w-[1200px]">
         <div className="mb-8 sm:mb-12 text-center">
-          <p className="font-montserrat text-xs font-bold tracking-[3px] text-[#B28D53]">LOVE THAT INSPIRES</p>
-          <h2 className="serif mt-3 sm:mt-4 text-2xl sm:text-4xl font-bold text-[#701C35]">Beautiful Stories, Happy Beginnings</h2>
+          <p className="text-xs font-bold tracking-[3px] text-[#B28D53]">LOVE THAT INSPIRES</p>
+          <h2 className="mt-3 sm:mt-4 text-2xl sm:text-4xl text-[#701C35]">Beautiful Stories, Happy Beginnings</h2>
         </div>
 
         <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
@@ -16,9 +16,9 @@ export default function StoriesSection() {
               <div className="mb-3 sm:mb-4 flex gap-1 text-[#C8A96B]">
                 {[1,2,3,4,5].map(n => <Star key={n} size={15} fill="currentColor"/>)}
               </div>
-              <h3 className="serif text-xl sm:text-2xl font-bold text-[#701C35]">A Beautiful New Beginning</h3>
-              <p className="font-sans mt-2 sm:mt-3 text-xs sm:text-base leading-6 sm:leading-7 text-gray-500">A sample success story about two people who found a meaningful connection and started a new chapter together.</p>
-              <p className="font-montserrat mt-4 sm:mt-5 text-xs sm:text-sm font-semibold text-[#9C8158]">Demo Couple · Kerala</p>
+              <h3 className="card-title text-xl sm:text-2xl text-[#701C35]">A Beautiful New Beginning</h3>
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base leading-6 sm:leading-7 text-gray-500">A sample success story about two people who found a meaningful connection and started a new chapter together.</p>
+              <p className="mt-4 sm:mt-5 text-xs sm:text-sm font-semibold text-[#9C8158]">Demo Couple · Kerala</p>
             </div>
           </div>
 
@@ -28,9 +28,9 @@ export default function StoriesSection() {
               <div className="mb-3 sm:mb-4 flex gap-1 text-[#C8A96B]">
                 {[1,2,3,4,5].map(n => <Star key={n} size={15} fill="currentColor"/>)}
               </div>
-              <h3 className="serif text-xl sm:text-2xl font-bold text-[#701C35]">Together, Forever</h3>
-              <p className="font-sans mt-2 sm:mt-3 text-xs sm:text-base leading-6 sm:leading-7 text-gray-500">A sample story celebrating trust, understanding, family values, and the joy of finding a life partner.</p>
-              <p className="font-montserrat mt-4 sm:mt-5 text-xs sm:text-sm font-semibold text-[#9C8158]">Demo Couple · India</p>
+              <h3 className="card-title text-xl sm:text-2xl text-[#701C35]">Together, Forever</h3>
+              <p className="mt-2 sm:mt-3 text-xs sm:text-base leading-6 sm:leading-7 text-gray-500">A sample story celebrating trust, understanding, family values, and the joy of finding a life partner.</p>
+              <p className="mt-4 sm:mt-5 text-xs sm:text-sm font-semibold text-[#9C8158]">Demo Couple · India</p>
             </div>
           </div>
         </div>

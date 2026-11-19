@@ -22,7 +22,7 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-4 font-inter text-gray-800"
+          className="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-4 text-gray-800"
         >
           {/* Header Banner */}
           <div className="bg-[#701C35] px-5 sm:px-6 py-4 text-white flex items-center justify-between">
@@ -33,7 +33,7 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
                 className="h-9 w-auto object-contain bg-white rounded-lg p-1 flex-shrink-0"
               />
               <div className="min-w-0">
-                <h3 className="serif text-lg sm:text-xl font-bold leading-tight truncate">
+                <h3 className="text-lg sm:text-xl leading-tight truncate">
                   Terms, Policy &amp; Legal Disclaimer
                 </h3>
                 <p className="text-[10px] text-[#E8CA91] font-semibold tracking-wide uppercase truncate">

@@ -125,9 +125,9 @@ export default function ProfileDetailsPage({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FAF7F1] flex flex-col items-center justify-center p-4 font-inter profile-details-page">
+      <div className="min-h-screen bg-[#FAF7F1] flex flex-col items-center justify-center p-4 profile-details-page">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#701C35] border-t-transparent mb-4" />
-        <p className="font-inter text-sm font-semibold text-gray-600">
+        <p className="text-sm font-semibold text-gray-600">
           Loading complete profile view...
         </p>
       </div>
@@ -136,12 +136,12 @@ export default function ProfileDetailsPage({
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-[#FAF7F1] flex flex-col items-center justify-center p-6 text-center font-inter profile-details-page">
+      <div className="min-h-screen bg-[#FAF7F1] flex flex-col items-center justify-center p-6 text-center profile-details-page">
         <div className="bg-white p-8 rounded-2xl border border-[#eadfce] max-w-md w-full shadow-lg space-y-4">
           <div className="h-16 w-16 mx-auto rounded-full bg-red-100 text-red-600 flex items-center justify-center">
             <User size={32} />
           </div>
-          <h2 className="serif text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl text-gray-900">
             Profile Not Found
           </h2>
           <p className="text-xs text-gray-500">
@@ -160,7 +160,7 @@ export default function ProfileDetailsPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F1] text-gray-800 font-inter profile-details-page flex flex-col pb-24 selection:bg-[#701C35] selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F1] text-gray-800 profile-details-page flex flex-col pb-24 selection:bg-[#701C35] selection:text-white">
       {/* 1. TOP STICKY HEADER */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
@@ -187,7 +187,7 @@ export default function ProfileDetailsPage({
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-mono text-gray-500 font-bold bg-white px-2.5 py-1 rounded-md border border-[#eadfce]">
+            <span className="text-gray-500 font-bold bg-white px-2.5 py-1 rounded-md border border-[#eadfce]">
               {profile.id}
             </span>
             <button
@@ -238,7 +238,7 @@ export default function ProfileDetailsPage({
                     profile.maritalStatus ||
                     "Never Married"}
                 </p>
-                <h1 className="serif text-2xl sm:text-3xl font-bold leading-tight mt-0.5">
+                <h1 className="text-2xl sm:text-3xl leading-tight mt-0.5">
                   {profile.name}
                 </h1>
                 <p className="text-xs text-gray-200 mt-1 flex items-center gap-2">
@@ -259,7 +259,7 @@ export default function ProfileDetailsPage({
                     <Sparkles size={14} />
                     <span>Verified Matrimonial Candidate</span>
                   </div>
-                  <h2 className="serif text-2xl sm:text-3xl font-bold text-[#701C35] mt-1">
+                  <h2 className="text-2xl sm:text-3xl text-[#701C35] mt-1">
                     {profile.name}
                   </h2>
                   <p className="text-xs text-gray-500 mt-1 leading-relaxed">
@@ -271,7 +271,7 @@ export default function ProfileDetailsPage({
                 </div>
 
                 {/* Grid of Key Attributes */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 font-inter text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-xs">
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
                       Age &amp; Height
@@ -399,7 +399,7 @@ export default function ProfileDetailsPage({
                 <div className="h-8 w-8 rounded-lg bg-[#FAF7F1] border border-[#eadfce] text-[#701C35] flex items-center justify-center">
                   <GraduationCap size={18} />
                 </div>
-                <h3 className="serif text-xl font-bold text-[#701C35]">
+                <h3 className="text-xl text-[#701C35]">
                   Education &amp; Professional Career
                 </h3>
               </div>
@@ -449,7 +449,7 @@ export default function ProfileDetailsPage({
                 <div className="h-8 w-8 rounded-lg bg-[#FAF7F1] border border-[#eadfce] text-[#701C35] flex items-center justify-center">
                   <Globe size={18} />
                 </div>
-                <h3 className="serif text-xl font-bold text-[#701C35]">
+                <h3 className="text-xl text-[#701C35]">
                   Religion &amp; Cultural Heritage
                 </h3>
               </div>
@@ -499,7 +499,7 @@ export default function ProfileDetailsPage({
                 <div className="h-8 w-8 rounded-lg bg-[#FAF7F1] border border-[#eadfce] text-[#701C35] flex items-center justify-center">
                   <Users size={18} />
                 </div>
-                <h3 className="serif text-xl font-bold text-[#701C35]">
+                <h3 className="text-xl text-[#701C35]">
                   Partner Expectations &amp; Preferences
                 </h3>
               </div>
@@ -612,7 +612,7 @@ export default function ProfileDetailsPage({
 
       {/* 4. FLOATING BOTTOM ACTION BAR */}
       <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#eadfce] py-3.5 px-4 shadow-xl">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 font-inter">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}

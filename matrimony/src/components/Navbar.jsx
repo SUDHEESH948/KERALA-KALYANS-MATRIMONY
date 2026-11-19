@@ -23,16 +23,16 @@ export default function Navbar({
             className="h-9 sm:h-11 md:h-12 w-auto object-contain mix-blend-multiply"
           />
           <div className="hidden sm:block">
-            <h2 className="serif font-serif text-lg sm:text-xl font-bold text-[#701C35] leading-tight tracking-tight uppercase">
+            <h2 className="text-lg sm:text-xl text-[#701C35] leading-tight tracking-tight uppercase">
               Kerala Kalyans
             </h2>
-            <p className="font-inter text-[8px] sm:text-[9px] font-semibold tracking-[2px] text-[#9C8158]">
+            <p className="text-[8px] sm:text-[9px] font-semibold tracking-[2px] text-[#9C8158]">
               MATRIMONY
             </p>
           </div>
         </a>
 
-        <div className="hidden items-center gap-7 text-sm font-semibold font-montserrat text-[#51464a] lg:flex">
+        <div className="hidden items-center gap-7 text-sm font-semibold text-[#51464a] lg:flex">
           <a href="#" className="text-[#701C35] hover:text-[#511327] transition">Home</a>
           <a href="#how-it-works" className="hover:text-[#701C35] transition">How It Works</a>
           <a href="#community" className="hover:text-[#701C35] transition">Community</a>
@@ -44,7 +44,7 @@ export default function Navbar({
         <div className="hidden items-center gap-3 lg:flex">
           <button
             onClick={onOpenAdmin}
-            className="relative font-montserrat px-3 py-2 text-sm font-semibold text-[#701C35] hover:text-[#511327] transition cursor-pointer flex items-center gap-1.5"
+            className="relative px-3 py-2 text-sm font-semibold text-[#701C35] hover:text-[#511327] transition cursor-pointer flex items-center gap-1.5"
             title="Admin Management"
           >
             <ShieldCheck size={16} />
@@ -76,7 +76,7 @@ export default function Navbar({
                   alt={currentMember.name}
                   className="h-7 w-7 rounded-full object-cover border border-[#701C35]/30"
                 />
-                <div className="text-left font-montserrat">
+                <div className="text-left">
                   <p className="text-xs font-bold text-gray-800 leading-tight max-w-[110px] truncate">
                     {currentMember.name}
                   </p>
@@ -101,7 +101,7 @@ export default function Navbar({
               {/* Automatically added Login button */}
               <button
                 onClick={onOpenLogin}
-                className="font-montserrat px-4 py-2 text-sm font-semibold text-[#701C35] hover:text-[#511327] transition cursor-pointer flex items-center gap-1.5 border border-[#701C35]/30 rounded-full hover:bg-[#701C35]/5"
+                className="px-4 py-2 text-sm font-semibold text-[#701C35] hover:text-[#511327] transition cursor-pointer flex items-center gap-1.5 border border-[#701C35]/30 rounded-full hover:bg-[#701C35]/5"
               >
                 <LogIn size={15} />
                 <span>Login</span>
@@ -109,7 +109,7 @@ export default function Navbar({
 
               <button
                 onClick={onOpenRegister}
-                className="font-montserrat rounded-full bg-[#701C35] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#701C35]/15 transition hover:bg-[#511327] cursor-pointer"
+                className="rounded-full bg-[#701C35] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#701C35]/15 transition hover:bg-[#511327] cursor-pointer"
               >
                 Register
               </button>
@@ -147,7 +147,7 @@ export default function Navbar({
       </div>
 
       {menuOpen && (
-        <div className="flex flex-col gap-3.5 border-t border-[#e9dfd2] bg-[#FAF7F1] px-4 py-5 lg:hidden font-montserrat font-medium text-sm">
+        <div className="flex flex-col gap-3.5 border-t border-[#e9dfd2] bg-[#FAF7F1] px-4 py-5 lg:hidden font-medium text-sm">
           {currentMember && (
             <div className="p-3 bg-white rounded-xl border border-[#eadfce] flex items-center justify-between mb-1">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -200,7 +200,7 @@ export default function Navbar({
               setMenuOpen(false)
               onOpenAdmin?.()
             }}
-            className="text-left font-montserrat text-sm font-semibold text-[#701C35] flex items-center justify-between py-1 cursor-pointer"
+            className="text-left text-sm font-semibold text-[#701C35] flex items-center justify-between py-1 cursor-pointer"
           >
             <div className="flex items-center gap-1.5">
               <ShieldCheck size={16} />
@@ -220,7 +220,7 @@ export default function Navbar({
                   setMenuOpen(false)
                   onOpenLogin?.()
                 }}
-                className="text-center rounded-full border border-[#701C35] py-2.5 text-[#701C35] text-xs font-semibold font-montserrat shadow-xs cursor-pointer flex items-center justify-center gap-1"
+                className="text-center rounded-full border border-[#701C35] py-2.5 text-[#701C35] text-xs font-semibold shadow-xs cursor-pointer flex items-center justify-center gap-1"
               >
                 <LogIn size={14} />
                 <span>Login</span>
@@ -230,7 +230,7 @@ export default function Navbar({
                   setMenuOpen(false)
                   onOpenRegister?.()
                 }}
-                className="text-center rounded-full bg-[#701C35] py-2.5 text-white text-xs font-semibold font-montserrat shadow-md cursor-pointer"
+                className="text-center rounded-full bg-[#701C35] py-2.5 text-white text-xs font-semibold shadow-md cursor-pointer"
               >
                 Register
               </button>

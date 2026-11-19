@@ -118,7 +118,7 @@ export default function MemberLoginModal({
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-4 font-inter login-modal"
+          className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-4 login-modal"
         >
           {/* Header Banner */}
           <div className="bg-[#701C35] px-5 py-4 text-white flex items-center justify-between">
@@ -129,7 +129,7 @@ export default function MemberLoginModal({
                 className="h-9 w-auto object-contain bg-white rounded-lg p-1 flex-shrink-0"
               />
               <div className="min-w-0">
-                <h3 className="serif text-lg sm:text-xl font-bold leading-tight truncate">
+                <h3 className="text-lg sm:text-xl leading-tight truncate">
                   Member Login
                 </h3>
                 <p className="text-[10px] text-[#E8CA91] font-semibold tracking-wide truncate">
@@ -181,7 +181,7 @@ export default function MemberLoginModal({
 
             <form onSubmit={handleLogin} className="space-y-4 text-xs">
               <div>
-                <label className="block text-gray-700 font-semibold mb-1">
+                <label className="block text-gray-700 mb-1">
                   Registered Email Address *
                 </label>
                 <div className="relative">
@@ -199,7 +199,7 @@ export default function MemberLoginModal({
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-gray-700 font-semibold">
+                  <label className="block text-gray-700">
                     Account Password *
                   </label>
                   <span className="text-[10px] text-gray-400">

@@ -235,7 +235,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F1] text-gray-800 font-montserrat flex flex-col selection:bg-[#701C35] selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F1] text-gray-800 flex flex-col selection:bg-[#701C35] selection:text-white">
       {/* 1. TOP NAVIGATION BAR */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
@@ -251,7 +251,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 className="h-10 sm:h-12 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition"
               />
               <div className="hidden sm:block">
-                <span className="serif text-lg sm:text-xl font-bold tracking-tight text-[#701C35] block leading-tight">
+                <span className="text-lg sm:text-xl font-bold tracking-tight text-[#701C35] block leading-tight">
                   Kerala Kalyans
                 </span>
                 <span className="text-[9px] sm:text-[10px] tracking-[2px] font-semibold text-[#B28D53] uppercase block">
@@ -329,7 +329,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               <Sparkles size={13} />
               <span>AUTOMATIC COMPATIBILITY FILTER</span>
             </div>
-            <h1 className="serif text-2xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="text-2xl sm:text-4xl tracking-tight text-white leading-tight">
               Curated Matches for {currentMember?.name || 'You'}
             </h1>
             <p className="text-xs sm:text-sm text-gray-200 max-w-2xl leading-relaxed">
@@ -350,7 +350,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               <span className="text-xs text-white/80 block uppercase tracking-wider font-semibold">
                 Available Matches
               </span>
-              <span className="serif text-base sm:text-lg font-bold text-white block">
+              <span className="text-base sm:text-lg font-bold text-white block">
                 {targetGender}s in {memberReligion}
               </span>
             </div>
@@ -531,7 +531,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-amber-600">
               <Heart size={30} />
             </div>
-            <h3 className="serif text-xl font-bold text-gray-900">
+            <h3 className="text-xl text-gray-900">
               No Matches Found Under Current Filters
             </h3>
             <p className="text-xs text-gray-500 leading-relaxed">
@@ -617,7 +617,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     {/* Bottom overlay inside photo */}
                     <div className="absolute bottom-3 left-3 right-3 text-white">
                       <div className="flex items-center gap-1.5">
-                        <h3 className="serif text-lg sm:text-xl font-bold leading-tight drop-shadow truncate">
+                        <h3 className="card-title text-lg sm:text-xl drop-shadow truncate">
                           {p.name}
                         </h3>
                         {(p.isApproved || p.verified) && (
@@ -705,7 +705,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
       {/* 5. VIEW FULL PROFILE MODAL */}
       {viewingProfile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto">
-          <div className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] font-inter profile-view-modal my-8 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] profile-view-modal my-8 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Header Image Cover */}
             <div className="relative h-48 sm:h-56 bg-gray-900 overflow-hidden">
               <img
@@ -725,7 +725,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
               <div className="absolute bottom-3 left-4 right-4 text-white">
                 <div className="flex items-center gap-2">
-                  <h3 className="serif text-2xl font-bold">{viewingProfile.name}</h3>
+                  <h3 className="text-2xl">{viewingProfile.name}</h3>
                   <ShieldCheck size={18} className="text-emerald-400" />
                 </div>
                 <p className="text-xs text-amber-200 font-medium">
@@ -756,7 +756,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                   </div>
                   <div>
                     <span className="text-gray-400 block text-[10px] uppercase font-semibold">Profile ID:</span>
-                    <span className="font-mono text-gray-900 font-bold">{viewingProfile.id}</span>
+                    <span className="text-gray-900 font-bold">{viewingProfile.id}</span>
                   </div>
                 </div>
               </div>

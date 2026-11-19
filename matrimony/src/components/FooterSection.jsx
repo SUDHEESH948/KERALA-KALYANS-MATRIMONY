@@ -19,7 +19,7 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister, onOpenTerms
   return (
     <>
       {/* FINAL CTA */}
-      <section className="relative px-2.5 sm:px-6 py-12 sm:py-28 text-center font-inter">
+      <section className="relative px-2.5 sm:px-6 py-12 sm:py-28 text-center">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1600"
@@ -31,7 +31,7 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister, onOpenTerms
 
         <div className="relative mx-auto max-w-3xl">
           <Sparkles className="mx-auto mb-3 sm:mb-6 text-[#E8CA91]" size={26} />
-          <h2 className="serif text-xl sm:text-4xl font-bold text-white sm:text-6xl leading-tight">
+          <h2 className="text-xl sm:text-4xl text-white sm:text-6xl leading-tight">
             Your Forever Story Starts Today.
           </h2>
           <p className="mt-3 sm:mt-6 text-xs sm:text-lg text-white/80">
@@ -47,7 +47,7 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister, onOpenTerms
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-[#24151A] px-3 sm:px-6 py-10 sm:py-16 text-white font-inter">
+      <footer className="bg-[#24151A] px-3 sm:px-6 py-10 sm:py-16 text-white">
         <div className="mx-auto grid grid-cols-1 md:grid-cols-12 max-w-[1300px] gap-8 sm:gap-10">
           {/* Brand Info */}
           <div className="md:col-span-4 space-y-3.5">
@@ -58,7 +58,7 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister, onOpenTerms
                 className="h-11 w-auto object-contain bg-white rounded-lg p-1.5 shadow-md"
               />
               <div>
-                <h2 className="serif text-xl sm:text-2xl font-bold text-[#E8CA91]">
+                <h2 className="text-xl sm:text-2xl text-[#E8CA91]">
                   Kerala Kalyans
                 </h2>
                 <p className="text-[9px] tracking-[2px] text-white/70 font-semibold uppercase">
@@ -127,7 +127,7 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister, onOpenTerms
 
           {/* Contact Details (From Image) */}
           <div className="md:col-span-5 space-y-3.5">
-            <h3 className="text-sm sm:text-base font-bold text-[#E8CA91] tracking-wide">
+            <h3 className="text-sm sm:text-base text-[#E8CA91] tracking-wide">
               Official Contact &amp; Support
             </h3>
 
@@ -136,7 +136,7 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister, onOpenTerms
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-[#25D366]/20 border border-[#25D366]/50 hover:bg-[#25D366]/30 text-white transition group cursor-pointer"
+              className="cta inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-[#25D366]/20 border border-[#25D366]/50 hover:bg-[#25D366]/30 text-white transition group cursor-pointer"
             >
               <div className="h-7 w-7 rounded-full bg-[#25D366] text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition shadow-sm">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -208,7 +208,7 @@ export default function FooterSection({ onOpenAdmin, onOpenRegister, onOpenTerms
 
           {/* Quick Legal & Terms Links */}
           <div className="md:col-span-3 space-y-3">
-            <h3 className="text-sm sm:text-base font-bold text-[#E8CA91] tracking-wide">
+            <h3 className="text-sm sm:text-base text-[#E8CA91] tracking-wide">
               Terms &amp; Policies
             </h3>
             <ul className="space-y-2 text-xs text-white/70">

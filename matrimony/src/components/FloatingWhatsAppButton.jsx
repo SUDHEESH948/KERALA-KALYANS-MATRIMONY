@@ -7,7 +7,7 @@ export default function FloatingWhatsAppButton() {
   return (
     <aside
       aria-label="WhatsApp Contact Support"
-      className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40 font-inter"
+      className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40"
     >
       {/* Floating Circular WhatsApp Button */}
       <a

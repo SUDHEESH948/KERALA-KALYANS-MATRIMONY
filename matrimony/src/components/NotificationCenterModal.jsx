@@ -40,7 +40,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
       {/* SLIDE-OVER NOTIFICATION DRAWER (ACCESSIBLE FROM ADMIN PORTAL) */}
       <AnimatePresence>
         {isNotificationOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end font-montserrat">
+          <div className="fixed inset-0 z-50 flex justify-end">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -65,7 +65,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
                     <BellRing size={16} />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="serif text-base sm:text-lg font-bold text-[#701C35] leading-tight truncate">
+                    <h3 className="text-base sm:text-lg text-[#701C35] leading-tight truncate">
                       Notification Center
                     </h3>
                     <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold tracking-wide truncate">
@@ -187,7 +187,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-xs font-bold text-gray-900 truncate">
+                          <h4 className="card-title text-xs text-gray-900 truncate">
                             {notif.title}
                           </h4>
                           {!notif.isRead && (

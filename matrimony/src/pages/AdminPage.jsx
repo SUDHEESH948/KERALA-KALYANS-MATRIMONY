@@ -48,8 +48,8 @@ export default function AdminPage({ onExit }) {
   });
 
   // Login form state
-  const [loginEmail, setLoginEmail] = useState("admin@apremiya.com");
-  const [loginPassword, setLoginPassword] = useState("admin123");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -113,8 +113,11 @@ export default function AdminPage({ onExit }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: loginEmail, password: loginPassword }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to login");
+      const data = await res.json().catch(() => null);
+      if (!res.ok && data?.error) throw new Error(data.error);
+      if (!res.ok || !data?.token || !data?.admin) {
+        throw new Error("The sign-in service is unavailable. Please try again later.");
+      }
 
       localStorage.setItem("apremiya_admin_token", data.token);
       localStorage.setItem("apremiya_admin_user", JSON.stringify(data.admin));
@@ -126,7 +129,11 @@ export default function AdminPage({ onExit }) {
         "verified",
       );
     } catch (err) {
-      setLoginError(err.message);
+      setLoginError(
+        err instanceof TypeError
+          ? "Could not reach the sign-in service. Please try again later."
+          : err.message,
+      );
     } finally {
       setIsLoggingIn(false);
     }
@@ -537,7 +544,7 @@ export default function AdminPage({ onExit }) {
   // ----------------------------------------------------
   if (!token) {
     return (
-      <div className="min-h-screen bg-[#FAF7F1] flex flex-col justify-center items-center p-4 font-inter admin-page">
+      <div className="min-h-screen bg-[#FAF7F1] flex flex-col justify-center items-center p-4 admin-page">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-[#eadfce] p-8">
           <div className="text-center mb-6">
             <img
@@ -545,10 +552,10 @@ export default function AdminPage({ onExit }) {
               alt="Kerala Kalyans Matrimony"
               className="h-12 w-auto mx-auto object-contain mb-3"
             />
-            <h1 className="serif font-serif text-2xl sm:text-3xl font-bold text-[#701C35]">
+            <h1 className="text-2xl sm:text-3xl text-[#701C35]">
               Kerala Kalyans Admin
             </h1>
-            <p className="font-inter text-xs tracking-[2px] font-semibold text-[#9C8158] mt-1">
+            <p className="text-xs tracking-[2px] font-semibold text-[#9C8158] mt-1">
               PORTAL CONTROL PANEL
             </p>
           </div>
@@ -560,9 +567,9 @@ export default function AdminPage({ onExit }) {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4 font-inter">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
+              <label className="block text-xs text-gray-700 mb-1">
                 Admin Email
               </label>
               <input
@@ -574,7 +581,7 @@ export default function AdminPage({ onExit }) {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
+              <label className="block text-xs text-gray-700 mb-1">
                 Password
               </label>
               <input
@@ -597,10 +604,7 @@ export default function AdminPage({ onExit }) {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-gray-100 flex items-center justify-between text-xs">
-            <span className="text-gray-400">
-              Default: admin@apremiya.com / admin123
-            </span>
+          <div className="mt-6 pt-5 border-t border-gray-100 flex items-center justify-end text-xs">
             {onExit && (
               <button
                 onClick={onExit}
@@ -619,7 +623,7 @@ export default function AdminPage({ onExit }) {
   // MAIN ADMIN DASHBOARD
   // ----------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#F7F4EE] text-gray-800 font-inter admin-page">
+    <div className="min-h-screen bg-[#F7F4EE] text-gray-800 admin-page">
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-[#701C35] text-white shadow-md">
         <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
@@ -630,16 +634,16 @@ export default function AdminPage({ onExit }) {
               className="h-8 sm:h-9 w-auto object-contain bg-white rounded-md p-1 flex-shrink-0"
             />
             <div className="min-w-0">
-              <h2 className="serif text-base sm:text-xl font-bold leading-tight truncate">
+              <h2 className="text-base sm:text-xl leading-tight truncate">
                 Kerala Kalyans
               </h2>
-              <p className="font-inter text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[#E8CA91] font-semibold truncate">
+              <p className="text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[#E8CA91] font-semibold truncate">
                 ADMIN CONSOLE
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-3 font-inter text-xs flex-shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 text-xs flex-shrink-0">
             <div className="hidden md:block text-right">
               <p className="font-semibold truncate max-w-[120px]">
                 {adminUser?.name || "Administrator"}
@@ -694,7 +698,7 @@ export default function AdminPage({ onExit }) {
       {/* Main Container */}
       <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-4 sm:py-6">
         {/* Navigation Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-[#eadfce] pb-4 font-inter">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-[#eadfce] pb-4">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
             {[
               { id: "profiles", label: "Profiles", count: profiles.length },
@@ -743,7 +747,7 @@ export default function AdminPage({ onExit }) {
         {/* TAB 1: PROFILES MANAGEMENT */}
         {activeTab === "profiles" && (
           <div className="space-y-4 sm:space-y-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 font-inter">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
               <div
                 onClick={() => {
                   setStatusFilter("all");
@@ -760,7 +764,7 @@ export default function AdminPage({ onExit }) {
                 <p className="text-[10px] sm:text-xs text-gray-500 font-semibold truncate">
                   Total Registrations
                 </p>
-                <h3 className="serif text-xl sm:text-2xl font-bold text-[#701C35] mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-[#701C35] mt-0.5">
                   {profiles.length}
                 </h3>
               </div>
@@ -776,7 +780,7 @@ export default function AdminPage({ onExit }) {
                 <p className="text-[10px] sm:text-xs text-amber-800 font-semibold truncate">
                   Pending Approval
                 </p>
-                <h3 className="serif text-xl sm:text-2xl font-bold text-amber-600 mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-amber-600 mt-0.5">
                   {
                     profiles.filter(
                       (p) =>
@@ -801,7 +805,7 @@ export default function AdminPage({ onExit }) {
                 <p className="text-[10px] sm:text-xs text-emerald-800 font-semibold truncate">
                   Approved & Active
                 </p>
-                <h3 className="serif text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-emerald-600 mt-0.5">
                   {profiles.filter((p) => p.isApproved || p.verified).length}
                 </h3>
               </div>
@@ -817,13 +821,13 @@ export default function AdminPage({ onExit }) {
                 <p className="text-[10px] sm:text-xs text-red-800 font-semibold truncate">
                   Rejected
                 </p>
-                <h3 className="serif text-xl sm:text-2xl font-bold text-red-600 mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-red-600 mt-0.5">
                   {profiles.filter((p) => p.status === "rejected").length}
                 </h3>
               </div>
             </div>
 
-            <div className="bg-white p-3 sm:p-4 rounded-xl border border-[#eadfce] shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 font-inter text-xs">
+            <div className="bg-white p-3 sm:p-4 rounded-xl border border-[#eadfce] shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 text-xs">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full">
                 <div className="relative flex-1 min-w-0 w-full">
                   <Search
@@ -873,7 +877,7 @@ export default function AdminPage({ onExit }) {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#eadfce] shadow-sm overflow-hidden font-inter">
+            <div className="bg-white rounded-xl border border-[#eadfce] shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-[#FAF7F1] border-b border-[#eadfce] text-gray-600 font-semibold uppercase tracking-wider text-[10px]">
@@ -891,7 +895,7 @@ export default function AdminPage({ onExit }) {
                     {filteredProfiles.length === 0 ? (
                       <tr>
                         <td colSpan="7" className="text-center py-12 px-4">
-                          <div className="max-w-sm mx-auto space-y-2 font-inter">
+                          <div className="max-w-sm mx-auto space-y-2">
                             <p className="text-sm font-bold text-gray-700">
                               No profiles matching current filters
                             </p>
@@ -1078,10 +1082,10 @@ export default function AdminPage({ onExit }) {
 
         {/* TAB 2: LEADS & INQUIRIES */}
         {activeTab === "inquiries" && (
-          <div className="space-y-4 font-inter">
+          <div className="space-y-4">
             <div className="bg-white p-4 rounded-xl border border-[#eadfce] shadow-sm flex items-center justify-between">
               <div>
-                <h3 className="serif text-xl font-bold text-[#701C35]">
+                <h3 className="text-xl text-[#701C35]">
                   Website Inquiries & Search Leads
                 </h3>
                 <p className="text-xs text-gray-500">
@@ -1124,7 +1128,7 @@ export default function AdminPage({ onExit }) {
                     </div>
 
                     <div>
-                      <h4 className="font-bold text-gray-900 text-sm">
+                      <h4 className="card-title text-gray-900 text-sm">
                         {inq.name}
                       </h4>
                       <p className="text-xs text-gray-500 mt-0.5">
@@ -1189,7 +1193,7 @@ export default function AdminPage({ onExit }) {
 
         {/* TAB 3: NOTIFICATIONS & LIVE ACTIVITY STREAM */}
         {activeTab === "notifications" && (
-          <div className="space-y-6 font-inter">
+          <div className="space-y-6">
             {/* Header banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-xl border border-[#eadfce] shadow-sm">
               <div className="flex items-center gap-3">
@@ -1197,7 +1201,7 @@ export default function AdminPage({ onExit }) {
                   <BellRing size={24} />
                 </div>
                 <div>
-                  <h3 className="serif text-xl sm:text-2xl font-bold text-[#701C35]">
+                  <h3 className="text-xl sm:text-2xl text-[#701C35]">
                     Notification Center
                   </h3>
                   <p className="text-xs text-gray-500 mt-0.5">
@@ -1320,7 +1324,7 @@ export default function AdminPage({ onExit }) {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h4 className="text-xs sm:text-sm font-bold text-gray-900">
+                            <h4 className="card-title text-xs sm:text-sm text-gray-900">
                               {notif.title}
                             </h4>
                             {!notif.isRead && (
@@ -1379,8 +1383,8 @@ export default function AdminPage({ onExit }) {
 
         {/* TAB 4: PLATFORM STATS & METRICS */}
         {activeTab === "settings" && (
-          <div className="max-w-2xl bg-white p-6 rounded-xl border border-[#eadfce] shadow-sm font-inter">
-            <h3 className="serif text-xl font-bold text-[#701C35]">
+          <div className="max-w-2xl bg-white p-6 rounded-xl border border-[#eadfce] shadow-sm">
+            <h3 className="text-xl text-[#701C35]">
               Homepage Statistics Control
             </h3>
             <p className="text-xs text-gray-500 mt-1 mb-6">
@@ -1390,7 +1394,7 @@ export default function AdminPage({ onExit }) {
 
             <form onSubmit={handleSaveStats} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                <label className="block text-xs text-gray-700 mb-1">
                   Verified Profiles (Target Number for %)
                 </label>
                 <input
@@ -1407,7 +1411,7 @@ export default function AdminPage({ onExit }) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                <label className="block text-xs text-gray-700 mb-1">
                   Happy Connections (Target Number for +)
                 </label>
                 <input
@@ -1424,7 +1428,7 @@ export default function AdminPage({ onExit }) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                <label className="block text-xs text-gray-700 mb-1">
                   Registered Members (Target Number for K+)
                 </label>
                 <input
@@ -1441,7 +1445,7 @@ export default function AdminPage({ onExit }) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                <label className="block text-xs text-gray-700 mb-1">
                   Trusted Experience (Target Number for +)
                 </label>
                 <input
@@ -1471,9 +1475,9 @@ export default function AdminPage({ onExit }) {
       {/* EDIT PROFILE MODAL */}
       {editingProfile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#eadfce] my-8 font-inter">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#eadfce] my-8">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <h3 className="serif text-xl font-bold text-[#701C35]">
+              <h3 className="text-xl text-[#701C35]">
                 Edit Profile ({editingProfile.id})
               </h3>
               <button
@@ -1490,7 +1494,7 @@ export default function AdminPage({ onExit }) {
             >
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold mb-1">Full Name</label>
+                  <label className="block mb-1">Full Name</label>
                   <input
                     type="text"
                     required
@@ -1505,7 +1509,7 @@ export default function AdminPage({ onExit }) {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">Gender</label>
+                  <label className="block mb-1">Gender</label>
                   <select
                     value={editingProfile.gender}
                     onChange={(e) =>
@@ -1524,7 +1528,7 @@ export default function AdminPage({ onExit }) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold mb-1">Age</label>
+                  <label className="block mb-1">Age</label>
                   <input
                     type="number"
                     value={editingProfile.age}
@@ -1538,7 +1542,7 @@ export default function AdminPage({ onExit }) {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">Height</label>
+                  <label className="block mb-1">Height</label>
                   <input
                     type="text"
                     value={editingProfile.height}
@@ -1554,7 +1558,7 @@ export default function AdminPage({ onExit }) {
               </div>
 
               <div>
-                <label className="block font-semibold mb-1">
+                <label className="block mb-1">
                   Marriage Type
                 </label>
                 <select
@@ -1583,7 +1587,7 @@ export default function AdminPage({ onExit }) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold mb-1">Religion</label>
+                  <label className="block mb-1">Religion</label>
                   <select
                     value={editingProfile.religion}
                     onChange={(e) =>
@@ -1602,7 +1606,7 @@ export default function AdminPage({ onExit }) {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">Caste</label>
+                  <label className="block mb-1">Caste</label>
                   <input
                     type="text"
                     value={editingProfile.caste}
@@ -1619,7 +1623,7 @@ export default function AdminPage({ onExit }) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold mb-1">Education</label>
+                  <label className="block mb-1">Education</label>
                   <input
                     type="text"
                     value={editingProfile.education}
@@ -1633,7 +1637,7 @@ export default function AdminPage({ onExit }) {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold mb-1">Profession</label>
+                  <label className="block mb-1">Profession</label>
                   <input
                     type="text"
                     value={editingProfile.profession}
@@ -1649,7 +1653,7 @@ export default function AdminPage({ onExit }) {
               </div>
 
               <div>
-                <label className="block font-semibold mb-1">Location</label>
+                <label className="block mb-1">Location</label>
                 <input
                   type="text"
                   value={editingProfile.location}
@@ -1664,7 +1668,7 @@ export default function AdminPage({ onExit }) {
               </div>
 
               <div>
-                <label className="block font-semibold mb-1">Photo URL</label>
+                <label className="block mb-1">Photo URL</label>
                 <input
                   type="url"
                   value={editingProfile.photo}
@@ -1693,7 +1697,7 @@ export default function AdminPage({ onExit }) {
                 />
                 <label
                   htmlFor="editVerifiedCheck"
-                  className="font-semibold cursor-pointer"
+                  className="cursor-pointer"
                 >
                   Verified Profile
                 </label>
@@ -1722,11 +1726,11 @@ export default function AdminPage({ onExit }) {
       {/* CUSTOM CONFIRMATION MODAL (NO BROWSER POPUPS/ALERTS) */}
       {confirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-[#eadfce] font-inter my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-[#eadfce] my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4">
               <AlertTriangle size={28} />
             </div>
-            <h3 className="serif text-xl font-bold text-center text-gray-900">
+            <h3 className="text-xl text-center text-gray-900">
               {confirmModal.title}
             </h3>
             <p className="mt-2 text-xs text-center text-gray-500 leading-relaxed max-w-xs mx-auto">
@@ -1754,11 +1758,11 @@ export default function AdminPage({ onExit }) {
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] font-inter my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4">
               <Key size={26} />
             </div>
-            <h3 className="serif text-xl sm:text-2xl font-bold text-center text-gray-900">
+            <h3 className="text-xl sm:text-2xl text-center text-gray-900">
               {approvalModal.isResend
                 ? "Credentials Reissued"
                 : "Account Approved"}
@@ -1776,7 +1780,7 @@ export default function AdminPage({ onExit }) {
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[#eadfce]">
-                <code className="font-mono font-bold text-base text-[#701C35] tracking-wider select-all">
+                <code className="font-bold text-base text-[#701C35] tracking-wider select-all">
                   {approvalModal.temporaryPassword}
                 </code>
                 <button
@@ -1837,11 +1841,11 @@ export default function AdminPage({ onExit }) {
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] font-inter my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4">
               <Key size={26} />
             </div>
-            <h3 className="serif text-xl sm:text-2xl font-bold text-center text-gray-900">
+            <h3 className="text-xl sm:text-2xl text-center text-gray-900">
               {approvalModal.isResend
                 ? "Credentials Reissued"
                 : "Account Approved"}
@@ -1859,7 +1863,7 @@ export default function AdminPage({ onExit }) {
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[#eadfce]">
-                <code className="font-mono font-bold text-base text-[#701C35] tracking-wider select-all">
+                <code className="font-bold text-base text-[#701C35] tracking-wider select-all">
                   {approvalModal.temporaryPassword}
                 </code>
                 <button

@@ -44,11 +44,11 @@ export default function HeroSection({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="font-zaslia text-2xl sm:text-5xl md:text-6xl lg:text-[70px] font-normal text-white tracking-wide drop-shadow-lg leading-tight">
-            Choose Your Forever
+          <h1 className="hero-heading text-white drop-shadow-lg">
+            Choose <span className="whitespace-nowrap">Your Forever</span>
           </h1>
 
-          <p className="mt-2 text-xs sm:text-base md:text-lg text-white/95 font-normal drop-shadow max-w-xs sm:max-w-md mx-auto">
+          <p className="mt-3 text-sm sm:text-base md:text-lg text-white/95 font-normal drop-shadow max-w-xs sm:max-w-md mx-auto">
             Find love on your terms with millions of verified profiles
           </p>
 
@@ -56,7 +56,7 @@ export default function HeroSection({
           <div id="search" className="hidden md:block mt-8 mx-auto w-full max-w-[1100px] rounded-lg bg-black/55 backdrop-blur-md p-4 border border-white/15 shadow-2xl">
             <div className="flex items-end gap-3 text-left">
               {/* I'm looking for a */}
-              <div className="flex-1 min-w-[140px]">
+              <div className="min-w-0 flex-1 lg:min-w-[140px]">
                 <label className="mb-1 block text-xs text-white/90 font-medium">I&apos;m looking for a</label>
                 <div className="relative">
                   <select
@@ -72,7 +72,7 @@ export default function HeroSection({
               </div>
 
               {/* aged ... to ... */}
-              <div className="flex-1 min-w-[170px]">
+              <div className="min-w-[120px] flex-1 lg:min-w-[170px]">
                 <label className="mb-1 block text-xs text-white/90 font-medium">aged</label>
                 <div className="flex items-center gap-1.5">
                   <div className="relative flex-1">
@@ -104,7 +104,7 @@ export default function HeroSection({
               </div>
 
               {/* of religion */}
-              <div className="flex-1 min-w-[150px]">
+              <div className="min-w-0 flex-1 lg:min-w-[150px]">
                 <label className="mb-1 block text-xs text-white/90 font-medium">of religion</label>
                 <div className="relative">
                   <select
@@ -128,7 +128,7 @@ export default function HeroSection({
               </div>
 
               {/* and mother tongue */}
-              <div className="flex-1 min-w-[160px]">
+              <div className="min-w-0 flex-1 lg:min-w-[160px]">
                 <label className="mb-1 block text-xs text-white/90 font-medium">and mother tongue</label>
                 <div className="relative">
                   <select
@@ -158,7 +158,7 @@ export default function HeroSection({
               <div className="w-auto">
                 <button
                   onClick={searchProfiles}
-                  className="font-montserrat h-[42px] px-8 rounded bg-[#3aa8c1] hover:bg-[#3296ad] active:bg-[#2b8296] text-white font-semibold text-sm sm:text-base flex items-center justify-center transition shadow cursor-pointer whitespace-nowrap tracking-wide"
+                  className="h-[42px] px-4 lg:px-8 rounded bg-[#3aa8c1] hover:bg-[#3296ad] active:bg-[#2b8296] text-white text-sm lg:text-base flex items-center justify-center transition shadow cursor-pointer whitespace-nowrap tracking-[0.01em]"
                 >
                   {currentMember ? 'Explore My Matches' : "Let's Begin"}
                 </button>
@@ -179,7 +179,7 @@ export default function HeroSection({
                       setMobileSearchOpen(true)
                     }
                   }}
-                  className="font-montserrat flex items-center gap-2 rounded-full bg-[#3aa8c1] hover:bg-[#3296ad] px-4 sm:px-5 py-2.5 sm:py-3 text-white font-semibold text-xs sm:text-sm shadow-xl shadow-black/60 transition active:scale-95 cursor-pointer border border-white/25 max-w-[260px] sm:max-w-[280px] tracking-wide"
+                  className="flex items-center gap-2 rounded-full bg-[#3aa8c1] hover:bg-[#3296ad] px-4 sm:px-5 py-2.5 sm:py-3 text-white font-semibold text-xs sm:text-sm shadow-xl shadow-black/60 transition active:scale-95 cursor-pointer border border-white/25 max-w-[260px] sm:max-w-[280px] tracking-wide"
                   aria-label="Expand search options"
                 >
                   <div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white/20 flex-shrink-0">
@@ -197,7 +197,7 @@ export default function HeroSection({
                 className="mx-auto w-full max-w-[340px] rounded-xl sm:rounded-2xl bg-black/85 backdrop-blur-lg p-3 sm:p-5 border border-white/20 shadow-2xl text-left"
               >
                 <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-white/15">
-                  <div className="flex items-center gap-2 text-white font-semibold text-xs sm:text-sm font-montserrat">
+                  <div className="flex items-center gap-2 text-white font-semibold text-xs sm:text-sm">
                     <Search size={15} className="text-[#3aa8c1]" />
                     <span>Search Profiles</span>
                   </div>
@@ -210,7 +210,7 @@ export default function HeroSection({
                   </button>
                 </div>
 
-                <div className="space-y-3 font-sans">
+                <div className="space-y-3">
                   {/* I'm looking for a */}
                   <div>
                     <label className="mb-1 block text-[11px] sm:text-xs text-white/90 font-medium">I&apos;m looking for a</label>
@@ -313,7 +313,7 @@ export default function HeroSection({
                   {/* Let's Begin Button */}
                   <button
                     onClick={searchProfiles}
-                    className="font-montserrat w-full h-10 mt-1 rounded bg-[#3aa8c1] hover:bg-[#3296ad] active:bg-[#2b8296] text-white font-semibold text-xs sm:text-sm flex items-center justify-center transition shadow-lg cursor-pointer tracking-wide"
+                    className="w-full h-10 mt-1 rounded bg-[#3aa8c1] hover:bg-[#3296ad] active:bg-[#2b8296] text-white font-semibold text-xs sm:text-sm flex items-center justify-center transition shadow-lg cursor-pointer tracking-wide"
                   >
                     {currentMember ? 'Explore My Matches' : "Let's Begin"}
                   </button>
