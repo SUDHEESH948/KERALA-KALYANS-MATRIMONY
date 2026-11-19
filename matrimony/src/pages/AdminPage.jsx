@@ -33,6 +33,7 @@ import {
 
 import { API_BASE } from "../config/api";
 import { useNotification } from "../context/NotificationContext";
+import AdminWhatsAppFollowUps from "../components/AdminWhatsAppFollowUps";
 
 export default function AdminPage({ onExit }) {
   // Auth state
@@ -54,7 +55,7 @@ export default function AdminPage({ onExit }) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Dashboard tab state
-  const [activeTab, setActiveTab] = useState("profiles"); // 'overview' | 'profiles' | 'inquiries' | 'notifications' | 'settings'
+  const [activeTab, setActiveTab] = useState("profiles");
 
   // Data state
   const [stats, setStats] = useState(null);
@@ -702,6 +703,7 @@ export default function AdminPage({ onExit }) {
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
             {[
               { id: "profiles", label: "Profiles", count: profiles.length },
+              { id: "whatsapp", label: "WhatsApp Follow-ups" },
               {
                 id: "inquiries",
                 label: "Leads",
@@ -743,6 +745,14 @@ export default function AdminPage({ onExit }) {
             ))}
           </div>
         </div>
+
+        {activeTab === "whatsapp" && (
+          <AdminWhatsAppFollowUps
+            profiles={profiles}
+            isLoading={isLoading}
+            lastRefreshedAt={lastRefreshedAt}
+          />
+        )}
 
         {/* TAB 1: PROFILES MANAGEMENT */}
         {activeTab === "profiles" && (
