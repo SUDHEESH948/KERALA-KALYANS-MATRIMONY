@@ -109,6 +109,34 @@ footer a:not(.cta) {
   color: var(--admin-gold-ink);
 }
 
+@media (width < 64rem) {
+  .admin-profiles {
+    display: block;
+  }
+
+  .admin-profiles thead {
+    @apply sr-only;
+  }
+
+  .admin-profiles tbody {
+    display: block;
+  }
+
+  .admin-profiles tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-profiles td {
+    overflow-wrap: anywhere;
+  }
+
+  .admin-profiles td:first-child,
+  .admin-profiles td:nth-last-child(-n + 2) {
+    grid-column: 1 / -1;
+  }
+}
+
 :where(input, select, textarea) {
   font-family: var(--font-sans);
   font-weight: 400;

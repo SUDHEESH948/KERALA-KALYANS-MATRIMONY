@@ -546,7 +546,7 @@ export default function AdminPage({ onExit }) {
   if (!token) {
     return (
       <div className="min-h-screen bg-[var(--admin-surface)] flex flex-col justify-center items-center p-4 admin-page">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-[var(--admin-border)] p-8">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-[var(--admin-border)] p-5 sm:p-8">
           <div className="text-center mb-6">
             <img
               src="/kerala-kalyan-logo.png"
@@ -677,6 +677,7 @@ export default function AdminPage({ onExit }) {
               <button
                 onClick={onExit}
                 className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-[var(--admin-surface)] hover:bg-[var(--admin-gold-light)] transition cursor-pointer font-semibold"
+                aria-label="View main website"
                 title="View Main Website"
               >
                 <ArrowLeft size={13} />
@@ -687,6 +688,7 @@ export default function AdminPage({ onExit }) {
             <button
               onClick={handleLogout}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white transition cursor-pointer font-semibold"
+              aria-label="Sign out"
               title="Sign Out"
             >
               <LogOut size={13} />
@@ -700,7 +702,7 @@ export default function AdminPage({ onExit }) {
       <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-4 sm:py-6">
         {/* Navigation Tabs */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-[var(--admin-border)] pb-4">
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
+          <div className="flex flex-wrap items-center gap-1.5">
             {[
               { id: "profiles", label: "Profiles", count: profiles.length },
               { id: "whatsapp", label: "WhatsApp Follow-ups" },
@@ -721,7 +723,7 @@ export default function AdminPage({ onExit }) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                className={`whitespace-nowrap px-2.5 py-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === tab.id
                     ? "bg-[var(--admin-gold-strong)] text-white shadow-md"
                     : "bg-white text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] border border-[var(--admin-border)]"
@@ -889,22 +891,22 @@ export default function AdminPage({ onExit }) {
 
             <div className="bg-white rounded-xl border border-[var(--admin-border)] shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[var(--admin-surface)] border-b border-[var(--admin-border)] text-[var(--admin-gold-text)] font-semibold uppercase tracking-wider text-[10px]">
-                    <tr>
-                      <th className="px-4 py-3">Profile</th>
-                      <th className="px-4 py-3">Age & Height</th>
-                      <th className="px-4 py-3">Community</th>
-                      <th className="px-4 py-3">Education & Career</th>
-                      <th className="px-4 py-3">Location</th>
-                      <th className="px-4 py-3 text-center">Status</th>
-                      <th className="px-4 py-3 text-right">Actions</th>
+                <table className="admin-profiles w-full text-left text-xs" role="table" aria-label="Registered profiles">
+                  <thead role="rowgroup" className="bg-[var(--admin-surface)] border-b border-[var(--admin-border)] text-[var(--admin-gold-text)] font-semibold uppercase tracking-wider text-[10px]">
+                    <tr role="row">
+                      <th role="columnheader" scope="col" className="px-4 py-3">Profile</th>
+                      <th role="columnheader" scope="col" className="px-4 py-3">Age & Height</th>
+                      <th role="columnheader" scope="col" className="px-4 py-3">Community</th>
+                      <th role="columnheader" scope="col" className="px-4 py-3">Education & Career</th>
+                      <th role="columnheader" scope="col" className="px-4 py-3">Location</th>
+                      <th role="columnheader" scope="col" className="px-4 py-3 text-left lg:text-center">Status</th>
+                      <th role="columnheader" scope="col" className="px-4 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--admin-border)]">
+                  <tbody role="rowgroup" className="divide-y divide-[var(--admin-border)]">
                     {filteredProfiles.length === 0 ? (
-                      <tr>
-                        <td colSpan="7" className="text-center py-12 px-4">
+                      <tr role="row">
+                        <td role="cell" colSpan="7" className="text-center py-12 px-4">
                           <div className="max-w-sm mx-auto space-y-2">
                             <p className="text-sm font-bold text-[var(--admin-gold-ink)]">
                               No profiles matching current filters
@@ -936,53 +938,65 @@ export default function AdminPage({ onExit }) {
                     ) : (
                       filteredProfiles.map((p) => (
                         <tr
+                          role="row"
                           key={p.id}
                           className="hover:bg-[var(--admin-surface)]/40 transition"
                         >
-                          <td className="px-4 py-3.5 flex items-center gap-3">
-                            <img
-                              src={p.photo}
-                              alt={p.name}
-                              className="h-10 w-10 rounded-full object-cover border border-[var(--admin-border)]"
-                            />
-                            <div>
-                              <div className="font-semibold text-[var(--admin-gold-ink)] text-sm flex items-center gap-1.5">
-                                <span>{p.name}</span>
-                                {(p.isApproved || p.verified) && (
-                                  <ShieldCheck
-                                    size={14}
-                                    className="text-[var(--admin-gold-text)]"
-                                    title="Approved & Verified Member"
-                                  />
-                                )}
-                              </div>
-                              <div className="text-[11px] text-[var(--admin-gold-ink)] font-medium truncate max-w-[190px]">
-                                {p.email}
-                              </div>
-                              <span className="text-[10px] text-[var(--admin-gold-text)]">
-                                {p.phone ? `${p.phone} · ` : ""}
-                                {p.id} · {p.gender} ·{" "}
-                                <span className="text-[var(--admin-gold-ink)] font-medium">
-                                  {p.marriageType ||
-                                    p.maritalStatus ||
-                                    "Never Married"}
+                          <td role="cell" className="px-4 py-3.5">
+                            <div className="flex min-w-0 items-center gap-3">
+                              <img
+                                src={p.photo}
+                                alt={p.name}
+                                className="h-10 w-10 shrink-0 rounded-full object-cover border border-[var(--admin-border)]"
+                              />
+                              <div className="min-w-0 wrap-anywhere">
+                                <div className="font-semibold text-[var(--admin-gold-ink)] text-sm flex items-center gap-1.5">
+                                  <span>{p.name}</span>
+                                  {(p.isApproved || p.verified) && (
+                                    <ShieldCheck
+                                      size={14}
+                                      className="text-[var(--admin-gold-text)]"
+                                      title="Approved & Verified Member"
+                                    />
+                                  )}
+                                </div>
+                                <div className="text-[11px] text-[var(--admin-gold-ink)] font-medium lg:truncate lg:max-w-[190px]">
+                                  {p.email}
+                                </div>
+                                <span className="text-[10px] text-[var(--admin-gold-text)]">
+                                  {p.phone ? `${p.phone} · ` : ""}
+                                  {p.id} · {p.gender} ·{" "}
+                                  <span className="text-[var(--admin-gold-ink)] font-medium">
+                                    {p.marriageType ||
+                                      p.maritalStatus ||
+                                      "Never Married"}
+                                  </span>
                                 </span>
-                              </span>
+                              </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                          <td role="cell" className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                            <span aria-hidden="true" className="mb-1 block font-semibold lg:hidden">
+                              Age & Height
+                            </span>
                             <div>{p.age} yrs</div>
                             <div className="text-[10px] text-[var(--admin-gold-text)]">
                               {p.height}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                          <td role="cell" className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                            <span aria-hidden="true" className="mb-1 block font-semibold lg:hidden">
+                              Community
+                            </span>
                             <div>{p.religion}</div>
                             <div className="text-[10px] text-[var(--admin-gold-text)]">
                               {p.caste || p.motherTongue}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                          <td role="cell" className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                            <span aria-hidden="true" className="mb-1 block font-semibold lg:hidden">
+                              Education & Career
+                            </span>
                             <div className="font-medium text-[var(--admin-gold-ink)]">
                               {p.profession}
                             </div>
@@ -990,12 +1004,15 @@ export default function AdminPage({ onExit }) {
                               {p.education}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                          <td role="cell" className="px-4 py-3 text-[var(--admin-gold-ink)]">
+                            <span aria-hidden="true" className="mb-1 block font-semibold lg:hidden">
+                              Location
+                            </span>
                             {p.location}
                           </td>
-                          <td className="px-4 py-3 text-center">
+                          <td role="cell" className="px-4 py-3 text-left lg:text-center">
                             {p.status === "rejected" ? (
-                              <div className="flex flex-col items-center gap-1">
+                              <div className="flex flex-col items-start gap-1 lg:items-center">
                                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] border border-[var(--admin-border)]">
                                   <XCircle size={12} />
                                   <span>Rejected</span>
@@ -1011,7 +1028,7 @@ export default function AdminPage({ onExit }) {
                                 </button>
                               </div>
                             ) : p.isApproved || p.verified ? (
-                              <div className="flex flex-col items-center gap-1">
+                              <div className="flex flex-col items-start gap-1 lg:items-center">
                                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] border border-[var(--admin-border)]">
                                   <CheckCircle2 size={12} />
                                   <span>Approved</span>
@@ -1027,7 +1044,7 @@ export default function AdminPage({ onExit }) {
                                 </button>
                               </div>
                             ) : (
-                              <div className="flex items-center justify-center gap-1.5">
+                              <div className="flex flex-wrap items-center gap-1.5 lg:justify-center">
                                 <button
                                   onClick={() =>
                                     handleApproveProfile(p.id, p.name)
@@ -1051,20 +1068,20 @@ export default function AdminPage({ onExit }) {
                               </div>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
+                          <td role="cell" className="px-4 py-3 text-right">
+                            <div className="flex flex-wrap items-center gap-1.5 lg:justify-end">
                               <button
                                 onClick={() => {
                                   window.location.hash = `#profile/${p.id}`;
                                 }}
-                                className="p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-ink)] hover:bg-[var(--admin-gold)]/15 transition cursor-pointer flex items-center gap-1"
+                                className="p-2.5 lg:p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-ink)] hover:bg-[var(--admin-gold)]/15 transition cursor-pointer flex items-center gap-1"
                                 title="View Complete Profile"
                               >
                                 <Eye size={15} />
                               </button>
                               <button
                                 onClick={() => setEditingProfile(p)}
-                                className="p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-ink)] hover:bg-[var(--admin-surface)] transition cursor-pointer"
+                                className="p-2.5 lg:p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-ink)] hover:bg-[var(--admin-surface)] transition cursor-pointer"
                                 title="Edit Profile"
                               >
                                 <Edit3 size={15} />
@@ -1073,7 +1090,7 @@ export default function AdminPage({ onExit }) {
                                 onClick={() =>
                                   promptDeleteProfile(p.id, p.name)
                                 }
-                                className="p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] transition cursor-pointer"
+                                className="p-2.5 lg:p-1.5 rounded text-[var(--admin-gold-text)] hover:text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] transition cursor-pointer"
                                 title="Delete Profile"
                               >
                                 <Trash2 size={15} />
@@ -1093,7 +1110,7 @@ export default function AdminPage({ onExit }) {
         {/* TAB 2: LEADS & INQUIRIES */}
         {activeTab === "inquiries" && (
           <div className="space-y-4">
-            <div className="bg-white p-4 rounded-xl border border-[var(--admin-border)] shadow-sm flex items-center justify-between">
+            <div className="bg-white p-4 rounded-xl border border-[var(--admin-border)] shadow-sm flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-xl text-[var(--admin-gold-ink)]">
                   Website Inquiries & Search Leads
@@ -1118,7 +1135,7 @@ export default function AdminPage({ onExit }) {
                 inquiries.map((inq) => (
                   <div
                     key={inq.id}
-                    className="bg-white p-5 rounded-xl border border-[var(--admin-border)] shadow-sm space-y-3"
+                    className="min-w-0 wrap-anywhere bg-white p-4 sm:p-5 rounded-xl border border-[var(--admin-border)] shadow-sm space-y-3"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-[var(--admin-gold-text)]">
@@ -1221,7 +1238,7 @@ export default function AdminPage({ onExit }) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={markAllNotificationsAsRead}
                   disabled={notifications.filter((n) => !n.isRead).length === 0}
@@ -1299,13 +1316,13 @@ export default function AdminPage({ onExit }) {
                     <div
                       key={notif.id}
                       onClick={() => markNotificationAsRead(notif.id)}
-                      className={`flex items-start justify-between gap-4 p-4 rounded-xl border transition cursor-pointer ${
+                      className={`flex items-start justify-between flex-wrap gap-3 p-3 sm:flex-nowrap sm:gap-4 sm:p-4 rounded-xl border transition cursor-pointer ${
                         !notif.isRead
                           ? "bg-white border-[var(--admin-gold)] shadow-sm ring-1 ring-[var(--admin-gold)]/30"
                           : "bg-white/70 border-[var(--admin-border)] hover:bg-white"
                       }`}
                     >
-                      <div className="flex items-start gap-3 flex-1">
+                      <div className="flex min-w-0 flex-1 basis-full items-start gap-3 sm:basis-auto">
                         <div className="p-2.5 rounded-xl flex-shrink-0 bg-[var(--admin-gold-strong)] text-white">
                           {notif.type === "registration" ? (
                             <UserPlus size={18} />
@@ -1320,7 +1337,7 @@ export default function AdminPage({ onExit }) {
                           )}
                         </div>
 
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 wrap-anywhere">
                           <div className="flex items-center gap-2">
                             <h4 className="card-title text-xs sm:text-sm text-[var(--admin-gold-ink)]">
                               {notif.title}
@@ -1472,8 +1489,8 @@ export default function AdminPage({ onExit }) {
 
       {/* EDIT PROFILE MODAL */}
       {editingProfile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--admin-gold-strong)]/35 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[var(--admin-border)] my-8">
+        <div className="fixed inset-0 z-50 flex flex-col items-center overflow-y-auto bg-[var(--admin-gold-strong)]/35 p-3 backdrop-blur-xs sm:p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full my-auto shrink-0 p-4 shadow-2xl border border-[var(--admin-border)] sm:p-6">
             <div className="flex items-center justify-between pb-4 border-b border-[var(--admin-border)]">
               <h3 className="text-xl text-[var(--admin-gold-ink)]">
                 Edit Profile ({editingProfile.id})
@@ -1490,7 +1507,7 @@ export default function AdminPage({ onExit }) {
               onSubmit={handleUpdateProfile}
               className="mt-4 space-y-3 text-xs"
             >
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block mb-1">Full Name</label>
                   <input
@@ -1524,7 +1541,7 @@ export default function AdminPage({ onExit }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block mb-1">Age</label>
                   <input
@@ -1583,7 +1600,7 @@ export default function AdminPage({ onExit }) {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block mb-1">Religion</label>
                   <select
@@ -1619,7 +1636,7 @@ export default function AdminPage({ onExit }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block mb-1">Education</label>
                   <input
@@ -1723,8 +1740,8 @@ export default function AdminPage({ onExit }) {
 
       {/* CUSTOM CONFIRMATION MODAL (NO BROWSER POPUPS/ALERTS) */}
       {confirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--admin-gold-strong)]/35 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex flex-col items-center overflow-y-auto bg-[var(--admin-gold-strong)]/35 p-3 backdrop-blur-xs sm:p-4">
+          <div className="relative w-full max-w-md rounded-2xl bg-white my-auto shrink-0 p-4 shadow-2xl border border-[var(--admin-border)] sm:p-6 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--admin-surface)] text-[var(--admin-gold-text)] mb-4">
               <AlertTriangle size={28} />
             </div>
@@ -1755,8 +1772,8 @@ export default function AdminPage({ onExit }) {
       )}
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--admin-gold-strong)]/35 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex flex-col items-center overflow-y-auto bg-[var(--admin-gold-strong)]/35 p-3 backdrop-blur-xs sm:p-4">
+          <div className="relative w-full max-w-md rounded-2xl bg-white my-auto shrink-0 p-4 sm:p-7 shadow-2xl border border-[var(--admin-border)] animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--admin-surface)] text-[var(--admin-gold-text)] mb-4">
               <Key size={26} />
             </div>
@@ -1778,7 +1795,7 @@ export default function AdminPage({ onExit }) {
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[var(--admin-border)]">
-                <code className="font-bold text-base text-[var(--admin-gold-ink)] tracking-wider select-all">
+                <code className="min-w-0 wrap-anywhere font-bold text-base text-[var(--admin-gold-ink)] tracking-wider select-all">
                   {approvalModal.temporaryPassword}
                 </code>
                 <button
@@ -1838,8 +1855,8 @@ export default function AdminPage({ onExit }) {
       )}
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--admin-gold-strong)]/35 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex flex-col items-center overflow-y-auto bg-[var(--admin-gold-strong)]/35 p-3 backdrop-blur-xs sm:p-4">
+          <div className="relative w-full max-w-md rounded-2xl bg-white my-auto shrink-0 p-4 sm:p-7 shadow-2xl border border-[var(--admin-border)] animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--admin-surface)] text-[var(--admin-gold-text)] mb-4">
               <Key size={26} />
             </div>
@@ -1861,7 +1878,7 @@ export default function AdminPage({ onExit }) {
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[var(--admin-border)]">
-                <code className="font-bold text-base text-[var(--admin-gold-ink)] tracking-wider select-all">
+                <code className="min-w-0 wrap-anywhere font-bold text-base text-[var(--admin-gold-ink)] tracking-wider select-all">
                   {approvalModal.temporaryPassword}
                 </code>
                 <button
