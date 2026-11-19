@@ -544,18 +544,18 @@ export default function AdminPage({ onExit }) {
   // ----------------------------------------------------
   if (!token) {
     return (
-      <div className="min-h-screen bg-[#FAF7F1] flex flex-col justify-center items-center p-4 admin-page">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-[#eadfce] p-8">
+      <div className="min-h-screen bg-[var(--admin-surface)] flex flex-col justify-center items-center p-4 admin-page">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-[var(--admin-border)] p-8">
           <div className="text-center mb-6">
             <img
               src="/kerala-kalyan-logo.png"
               alt="Kerala Kalyans Matrimony"
               className="h-12 w-auto mx-auto object-contain mb-3"
             />
-            <h1 className="text-2xl sm:text-3xl text-[#701C35]">
+            <h1 className="text-2xl sm:text-3xl text-[var(--admin-ink)]">
               Kerala Kalyans Admin
             </h1>
-            <p className="text-xs tracking-[2px] font-semibold text-[#9C8158] mt-1">
+            <p className="text-xs tracking-[2px] font-semibold text-[var(--admin-gold-text)] mt-1">
               PORTAL CONTROL PANEL
             </p>
           </div>
@@ -577,7 +577,7 @@ export default function AdminPage({ onExit }) {
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35]"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)] focus:ring-1 focus:ring-[var(--admin-ink)]"
               />
             </div>
             <div>
@@ -589,14 +589,14 @@ export default function AdminPage({ onExit }) {
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35]"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)] focus:ring-1 focus:ring-[var(--admin-ink)]"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full mt-2 py-3 rounded-lg bg-[#701C35] hover:bg-[#511327] text-white font-semibold text-sm transition shadow-md cursor-pointer disabled:opacity-50"
+              className="w-full mt-2 py-3 rounded-lg bg-[var(--admin-gold)] hover:bg-[var(--admin-gold-hover)] text-[var(--admin-ink)] font-semibold text-sm transition shadow-md cursor-pointer disabled:opacity-50"
             >
               {isLoggingIn
                 ? "Verifying Credentials..."
@@ -608,7 +608,7 @@ export default function AdminPage({ onExit }) {
             {onExit && (
               <button
                 onClick={onExit}
-                className="text-[#701C35] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                className="text-[var(--admin-ink)] hover:underline flex items-center gap-1 font-semibold cursor-pointer"
               >
                 <ArrowLeft size={14} /> Back to Site
               </button>
@@ -623,9 +623,9 @@ export default function AdminPage({ onExit }) {
   // MAIN ADMIN DASHBOARD
   // ----------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#F7F4EE] text-gray-800 admin-page">
+    <div className="min-h-screen bg-[var(--admin-canvas)] text-gray-800 admin-page">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-40 bg-[#701C35] text-white shadow-md">
+      <header className="sticky top-0 z-40 bg-[var(--admin-ink)] text-white shadow-md">
         <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <img
@@ -637,7 +637,7 @@ export default function AdminPage({ onExit }) {
               <h2 className="text-base sm:text-xl leading-tight truncate">
                 Kerala Kalyans
               </h2>
-              <p className="text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[#E8CA91] font-semibold truncate">
+              <p className="text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[var(--admin-gold-light)] font-semibold truncate">
                 ADMIN CONSOLE
               </p>
             </div>
@@ -648,7 +648,7 @@ export default function AdminPage({ onExit }) {
               <p className="font-semibold truncate max-w-[120px]">
                 {adminUser?.name || "Administrator"}
               </p>
-              <p className="text-[10px] text-[#E8CA91] truncate max-w-[120px]">
+              <p className="text-[10px] text-[var(--admin-gold-light)] truncate max-w-[120px]">
                 {adminUser?.email}
               </p>
             </div>
@@ -658,7 +658,7 @@ export default function AdminPage({ onExit }) {
               onClick={() => setActiveTab("notifications")}
               className={`relative flex items-center gap-1 px-2.5 py-1.5 rounded-md transition cursor-pointer font-semibold ${
                 activeTab === "notifications"
-                  ? "bg-[#C8A96B] text-[#321b1e]"
+                  ? "bg-[var(--admin-gold)] text-[var(--admin-ink)]"
                   : "bg-white/10 hover:bg-white/20 text-white"
               }`}
               title="Notifications Center"
@@ -698,7 +698,7 @@ export default function AdminPage({ onExit }) {
       {/* Main Container */}
       <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-4 sm:py-6">
         {/* Navigation Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-[#eadfce] pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-[var(--admin-border)] pb-4">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
             {[
               { id: "profiles", label: "Profiles", count: profiles.length },
@@ -721,8 +721,8 @@ export default function AdminPage({ onExit }) {
                 onClick={() => setActiveTab(tab.id)}
                 className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === tab.id
-                    ? "bg-[#701C35] text-white shadow-md"
-                    : "bg-white text-gray-600 hover:bg-[#FAF7F1] border border-[#eadfce]"
+                    ? "bg-[var(--admin-ink)] text-white shadow-md"
+                    : "bg-white text-gray-600 hover:bg-[var(--admin-surface)] border border-[var(--admin-border)]"
                 }`}
               >
                 <span>{tab.label}</span>
@@ -732,7 +732,7 @@ export default function AdminPage({ onExit }) {
                       activeTab === tab.id
                         ? "bg-white/25 text-white"
                         : tab.isBadge && tab.count > 0
-                          ? "bg-[#701C35] text-white"
+                          ? "bg-[var(--admin-ink)] text-white"
                           : "bg-gray-200 text-gray-700"
                     }`}
                   >
@@ -756,15 +756,15 @@ export default function AdminPage({ onExit }) {
                 }}
                 className={`p-3 sm:p-4 rounded-xl border transition cursor-pointer shadow-xs ${
                   statusFilter === "all" && !searchQuery
-                    ? "bg-white border-[#701C35] ring-2 ring-[#701C35]/20"
-                    : "bg-white border-[#eadfce] hover:border-[#701C35]/50"
+                    ? "bg-white border-[var(--admin-ink)] ring-2 ring-[var(--admin-ink)]/20"
+                    : "bg-white border-[var(--admin-border)] hover:border-[var(--admin-ink)]/50"
                 }`}
                 title="Click to view all registrations"
               >
                 <p className="text-[10px] sm:text-xs text-gray-500 font-semibold truncate">
                   Total Registrations
                 </p>
-                <h3 className="text-xl sm:text-2xl text-[#701C35] mt-0.5">
+                <h3 className="text-xl sm:text-2xl text-[var(--admin-ink)] mt-0.5">
                   {profiles.length}
                 </h3>
               </div>
@@ -827,7 +827,7 @@ export default function AdminPage({ onExit }) {
               </div>
             </div>
 
-            <div className="bg-white p-3 sm:p-4 rounded-xl border border-[#eadfce] shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 text-xs">
+            <div className="bg-white p-3 sm:p-4 rounded-xl border border-[var(--admin-border)] shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 text-xs">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full">
                 <div className="relative flex-1 min-w-0 w-full">
                   <Search
@@ -839,7 +839,7 @@ export default function AdminPage({ onExit }) {
                     placeholder="Search name, email, phone, city..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-8 pr-8 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#701C35] text-xs"
+                    className="w-full pl-8 pr-8 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[var(--admin-ink)] text-xs"
                   />
                   {searchQuery && (
                     <button
@@ -877,10 +877,10 @@ export default function AdminPage({ onExit }) {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#eadfce] shadow-sm overflow-hidden">
+            <div className="bg-white rounded-xl border border-[var(--admin-border)] shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#FAF7F1] border-b border-[#eadfce] text-gray-600 font-semibold uppercase tracking-wider text-[10px]">
+                  <thead className="bg-[var(--admin-surface)] border-b border-[var(--admin-border)] text-gray-600 font-semibold uppercase tracking-wider text-[10px]">
                     <tr>
                       <th className="px-4 py-3">Profile</th>
                       <th className="px-4 py-3">Age & Height</th>
@@ -913,7 +913,7 @@ export default function AdminPage({ onExit }) {
                                 setGenderFilter("all");
                                 setStatusFilter("all");
                               }}
-                              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#701C35] hover:bg-[#8B2342] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
+                              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
                             >
                               <RefreshCw size={13} />
                               <span>
@@ -933,7 +933,7 @@ export default function AdminPage({ onExit }) {
                             <img
                               src={p.photo}
                               alt={p.name}
-                              className="h-10 w-10 rounded-full object-cover border border-[#eadfce]"
+                              className="h-10 w-10 rounded-full object-cover border border-[var(--admin-border)]"
                             />
                             <div>
                               <div className="font-semibold text-gray-900 text-sm flex items-center gap-1.5">
@@ -946,13 +946,13 @@ export default function AdminPage({ onExit }) {
                                   />
                                 )}
                               </div>
-                              <div className="text-[11px] text-[#701C35] font-medium truncate max-w-[190px]">
+                              <div className="text-[11px] text-[var(--admin-ink)] font-medium truncate max-w-[190px]">
                                 {p.email}
                               </div>
                               <span className="text-[10px] text-gray-400">
                                 {p.phone ? `${p.phone} · ` : ""}
                                 {p.id} · {p.gender} ·{" "}
-                                <span className="text-[#701C35] font-medium">
+                                <span className="text-[var(--admin-ink)] font-medium">
                                   {p.marriageType ||
                                     p.maritalStatus ||
                                     "Never Married"}
@@ -994,7 +994,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleApproveProfile(p.id, p.name)
                                   }
-                                  className="text-[10px] text-[#701C35] hover:underline font-semibold cursor-pointer"
+                                  className="text-[10px] text-[var(--admin-ink)] hover:underline font-semibold cursor-pointer"
                                   title="Re-approve application"
                                 >
                                   Re-Approve
@@ -1010,7 +1010,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleResendApproval(p.id, p.name)
                                   }
-                                  className="text-[9px] text-[#701C35] hover:underline font-medium cursor-pointer"
+                                  className="text-[9px] text-[var(--admin-ink)] hover:underline font-medium cursor-pointer"
                                   title="Resend temporary login credentials email"
                                 >
                                   Resend Email
@@ -1047,14 +1047,14 @@ export default function AdminPage({ onExit }) {
                                 onClick={() => {
                                   window.location.hash = `#profile/${p.id}`;
                                 }}
-                                className="p-1.5 rounded text-gray-600 hover:text-[#701C35] hover:bg-[#701C35]/10 transition cursor-pointer flex items-center gap-1"
+                                className="p-1.5 rounded text-gray-600 hover:text-[var(--admin-ink)] hover:bg-[var(--admin-ink)]/10 transition cursor-pointer flex items-center gap-1"
                                 title="View Complete Profile"
                               >
                                 <Eye size={15} />
                               </button>
                               <button
                                 onClick={() => setEditingProfile(p)}
-                                className="p-1.5 rounded text-gray-500 hover:text-[#701C35] hover:bg-gray-100 transition cursor-pointer"
+                                className="p-1.5 rounded text-gray-500 hover:text-[var(--admin-ink)] hover:bg-gray-100 transition cursor-pointer"
                                 title="Edit Profile"
                               >
                                 <Edit3 size={15} />
@@ -1083,9 +1083,9 @@ export default function AdminPage({ onExit }) {
         {/* TAB 2: LEADS & INQUIRIES */}
         {activeTab === "inquiries" && (
           <div className="space-y-4">
-            <div className="bg-white p-4 rounded-xl border border-[#eadfce] shadow-sm flex items-center justify-between">
+            <div className="bg-white p-4 rounded-xl border border-[var(--admin-border)] shadow-sm flex items-center justify-between">
               <div>
-                <h3 className="text-xl text-[#701C35]">
+                <h3 className="text-xl text-[var(--admin-ink)]">
                   Website Inquiries & Search Leads
                 </h3>
                 <p className="text-xs text-gray-500">
@@ -1093,14 +1093,14 @@ export default function AdminPage({ onExit }) {
                   registration links.
                 </p>
               </div>
-              <span className="px-3 py-1 rounded-full bg-[#701C35] text-white text-xs font-semibold">
+              <span className="px-3 py-1 rounded-full bg-[var(--admin-ink)] text-white text-xs font-semibold">
                 {inquiries.length} Total Leads
               </span>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {inquiries.length === 0 ? (
-                <div className="col-span-full py-12 text-center text-gray-400 bg-white rounded-xl border border-[#eadfce]">
+                <div className="col-span-full py-12 text-center text-gray-400 bg-white rounded-xl border border-[var(--admin-border)]">
                   No inquiries recorded yet. Test by submitting from the home
                   page!
                 </div>
@@ -1108,7 +1108,7 @@ export default function AdminPage({ onExit }) {
                 inquiries.map((inq) => (
                   <div
                     key={inq.id}
-                    className="bg-white p-5 rounded-xl border border-[#eadfce] shadow-sm space-y-3"
+                    className="bg-white p-5 rounded-xl border border-[var(--admin-border)] shadow-sm space-y-3"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-gray-400">
@@ -1138,7 +1138,7 @@ export default function AdminPage({ onExit }) {
                       </p>
                     </div>
 
-                    <div className="text-xs text-gray-600 space-y-1 bg-[#FAF7F1] p-2.5 rounded-lg border border-[#eadfce]/60">
+                    <div className="text-xs text-gray-600 space-y-1 bg-[var(--admin-surface)] p-2.5 rounded-lg border border-[var(--admin-border)]/60">
                       <div>
                         <b>Religion:</b> {inq.religion || "Any"}
                       </div>
@@ -1147,13 +1147,13 @@ export default function AdminPage({ onExit }) {
                       </div>
                       {inq.phone && (
                         <div className="flex items-center gap-1.5 text-gray-700">
-                          <Phone size={12} className="text-[#B28D53]" />{" "}
+                          <Phone size={12} className="text-[var(--admin-gold-text)]" />{" "}
                           {inq.phone}
                         </div>
                       )}
                       {inq.email && (
                         <div className="flex items-center gap-1.5 text-gray-700">
-                          <Mail size={12} className="text-[#B28D53]" />{" "}
+                          <Mail size={12} className="text-[var(--admin-gold-text)]" />{" "}
                           {inq.email}
                         </div>
                       )}
@@ -1195,13 +1195,13 @@ export default function AdminPage({ onExit }) {
         {activeTab === "notifications" && (
           <div className="space-y-6">
             {/* Header banner */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-xl border border-[#eadfce] shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-xl border border-[var(--admin-border)] shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#701C35] text-white flex-shrink-0 shadow-md">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--admin-ink)] text-white flex-shrink-0 shadow-md">
                   <BellRing size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl sm:text-2xl text-[#701C35]">
+                  <h3 className="text-xl sm:text-2xl text-[var(--admin-ink)]">
                     Notification Center
                   </h3>
                   <p className="text-xs text-gray-500 mt-0.5">
@@ -1215,7 +1215,7 @@ export default function AdminPage({ onExit }) {
                 <button
                   onClick={markAllNotificationsAsRead}
                   disabled={notifications.filter((n) => !n.isRead).length === 0}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-white border border-[#eadfce] hover:bg-[#FAF7F1] text-gray-700 transition cursor-pointer disabled:opacity-40"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-white border border-[var(--admin-border)] hover:bg-[var(--admin-surface)] text-gray-700 transition cursor-pointer disabled:opacity-40"
                 >
                   <Check size={14} className="text-emerald-600" />
                   <span>Mark All Read</span>
@@ -1252,8 +1252,8 @@ export default function AdminPage({ onExit }) {
                   onClick={() => setNotifFilter(f.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                     notifFilter === f.id
-                      ? "bg-[#701C35] text-white shadow-xs"
-                      : "bg-white text-gray-600 border border-[#eadfce] hover:bg-[#FAF7F1]"
+                      ? "bg-[var(--admin-ink)] text-white shadow-xs"
+                      : "bg-white text-gray-600 border border-[var(--admin-border)] hover:bg-[var(--admin-surface)]"
                   }`}
                 >
                   {f.label}
@@ -1268,7 +1268,7 @@ export default function AdminPage({ onExit }) {
                 if (notifFilter === "read") return n.isRead;
                 return true;
               }).length === 0 ? (
-                <div className="bg-white rounded-xl border border-[#eadfce] p-12 text-center text-gray-400">
+                <div className="bg-white rounded-xl border border-[var(--admin-border)] p-12 text-center text-gray-400">
                   <Bell size={36} className="mx-auto mb-3 text-gray-300" />
                   <p className="text-sm font-semibold text-gray-600">
                     No notifications found
@@ -1291,22 +1291,22 @@ export default function AdminPage({ onExit }) {
                       onClick={() => markNotificationAsRead(notif.id)}
                       className={`flex items-start justify-between gap-4 p-4 rounded-xl border transition cursor-pointer ${
                         !notif.isRead
-                          ? "bg-white border-[#C8A96B] shadow-sm ring-1 ring-[#C8A96B]/30"
-                          : "bg-white/70 border-[#eadfce] hover:bg-white"
+                          ? "bg-white border-[var(--admin-gold)] shadow-sm ring-1 ring-[var(--admin-gold)]/30"
+                          : "bg-white/70 border-[var(--admin-border)] hover:bg-white"
                       }`}
                     >
                       <div className="flex items-start gap-3 flex-1">
                         <div
                           className={`p-2.5 rounded-xl flex-shrink-0 ${
                             notif.type === "registration"
-                              ? "bg-[#701C35] text-white"
+                              ? "bg-[var(--admin-ink)] text-white"
                               : notif.type === "inquiry"
                                 ? "bg-blue-600 text-white"
                                 : notif.type === "verified"
                                   ? "bg-emerald-600 text-white"
                                   : notif.type === "delete"
                                     ? "bg-red-500 text-white"
-                                    : "bg-[#B28D53] text-white"
+                                    : "bg-[var(--admin-gold-text)] text-white"
                           }`}
                         >
                           {notif.type === "registration" ? (
@@ -1329,7 +1329,7 @@ export default function AdminPage({ onExit }) {
                             </h4>
                             {!notif.isRead && (
                               <span
-                                className="h-2 w-2 rounded-full bg-[#701C35] inline-block"
+                                className="h-2 w-2 rounded-full bg-[var(--admin-ink)] inline-block"
                                 title="Unread"
                               />
                             )}
@@ -1351,7 +1351,7 @@ export default function AdminPage({ onExit }) {
                                   if (notif.action.search)
                                     setSearchQuery(notif.action.search);
                                 }}
-                                className="font-semibold text-[#701C35] hover:underline cursor-pointer"
+                                className="font-semibold text-[var(--admin-ink)] hover:underline cursor-pointer"
                               >
                                 Go to{" "}
                                 {notif.action.tab === "profiles"
@@ -1383,8 +1383,8 @@ export default function AdminPage({ onExit }) {
 
         {/* TAB 4: PLATFORM STATS & METRICS */}
         {activeTab === "settings" && (
-          <div className="max-w-2xl bg-white p-6 rounded-xl border border-[#eadfce] shadow-sm">
-            <h3 className="text-xl text-[#701C35]">
+          <div className="max-w-2xl bg-white p-6 rounded-xl border border-[var(--admin-border)] shadow-sm">
+            <h3 className="text-xl text-[var(--admin-ink)]">
               Homepage Statistics Control
             </h3>
             <p className="text-xs text-gray-500 mt-1 mb-6">
@@ -1406,7 +1406,7 @@ export default function AdminPage({ onExit }) {
                       verifiedProfiles: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[#701C35]"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)]"
                 />
               </div>
 
@@ -1423,7 +1423,7 @@ export default function AdminPage({ onExit }) {
                       happyConnections: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[#701C35]"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)]"
                 />
               </div>
 
@@ -1440,7 +1440,7 @@ export default function AdminPage({ onExit }) {
                       registeredMembers: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[#701C35]"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)]"
                 />
               </div>
 
@@ -1457,13 +1457,13 @@ export default function AdminPage({ onExit }) {
                       trustedExperience: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[#701C35]"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[var(--admin-ink)]"
                 />
               </div>
 
               <button
                 type="submit"
-                className="mt-4 px-6 py-2.5 rounded-lg bg-[#701C35] hover:bg-[#511327] text-white font-semibold text-xs transition cursor-pointer shadow"
+                className="mt-4 px-6 py-2.5 rounded-lg bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white font-semibold text-xs transition cursor-pointer shadow"
               >
                 Save Platform Stats
               </button>
@@ -1475,9 +1475,9 @@ export default function AdminPage({ onExit }) {
       {/* EDIT PROFILE MODAL */}
       {editingProfile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#eadfce] my-8">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[var(--admin-border)] my-8">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <h3 className="text-xl text-[#701C35]">
+              <h3 className="text-xl text-[var(--admin-ink)]">
                 Edit Profile ({editingProfile.id})
               </h3>
               <button
@@ -1505,7 +1505,7 @@ export default function AdminPage({ onExit }) {
                         name: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:border-[#701C35]"
+                    className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:border-[var(--admin-ink)]"
                   />
                 </div>
                 <div>
@@ -1693,7 +1693,7 @@ export default function AdminPage({ onExit }) {
                       verified: e.target.checked,
                     })
                   }
-                  className="rounded text-[#701C35]"
+                  className="rounded text-[var(--admin-ink)]"
                 />
                 <label
                   htmlFor="editVerifiedCheck"
@@ -1713,7 +1713,7 @@ export default function AdminPage({ onExit }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded bg-[#701C35] hover:bg-[#511327] text-white font-semibold transition cursor-pointer shadow"
+                  className="px-5 py-2 rounded bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white font-semibold transition cursor-pointer shadow"
                 >
                   Update Profile
                 </button>
@@ -1726,7 +1726,7 @@ export default function AdminPage({ onExit }) {
       {/* CUSTOM CONFIRMATION MODAL (NO BROWSER POPUPS/ALERTS) */}
       {confirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-[#eadfce] my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4">
               <AlertTriangle size={28} />
             </div>
@@ -1758,7 +1758,7 @@ export default function AdminPage({ onExit }) {
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4">
               <Key size={26} />
             </div>
@@ -1772,15 +1772,15 @@ export default function AdminPage({ onExit }) {
               {approvalModal.email && <span> ({approvalModal.email})</span>}
             </p>
 
-            <div className="mt-5 bg-[#FAF7F1] border border-[#eadfce] rounded-xl p-4">
+            <div className="mt-5 bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-xl p-4">
               <div className="flex items-center justify-between text-xs text-gray-500 font-semibold mb-1">
                 <span>Temporary Password</span>
                 <span className="text-[10px] text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
                   ⏱️ Expires in 10 mins
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[#eadfce]">
-                <code className="font-bold text-base text-[#701C35] tracking-wider select-all">
+              <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[var(--admin-border)]">
+                <code className="font-bold text-base text-[var(--admin-ink)] tracking-wider select-all">
                   {approvalModal.temporaryPassword}
                 </code>
                 <button
@@ -1792,7 +1792,7 @@ export default function AdminPage({ onExit }) {
                     setCopiedPassword(true);
                     setTimeout(() => setCopiedPassword(false), 2000);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#701C35] hover:bg-[#8B2342] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
                 >
                   {copiedPassword ? (
                     <>
@@ -1831,7 +1831,7 @@ export default function AdminPage({ onExit }) {
                 setApprovalModal(null);
                 setCopiedPassword(false);
               }}
-              className="mt-6 w-full py-2.5 rounded-xl bg-[#701C35] hover:bg-[#8B2342] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[#701C35]/20"
+              className="mt-6 w-full py-2.5 rounded-xl bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[var(--admin-ink)]/20"
             >
               Done & Close
             </button>
@@ -1841,7 +1841,7 @@ export default function AdminPage({ onExit }) {
       {/* CREDENTIALS / APPROVAL SUCCESS MODAL */}
       {approvalModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[#eadfce] my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-[var(--admin-border)] my-8 animate-in fade-in zoom-in-95 duration-150">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4">
               <Key size={26} />
             </div>
@@ -1855,15 +1855,15 @@ export default function AdminPage({ onExit }) {
               {approvalModal.email && <span> ({approvalModal.email})</span>}
             </p>
 
-            <div className="mt-5 bg-[#FAF7F1] border border-[#eadfce] rounded-xl p-4">
+            <div className="mt-5 bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-xl p-4">
               <div className="flex items-center justify-between text-xs text-gray-500 font-semibold mb-1">
                 <span>Temporary Password</span>
                 <span className="text-[10px] text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
                   ⏱️ Expires in 10 mins
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[#eadfce]">
-                <code className="font-bold text-base text-[#701C35] tracking-wider select-all">
+              <div className="flex items-center justify-between gap-2 mt-2 bg-white px-3.5 py-2.5 rounded-lg border border-[var(--admin-border)]">
+                <code className="font-bold text-base text-[var(--admin-ink)] tracking-wider select-all">
                   {approvalModal.temporaryPassword}
                 </code>
                 <button
@@ -1875,7 +1875,7 @@ export default function AdminPage({ onExit }) {
                     setCopiedPassword(true);
                     setTimeout(() => setCopiedPassword(false), 2000);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#701C35] hover:bg-[#8B2342] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white text-xs font-semibold transition cursor-pointer shadow-xs"
                 >
                   {copiedPassword ? (
                     <>
@@ -1914,7 +1914,7 @@ export default function AdminPage({ onExit }) {
                 setApprovalModal(null);
                 setCopiedPassword(false);
               }}
-              className="mt-6 w-full py-2.5 rounded-xl bg-[#701C35] hover:bg-[#8B2342] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[#701C35]/20"
+              className="mt-6 w-full py-2.5 rounded-xl bg-[var(--admin-ink)] hover:bg-[var(--admin-ink-hover)] text-white font-semibold text-xs transition cursor-pointer shadow-md shadow-[var(--admin-ink)]/20"
             >
               Done & Close
             </button>
