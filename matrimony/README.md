@@ -12,6 +12,14 @@ Without that variable, production builds use
 `https://kerala-kalyans-matrimony.onrender.com/api`. The local Vite dev server
 defaults to `http://localhost:5000/api`.
 
+## Admin fonts
+
+Playfair Display loads from Google Fonts. To serve licensed Gotham webfonts on
+the admin screens, set `VITE_ADMIN_GOTHAM_STYLESHEET` to the HTTPS URL of your
+webfont CSS and redeploy. Define its font faces as `Admin Gotham` with Book
+(400), Medium (500), and Bold (700). Without that stylesheet, the admin uses
+locally installed Gotham when available, then DM Sans.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

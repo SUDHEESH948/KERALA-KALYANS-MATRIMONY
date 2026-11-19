@@ -35,7 +35,18 @@ import { API_BASE } from "../config/api";
 import { useNotification } from "../context/NotificationContext";
 import AdminWhatsAppFollowUps from "../components/AdminWhatsAppFollowUps";
 
+const gothamStylesheet = import.meta.env.VITE_ADMIN_GOTHAM_STYLESHEET?.trim();
+
 export default function AdminPage({ onExit }) {
+  useEffect(() => {
+    if (!gothamStylesheet) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = gothamStylesheet;
+    document.head.append(link);
+    return () => link.remove();
+  }, []);
+
   // Auth state
   const [token, setToken] = useState(
     () => localStorage.getItem("apremiya_admin_token") || "",
@@ -723,7 +734,7 @@ export default function AdminPage({ onExit }) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`whitespace-nowrap px-2.5 py-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                className={`admin-tab whitespace-nowrap px-2.5 py-2 sm:px-3 sm:py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === tab.id
                     ? "bg-[var(--admin-gold-strong)] text-white shadow-md"
                     : "bg-white text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] border border-[var(--admin-border)]"

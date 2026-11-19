@@ -96,6 +96,7 @@ footer a:not(.cta) {
 }
 
 .admin-page {
+  --font-sans: "Admin Gotham", "Gotham", "DM Sans", system-ui, sans-serif;
   --admin-gold-ink: #573b0b;
   --admin-gold-strong: #795705;
   --admin-gold-strong-hover: #654804;
@@ -107,6 +108,19 @@ footer a:not(.cta) {
   --admin-gold-light: #fff0bf;
   --admin-gold-text: #795705;
   color: var(--admin-gold-ink);
+  font-family: var(--font-sans);
+}
+
+.admin-page :where(h1, h2, h3):not(.card-title) {
+  font-family: var(--font-serif);
+}
+
+.admin-page :where(h1, h2, h3):not(.card-title, .truncate) {
+  text-wrap: balance;
+}
+
+.admin-page .admin-tab {
+  font-weight: 500;
 }
 
 @media (width < 64rem) {
