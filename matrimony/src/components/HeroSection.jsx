@@ -1,328 +1,67 @@
 import { motion } from 'framer-motion'
 import { Search, ChevronDown, X } from 'lucide-react'
 
-export default function HeroSection({
-  lookingFor,
-  setLookingFor,
-  ageFrom,
-  setAgeFrom,
-  ageTo,
-  setAgeTo,
-  religion,
-  setReligion,
-  motherTongue,
-  setMotherTongue,
-  mobileSearchOpen,
-  setMobileSearchOpen,
-  searchProfiles,
-  currentMember,
-  onOpenMatches
-}) {
-  return (
-    <section className="hero-100vh relative flex flex-col justify-end overflow-hidden bg-[#211016] pb-10 sm:pb-14 lg:pb-16">
-      {/* Desktop Background Image */}
-      <img
-        src="/Gemini_Generated_Image_hlp8u6hlp8u6hlp8.png"
-        alt="Matrimony Home Desktop"
-        className="hidden md:block absolute inset-0 h-full w-full object-cover object-[center_15%]"
-      />
+const SelectBox = ({ value, onChange, children, small = false, variant = 'dark' }) => <div className="relative"><select value={value} onChange={onChange} className={`w-full appearance-none ${variant === 'light' ? 'rounded-2xl border border-[#e4d9c2] bg-[#faf7ef] text-[#26312b] shadow-none focus:border-[#701C35] focus:ring-[#701C35]/25' : 'rounded bg-white text-gray-800 shadow-sm focus:ring-[#d3a825]'} ${small ? 'px-2 py-2 text-xs' : 'px-4 py-3 text-base'} font-medium outline-none focus:ring-2`}>{children}</select><ChevronDown className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${variant === 'light' ? 'text-[#38463e]' : 'text-gray-500'}`} size={small ? 13 : 18} /></div>
 
-      {/* Mobile Background Image */}
-      <img
-        src="/erasio_Gemini_Generated_Image_yr2m55yr2m55yr2m (1).png"
-        alt="Matrimony Home Mobile"
-        className="block md:hidden absolute inset-0 h-full w-full object-cover object-top"
-      />
-
-      {/* Elegant Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/15 pointer-events-none" />
-
-      {/* CONTENT & SEARCH BAR OVERLAY */}
-      <div className="relative z-10 mx-auto w-full max-w-[1240px] px-3 sm:px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="hero-heading text-white drop-shadow-lg">
-            Choose <span className="whitespace-nowrap">Your Forever</span>
-          </h1>
-
-          <p className="mt-3 text-sm sm:text-base md:text-lg text-white/95 font-normal drop-shadow max-w-xs sm:max-w-md mx-auto">
-            Find love on your terms with millions of verified profiles
-          </p>
-
-          {/* DESKTOP SEARCH BAR */}
-          <div id="search" className="hidden md:block mt-8 mx-auto w-full max-w-[1100px] rounded-lg bg-black/55 backdrop-blur-md p-4 border border-white/15 shadow-2xl">
-            <div className="flex items-end gap-3 text-left">
-              {/* I'm looking for a */}
-              <div className="min-w-0 flex-1 lg:min-w-[140px]">
-                <label className="mb-1 block text-xs text-white/90 font-medium">I&apos;m looking for a</label>
-                <div className="relative">
-                  <select
-                    value={lookingFor}
-                    onChange={e => setLookingFor(e.target.value)}
-                    className="w-full appearance-none rounded bg-white px-3 py-2.5 text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                  >
-                    <option value="Woman">Woman</option>
-                    <option value="Man">Man</option>
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-                </div>
-              </div>
-
-              {/* aged ... to ... */}
-              <div className="min-w-[120px] flex-1 lg:min-w-[170px]">
-                <label className="mb-1 block text-xs text-white/90 font-medium">aged</label>
-                <div className="flex items-center gap-1.5">
-                  <div className="relative flex-1">
-                    <select
-                      value={ageFrom}
-                      onChange={e => setAgeFrom(e.target.value)}
-                      className="w-full appearance-none rounded bg-white px-2.5 py-2.5 text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                    >
-                      {Array.from({ length: 53 }, (_, i) => 18 + i).map(n => (
-                        <option key={n} value={n}>{n}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                  </div>
-                  <span className="text-xs text-white/90 font-medium px-0.5">to</span>
-                  <div className="relative flex-1">
-                    <select
-                      value={ageTo}
-                      onChange={e => setAgeTo(e.target.value)}
-                      className="w-full appearance-none rounded bg-white px-2.5 py-2.5 text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                    >
-                      {Array.from({ length: 53 }, (_, i) => 18 + i).map(n => (
-                        <option key={n} value={n}>{n}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                  </div>
-                </div>
-              </div>
-
-              {/* of religion */}
-              <div className="min-w-0 flex-1 lg:min-w-[150px]">
-                <label className="mb-1 block text-xs text-white/90 font-medium">of religion</label>
-                <div className="relative">
-                  <select
-                    value={religion}
-                    onChange={e => setReligion(e.target.value)}
-                    className="w-full appearance-none rounded bg-white px-3 py-2.5 text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                  >
-                    <option value="Select">Select</option>
-                    <option value="Hindu">Hindu</option>
-                    <option value="Muslim">Muslim</option>
-                    <option value="Christian">Christian</option>
-                    <option value="Sikh">Sikh</option>
-                    <option value="Jain">Jain</option>
-                    <option value="Buddhist">Buddhist</option>
-                    <option value="Parsi">Parsi</option>
-                    <option value="Jewish">Jewish</option>
-                    <option value="Any">Any Religion</option>
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-                </div>
-              </div>
-
-              {/* and mother tongue */}
-              <div className="min-w-0 flex-1 lg:min-w-[160px]">
-                <label className="mb-1 block text-xs text-white/90 font-medium">and mother tongue</label>
-                <div className="relative">
-                  <select
-                    value={motherTongue}
-                    onChange={e => setMotherTongue(e.target.value)}
-                    className="w-full appearance-none rounded bg-white px-3 py-2.5 text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                  >
-                    <option value="Select">Select</option>
-                    <option value="Malayalam">Malayalam</option>
-                    <option value="Tamil">Tamil</option>
-                    <option value="Telugu">Telugu</option>
-                    <option value="Kannada">Kannada</option>
-                    <option value="Hindi">Hindi</option>
-                    <option value="Marathi">Marathi</option>
-                    <option value="Bengali">Bengali</option>
-                    <option value="Gujarati">Gujarati</option>
-                    <option value="Punjabi">Punjabi</option>
-                    <option value="Odia">Odia</option>
-                    <option value="Urdu">Urdu</option>
-                    <option value="English">English</option>
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-                </div>
-              </div>
-
-              {/* Let's Begin Button */}
-              <div className="w-auto">
-                <button
-                  onClick={searchProfiles}
-                  className="h-[42px] px-4 lg:px-8 rounded bg-[#3aa8c1] hover:bg-[#3296ad] active:bg-[#2b8296] text-white text-sm lg:text-base flex items-center justify-center transition shadow cursor-pointer whitespace-nowrap tracking-[0.01em]"
-                >
-                  {currentMember ? 'Explore My Matches' : "Let's Begin"}
-                </button>
-              </div>
-            </div>
+export default function HeroSection({ lookingFor, setLookingFor, ageFrom, setAgeFrom, ageTo, setAgeTo, religion, setReligion, motherTongue, setMotherTongue, mobileSearchOpen, setMobileSearchOpen, searchProfiles, currentMember, onOpenMatches }) {
+  const ages = Array.from({ length: 53 }, (_, i) => 18 + i)
+  const religions = ['Select', 'Hindu', 'Muslim', 'Christian', 'Sikh', 'Jain', 'Buddhist', 'Parsi', 'Jewish', 'Any']
+  const languages = ['Select', 'Malayalam', 'Tamil', 'Telugu', 'Kannada', 'Hindi', 'Marathi', 'Bengali', 'Gujarati', 'Punjabi', 'Odia', 'Urdu', 'English']
+  const submit = (event) => {
+    if (currentMember && onOpenMatches) { event?.preventDefault?.(); onOpenMatches(currentMember); return }
+    searchProfiles(event)
+  }
+  const ageOptions = ages.map(age => <option key={age} value={age}>{age}</option>)
+  return <section className="bg-white px-3 pb-8 sm:px-6 sm:pb-12 lg:px-10">
+    <div className="relative mx-auto min-h-[620px] max-w-[1440px] overflow-hidden rounded-[26px] bg-[#252b2e] sm:min-h-[650px] sm:rounded-[34px] md:min-h-[680px]">
+    <img src="/Gemini_Generated_Image_hlp8u6hlp8u6hlp8.png" alt="Kerala wedding celebration" className="absolute inset-0 hidden h-full w-full object-cover object-[center_15%] md:block" />
+    <img src="/erasio_Gemini_Generated_Image_yr2m55yr2m55yr2m (1).png" alt="Kerala wedding celebration" className="absolute inset-0 block h-full w-full object-cover object-top md:hidden" />
+    <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/75 via-black/30 to-black/10" />
+    <div className="relative z-10 mx-auto flex min-h-[620px] w-full max-w-[1320px] flex-col px-5 py-10 sm:min-h-[650px] sm:px-10 sm:py-12 md:min-h-[680px] md:px-12 md:py-12">
+      <motion.div className="flex h-full flex-1 flex-col justify-between" initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <div className="max-w-[680px] text-left">
+          <p className="font-sans text-[10px] font-bold tracking-[.22em] text-[#E8CA91] sm:text-xs">KERALA&apos;S TRUSTED MATCHMAKING</p>
+          <h1 className="font-serif mt-3 text-4xl font-bold leading-[.98] text-white drop-shadow-lg sm:text-6xl md:text-7xl">Choose your forever.</h1>
+          <p className="mt-5 max-w-md text-sm leading-6 text-white/90 drop-shadow sm:text-base">Find love on your terms with meaningful, verified connections.</p>
+        </div>
+        <div>
+        <form id="search" onSubmit={submit} className="mt-8 hidden w-full overflow-x-auto rounded-[30px] border border-[#eadfc7] bg-[#fffdf8] p-5 text-left shadow-[0_22px_50px_rgba(0,0,0,.22)] md:block [-webkit-overflow-scrolling:touch]">
+          <div className="grid min-w-[980px] grid-cols-[1.24fr_1.1fr_1.1fr_1.1fr_.82fr] items-end gap-4">
+            <label className="min-w-0"><span className="mb-3 block text-sm font-medium text-[#5d6b63]">I&apos;m looking for a</span><SelectBox variant="light" value={lookingFor} onChange={e => setLookingFor(e.target.value)}><option>Woman</option><option>Man</option></SelectBox></label>
+            <div className="min-w-0"><span className="mb-3 block text-sm font-medium text-[#5d6b63]">Age</span><div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2"><SelectBox variant="light" value={ageFrom} onChange={e => setAgeFrom(e.target.value)}>{ageOptions}</SelectBox><span className="text-sm text-[#66736b]">to</span><SelectBox variant="light" value={ageTo} onChange={e => setAgeTo(e.target.value)}>{ageOptions}</SelectBox></div></div>
+            <label className="min-w-0"><span className="mb-3 block text-sm font-medium text-[#5d6b63]">Community</span><SelectBox variant="light" value={religion} onChange={e => setReligion(e.target.value)}>{religions.map(item => <option key={item}>{item}</option>)}</SelectBox></label>
+            <label className="min-w-0"><span className="mb-3 block text-sm font-medium text-[#5d6b63]">Mother tongue</span><SelectBox variant="light" value={motherTongue} onChange={e => setMotherTongue(e.target.value)}>{languages.map(item => <option key={item}>{item}</option>)}</SelectBox></label>
+            <button type="submit" className="flex h-[50px] w-full self-end items-center justify-center whitespace-nowrap rounded-full bg-[#701C35] px-4 text-sm font-bold tracking-wide text-white shadow-[0_10px_20px_rgba(158,119,13,.22)] transition hover:bg-[#511327]">{currentMember ? 'My Matches' : 'Search profiles'}</button>
           </div>
-
-          {/* MOBILE SEARCH TRIGGER & EXPANDABLE CARD */}
-          <div className="block md:hidden mt-4">
-            {!mobileSearchOpen ? (
-              <div className="flex justify-center">
-                <button
-                  onClick={() => {
-                    if (currentMember) {
-                      if (onOpenMatches) onOpenMatches(currentMember)
-                      else window.location.hash = '#matches'
-                    } else {
-                      setMobileSearchOpen(true)
-                    }
-                  }}
-                  className="flex items-center gap-2 rounded-full bg-[#3aa8c1] hover:bg-[#3296ad] px-4 sm:px-5 py-2.5 sm:py-3 text-white font-semibold text-xs sm:text-sm shadow-xl shadow-black/60 transition active:scale-95 cursor-pointer border border-white/25 max-w-[260px] sm:max-w-[280px] tracking-wide"
-                  aria-label="Expand search options"
-                >
-                  <div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-white/20 flex-shrink-0">
-                    <Search size={13} />
-                  </div>
-                  <span>{currentMember ? 'View My Matches' : 'Find Your Match'}</span>
-                  <ChevronDown size={15} className="text-white/80" />
-                </button>
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: 12 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                className="mx-auto w-full max-w-[340px] rounded-xl sm:rounded-2xl bg-black/85 backdrop-blur-lg p-3 sm:p-5 border border-white/20 shadow-2xl text-left"
-              >
-                <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-white/15">
-                  <div className="flex items-center gap-2 text-white font-semibold text-xs sm:text-sm">
-                    <Search size={15} className="text-[#3aa8c1]" />
-                    <span>Search Profiles</span>
-                  </div>
-                  <button
-                    onClick={() => setMobileSearchOpen(false)}
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25 transition cursor-pointer"
-                    aria-label="Close search"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {/* I'm looking for a */}
-                  <div>
-                    <label className="mb-1 block text-[11px] sm:text-xs text-white/90 font-medium">I&apos;m looking for a</label>
-                    <div className="relative">
-                      <select
-                        value={lookingFor}
-                        onChange={e => setLookingFor(e.target.value)}
-                        className="w-full appearance-none rounded bg-white px-2.5 py-2 text-xs sm:text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                      >
-                        <option value="Woman">Woman</option>
-                        <option value="Man">Man</option>
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                    </div>
-                  </div>
-
-                  {/* aged */}
-                  <div>
-                    <label className="mb-1 block text-[11px] sm:text-xs text-white/90 font-medium">aged</label>
-                    <div className="flex items-center gap-1.5">
-                      <div className="relative flex-1">
-                        <select
-                          value={ageFrom}
-                          onChange={e => setAgeFrom(e.target.value)}
-                          className="w-full appearance-none rounded bg-white px-2 py-2 text-xs sm:text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                        >
-                          {Array.from({ length: 53 }, (_, i) => 18 + i).map(n => (
-                            <option key={n} value={n}>{n}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-gray-500" size={12} />
-                      </div>
-                      <span className="text-[11px] sm:text-xs text-white/90 font-medium px-0.5">to</span>
-                      <div className="relative flex-1">
-                        <select
-                          value={ageTo}
-                          onChange={e => setAgeTo(e.target.value)}
-                          className="w-full appearance-none rounded bg-white px-2 py-2 text-xs sm:text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                        >
-                          {Array.from({ length: 53 }, (_, i) => 18 + i).map(n => (
-                            <option key={n} value={n}>{n}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-gray-500" size={12} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* of religion */}
-                  <div>
-                    <label className="mb-1 block text-[11px] sm:text-xs text-white/90 font-medium">of religion</label>
-                    <div className="relative">
-                      <select
-                        value={religion}
-                        onChange={e => setReligion(e.target.value)}
-                        className="w-full appearance-none rounded bg-white px-2.5 py-2 text-xs sm:text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                      >
-                        <option value="Select">Select</option>
-                        <option value="Hindu">Hindu</option>
-                        <option value="Muslim">Muslim</option>
-                        <option value="Christian">Christian</option>
-                        <option value="Sikh">Sikh</option>
-                        <option value="Jain">Jain</option>
-                        <option value="Buddhist">Buddhist</option>
-                        <option value="Parsi">Parsi</option>
-                        <option value="Jewish">Jewish</option>
-                        <option value="Any">Any Religion</option>
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                    </div>
-                  </div>
-
-                  {/* and mother tongue */}
-                  <div>
-                    <label className="mb-1 block text-[11px] sm:text-xs text-white/90 font-medium">and mother tongue</label>
-                    <div className="relative">
-                      <select
-                        value={motherTongue}
-                        onChange={e => setMotherTongue(e.target.value)}
-                        className="w-full appearance-none rounded bg-white px-2.5 py-2 text-xs sm:text-sm font-medium text-gray-800 shadow-sm outline-none cursor-pointer focus:ring-2 focus:ring-[#3aa8c1]"
-                      >
-                        <option value="Select">Select</option>
-                        <option value="Malayalam">Malayalam</option>
-                        <option value="Tamil">Tamil</option>
-                        <option value="Telugu">Telugu</option>
-                        <option value="Kannada">Kannada</option>
-                        <option value="Hindi">Hindi</option>
-                        <option value="Marathi">Marathi</option>
-                        <option value="Bengali">Bengali</option>
-                        <option value="Gujarati">Gujarati</option>
-                        <option value="Punjabi">Punjabi</option>
-                        <option value="Odia">Odia</option>
-                        <option value="Urdu">Urdu</option>
-                        <option value="English">English</option>
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-500" size={14} />
-                    </div>
-                  </div>
-
-                  {/* Let's Begin Button */}
-                  <button
-                    onClick={searchProfiles}
-                    className="w-full h-10 mt-1 rounded bg-[#3aa8c1] hover:bg-[#3296ad] active:bg-[#2b8296] text-white font-semibold text-xs sm:text-sm flex items-center justify-center transition shadow-lg cursor-pointer tracking-wide"
-                  >
-                    {currentMember ? 'Explore My Matches' : "Let's Begin"}
-                  </button>
-                </div>
-              </motion.div>
-            )}
+        </form>
+        <form onSubmit={submit} className="hidden">
+          <div className="grid grid-cols-6 gap-3">
+            <label className="col-span-2 min-w-0"><span className="mb-1 block text-xs font-medium text-white/90">I&apos;m looking for a</span><SelectBox value={lookingFor} onChange={e => setLookingFor(e.target.value)}><option>Woman</option><option>Man</option></SelectBox></label>
+            <div className="col-span-2 min-w-0"><span className="mb-1 block text-xs font-medium text-white/90">aged</span><div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1.5"><SelectBox value={ageFrom} onChange={e => setAgeFrom(e.target.value)}>{ageOptions}</SelectBox><span className="text-xs text-white/90">to</span><SelectBox value={ageTo} onChange={e => setAgeTo(e.target.value)}>{ageOptions}</SelectBox></div></div>
+            <label className="col-span-2 min-w-0"><span className="mb-1 block text-xs font-medium text-white/90">of religion</span><SelectBox value={religion} onChange={e => setReligion(e.target.value)}>{religions.map(item => <option key={item}>{item}</option>)}</SelectBox></label>
+            <label className="col-span-4 min-w-0"><span className="mb-1 block text-xs font-medium text-white/90">and mother tongue</span><SelectBox value={motherTongue} onChange={e => setMotherTongue(e.target.value)}>{languages.map(item => <option key={item}>{item}</option>)}</SelectBox></label>
+            <button type="submit" className="col-span-2 flex h-[42px] items-center justify-center rounded bg-[#701C35] px-6 text-sm font-bold tracking-wide text-white shadow transition hover:bg-[#511327]">{currentMember ? 'Explore My Matches' : "Let's Begin"}</button>
           </div>
-        </motion.div>
-      </div>
-    </section>
-  )
+        </form>
+        <div className="mt-4 block md:hidden">
+          {!mobileSearchOpen ? (
+            <button onClick={() => currentMember ? submit() : setMobileSearchOpen(true)} className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-[#701C35] px-6 py-3 text-sm font-bold tracking-wide text-white shadow-xl shadow-black/60"><span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20"><Search size={14} /></span>{currentMember ? 'View My Matches' : 'Find Your Match'}<ChevronDown size={15} /></button>
+          ) : (
+            <motion.div initial={{ opacity: 0, scale: 0.96, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="mx-auto w-full max-w-[380px] rounded-2xl border border-white/20 bg-black/85 p-4 text-left shadow-2xl backdrop-blur-lg">
+              <div className="mb-4 flex items-center justify-between border-b border-white/15 pb-3 text-base font-semibold text-white"><span className="flex items-center gap-2"><Search size={17} className="text-[#d3a825]" />Search Profiles</span><button type="button" onClick={() => setMobileSearchOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15" aria-label="Close search"><X size={18} /></button></div>
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-white/90">I&apos;m looking for a<SelectBox value={lookingFor} onChange={e => setLookingFor(e.target.value)}><option>Woman</option><option>Man</option></SelectBox></label>
+                <div><span className="mb-1 block text-sm font-medium text-white/90">aged</span><div className="grid grid-cols-[1fr_auto_1fr] items-end gap-2"><SelectBox value={ageFrom} onChange={e => setAgeFrom(e.target.value)}>{ageOptions}</SelectBox><span className="pb-3 text-sm text-white/80">to</span><SelectBox value={ageTo} onChange={e => setAgeTo(e.target.value)}>{ageOptions}</SelectBox></div></div>
+                <label className="block text-sm font-medium text-white/90">of religion<SelectBox value={religion} onChange={e => setReligion(e.target.value)}>{religions.map(item => <option key={item}>{item}</option>)}</SelectBox></label>
+                <label className="block text-sm font-medium text-white/90">and mother tongue<SelectBox value={motherTongue} onChange={e => setMotherTongue(e.target.value)}>{languages.map(item => <option key={item}>{item}</option>)}</SelectBox></label>
+                <button type="button" onClick={submit} className="mt-2 flex h-12 w-full items-center justify-center rounded-lg bg-[#701C35] text-sm font-bold text-white hover:bg-[#511327]">{currentMember ? 'Explore My Matches' : "Let's Begin"}</button>
+              </div>
+            </motion.div>
+          )}
+        </div>
+        </div>
+      </motion.div>
+    </div>
+    </div>
+  </section>
 }

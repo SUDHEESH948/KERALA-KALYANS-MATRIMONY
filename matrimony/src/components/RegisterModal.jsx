@@ -20,7 +20,7 @@ import {
 
 import { API_BASE } from "../config/api";
 import { useNotification } from "../context/NotificationContext";
-import TermsDisclaimerModal from "./TermsDisclaimerModal";
+import TermsPolicyDialog from "./TermsPolicyDialog";
 
 export default function RegisterModal({
   isOpen,
@@ -197,7 +197,7 @@ export default function RegisterModal({
           className="relative w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-2 sm:my-6 register-modal"
         >
           {/* Header Banner */}
-          <div className="bg-[#701C35] px-3.5 sm:px-8 py-3.5 sm:py-5 text-white flex items-center justify-between">
+          <div className="bg-[#e2b82f] px-3.5 sm:px-8 py-3.5 sm:py-5 text-[#332500] flex items-center justify-between">
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
               <img
                 src="/kerala-kalyan-logo.png"
@@ -208,7 +208,7 @@ export default function RegisterModal({
                 <h3 className="text-base sm:text-2xl leading-tight truncate">
                   Register on Kerala Kalyans
                 </h3>
-                <p className="text-[9px] sm:text-xs text-[#E8CA91] font-semibold tracking-wide truncate">
+                <p className="text-[9px] sm:text-xs text-[#573b0b] font-semibold tracking-wide truncate">
                   FIND YOUR SPECIAL SOMEONE
                 </p>
               </div>
@@ -216,7 +216,7 @@ export default function RegisterModal({
 
             <button
               onClick={onClose}
-              className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition cursor-pointer flex-shrink-0"
+              className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-black/10 hover:bg-black/20 text-[#332500] transition cursor-pointer flex-shrink-0"
               aria-label="Close dialog"
             >
               <X size={16} />
@@ -230,7 +230,7 @@ export default function RegisterModal({
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                   <Clock size={36} />
                 </div>
-                <h4 className="text-2xl font-bold text-[#701C35]">
+                <h4 className="text-2xl font-bold text-[#795705]">
                   Awaiting Admin Approval
                 </h4>
                 <div className="bg-amber-50/95 border border-amber-200 p-4 sm:p-5 rounded-xl max-w-md mx-auto shadow-xs text-center space-y-2.5">
@@ -277,7 +277,7 @@ export default function RegisterModal({
                 <div className="pt-3 flex justify-center">
                   <button
                     onClick={handleReset}
-                    className="px-8 py-3 rounded-full bg-[#701C35] hover:bg-[#511327] text-white text-xs sm:text-sm font-semibold transition cursor-pointer shadow-lg shadow-[#701C35]/20"
+                    className="px-8 py-3 rounded-full bg-[#e2b82f] hover:bg-[#d4aa25] text-[#332500] text-xs sm:text-sm font-semibold transition cursor-pointer shadow-lg shadow-[#b58a20]/20"
                   >
                     Done
                   </button>
@@ -317,7 +317,7 @@ export default function RegisterModal({
                         }}
                         className={`py-2 px-1 text-center rounded-lg border text-[11px] font-semibold transition cursor-pointer ${
                           profileFor === rel
-                            ? "bg-[#701C35] text-white border-[#701C35]"
+                            ? "bg-[#e2b82f] text-[#332500] border-[#b58a20]"
                             : "bg-[#FAF7F1] text-gray-700 border-[#eadfce] hover:bg-gray-100"
                         }`}
                       >
@@ -368,7 +368,7 @@ export default function RegisterModal({
                           <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="px-3 py-1 rounded-md text-[11px] font-medium bg-[#701C35] text-white hover:bg-[#511327] transition cursor-pointer"
+                            className="px-3 py-1 rounded-md text-[11px] font-medium bg-[#e2b82f] text-[#332500] hover:bg-[#d4aa25] transition cursor-pointer"
                           >
                             Change Photo
                           </button>
@@ -386,12 +386,12 @@ export default function RegisterModal({
                   ) : (
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center p-4 sm:p-5 border-2 border-dashed border-[#d8c7b3] hover:border-[#701C35] bg-white rounded-xl cursor-pointer transition text-center group"
+                      className="flex flex-col items-center justify-center p-4 sm:p-5 border-2 border-dashed border-[#d8c7b3] hover:border-[#b58a20] bg-white rounded-xl cursor-pointer transition text-center group"
                     >
-                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FAF7F1] text-[#701C35] group-hover:bg-[#701C35] group-hover:text-white transition mb-2 shadow-xs">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FAF7F1] text-[#795705] group-hover:bg-[#e2b82f] group-hover:text-[#332500] transition mb-2 shadow-xs">
                         <Camera size={20} />
                       </div>
-                      <p className="text-xs font-semibold text-gray-800 group-hover:text-[#701C35] transition">
+                      <p className="text-xs font-semibold text-gray-800 group-hover:text-[#795705] transition">
                         Click to upload your portrait photo
                       </p>
                       <p className="text-[10px] text-gray-400 mt-0.5">
@@ -418,7 +418,7 @@ export default function RegisterModal({
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="e.g. Ananya Menon"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35]"
+                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20] focus:ring-1 focus:ring-[#b58a20]"
                       />
                     </div>
                   </div>
@@ -433,7 +433,7 @@ export default function RegisterModal({
                         onClick={() => setGender("Bride")}
                         className={`py-2.5 rounded-lg border font-semibold text-center transition cursor-pointer ${
                           gender === "Bride"
-                            ? "bg-[#701C35] text-white border-[#701C35]"
+                            ? "bg-[#e2b82f] text-[#332500] border-[#b58a20]"
                             : "bg-white text-gray-700 border-gray-300"
                         }`}
                       >
@@ -444,7 +444,7 @@ export default function RegisterModal({
                         onClick={() => setGender("Groom")}
                         className={`py-2.5 rounded-lg border font-semibold text-center transition cursor-pointer ${
                           gender === "Groom"
-                            ? "bg-[#701C35] text-white border-[#701C35]"
+                            ? "bg-[#e2b82f] text-[#332500] border-[#b58a20]"
                             : "bg-white text-gray-700 border-gray-300"
                         }`}
                       >
@@ -472,7 +472,7 @@ export default function RegisterModal({
                     <select
                       value={age}
                       onChange={(e) => setAge(Number(e.target.value))}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#701C35]"
+                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
                     >
                       {Array.from({ length: 50 }, (_, i) => 18 + i).map((n) => (
                         <option key={n} value={n}>
@@ -489,7 +489,7 @@ export default function RegisterModal({
                     <select
                       value={height}
                       onChange={(e) => setHeight(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#701C35]"
+                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
                     >
                       {[
                         "4'10\"",
@@ -522,7 +522,7 @@ export default function RegisterModal({
                     <select
                       value={marriageType}
                       onChange={(e) => setMarriageType(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#701C35] font-medium"
+                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20] font-medium"
                     >
                       <option value="Never Married">Never Married</option>
                       <option value="Divorced">Divorced</option>
@@ -543,7 +543,7 @@ export default function RegisterModal({
                     <select
                       value={religion}
                       onChange={(e) => setReligion(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#701C35]"
+                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
                     >
                       <option value="Hindu">Hindu</option>
                       <option value="Christian">Christian</option>
@@ -564,7 +564,7 @@ export default function RegisterModal({
                       value={caste}
                       onChange={(e) => setCaste(e.target.value)}
                       placeholder="e.g. Nair, Syrian Catholic"
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35]"
+                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                     />
                   </div>
                 </div>
@@ -578,7 +578,7 @@ export default function RegisterModal({
                     <select
                       value={motherTongue}
                       onChange={(e) => setMotherTongue(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#701C35]"
+                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
                     >
                       <option value="Malayalam">Malayalam</option>
                       <option value="Tamil">Tamil</option>
@@ -607,7 +607,7 @@ export default function RegisterModal({
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         placeholder="e.g. Kochi, Kerala"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35]"
+                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
                   </div>
@@ -629,7 +629,7 @@ export default function RegisterModal({
                         value={education}
                         onChange={(e) => setEducation(e.target.value)}
                         placeholder="e.g. B.Tech, MBBS, MBA"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35]"
+                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
                   </div>
@@ -648,7 +648,7 @@ export default function RegisterModal({
                         value={profession}
                         onChange={(e) => setProfession(e.target.value)}
                         placeholder="e.g. Software Engineer"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35]"
+                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
                   </div>
@@ -671,7 +671,7 @@ export default function RegisterModal({
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="e.g. +91 98471 22334"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35]"
+                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
                   </div>
@@ -691,7 +691,7 @@ export default function RegisterModal({
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="e.g. user@example.com"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35]"
+                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
                   </div>
@@ -700,14 +700,14 @@ export default function RegisterModal({
                 {/* Registration & Privacy Disclaimer Box */}
                 <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-3 sm:p-3.5 space-y-2 text-[11px] text-gray-700">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-[#701C35] flex items-center gap-1.5">
-                      <ShieldCheck size={14} className="text-[#701C35]" />
+                    <span className="font-bold text-[#795705] flex items-center gap-1.5">
+                      <ShieldCheck size={14} className="text-[#795705]" />
                       <span>Registration Terms &amp; Privacy Notice</span>
                     </span>
                     <button
                       type="button"
                       onClick={() => setShowTermsModal(true)}
-                      className="text-[#701C35] font-semibold hover:underline text-[10px] cursor-pointer"
+                      className="text-[#795705] font-semibold hover:underline text-[10px] cursor-pointer"
                     >
                       View Full Policy →
                     </button>
@@ -738,7 +738,7 @@ export default function RegisterModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full mt-2 py-3.5 rounded-xl bg-[#701C35] hover:bg-[#511327] text-white font-semibold text-sm transition shadow-lg shadow-[#701C35]/25 cursor-pointer disabled:opacity-50"
+                  className="w-full mt-2 py-3.5 rounded-xl bg-[#e2b82f] hover:bg-[#d4aa25] text-[#332500] font-semibold text-sm transition shadow-lg shadow-[#b58a20]/25 cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting
                     ? "Creating Profile..."
@@ -750,7 +750,7 @@ export default function RegisterModal({
         </motion.div>
 
         {/* Full Terms & Legal Disclaimer Modal */}
-        <TermsDisclaimerModal
+        <TermsPolicyDialog
           isOpen={showTermsModal}
           onClose={() => setShowTermsModal(false)}
         />

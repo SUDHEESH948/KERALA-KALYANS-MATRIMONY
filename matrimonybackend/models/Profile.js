@@ -76,6 +76,16 @@ const profileSchema = new mongoose.Schema(
       trim: true,
       default: ''
     },
+    whatsAppOptIn: Boolean,
+    marriageSurvey: {
+      status: {
+        type: String,
+        enum: ['sending', 'accepted', 'rejected', 'uncertain']
+      },
+      attemptedAt: Date,
+      acceptedAt: Date,
+      messageId: String
+    },
     password: {
       type: String,
       required: true
@@ -116,6 +126,8 @@ const profileSchema = new mongoose.Schema(
     timestamps: true
   }
 )
+
+profileSchema.index({ whatsAppOptIn: 1, createdAt: 1 })
 
 // Pre-save hook: Hash password with bcrypt before saving if modified
 profileSchema.pre('save', async function () {

@@ -13,6 +13,7 @@ import inquiryRoutes from './routes/inquiryRoutes.js'
 import statsRoutes from './routes/statsRoutes.js'
 import { purgeDummyData } from './controllers/statsController.js'
 import { notFound, errorHandler } from './middleware/errorHandler.js'
+import { startMarriageSurveyScheduler } from './services/marriageSurvey.js'
 
 // Environment Configuration
 const __filename = fileURLToPath(import.meta.url)
@@ -56,6 +57,8 @@ const startServer = async () => {
     await ensureAdminAccount()
 
     const server = app.listen(PORT, () => {
+      const stopMarriageSurveyScheduler = startMarriageSurveyScheduler()
+      server.once('close', stopMarriageSurveyScheduler)
       console.log('==============================================')
       console.log(` Apremiya Matrimony Server Running!`)
       console.log(` Mode: ${process.env.NODE_ENV || 'development'}`)

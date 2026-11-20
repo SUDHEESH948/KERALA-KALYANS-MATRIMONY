@@ -121,7 +121,7 @@ export default function MemberLoginModal({
           className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-4 login-modal"
         >
           {/* Header Banner */}
-          <div className="bg-[#701C35] px-5 py-4 text-white flex items-center justify-between">
+          <div className="bg-[#e2b82f] px-5 py-4 text-[#332500] flex items-center justify-between">
             <div className="flex items-center gap-2.5 min-w-0">
               <img
                 src="/kerala-kalyan-logo.png"
@@ -132,7 +132,7 @@ export default function MemberLoginModal({
                 <h3 className="text-lg sm:text-xl leading-tight truncate">
                   Member Login
                 </h3>
-                <p className="text-[10px] text-[#E8CA91] font-semibold tracking-wide truncate">
+                <p className="text-[10px] text-[#573b0b] font-semibold tracking-wide truncate">
                   KERALA KALYANS MATRIMONY
                 </p>
               </div>
@@ -140,7 +140,7 @@ export default function MemberLoginModal({
 
             <button
               onClick={onClose}
-              className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition cursor-pointer flex-shrink-0"
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-black/10 hover:bg-black/20 text-[#332500] transition cursor-pointer flex-shrink-0"
               aria-label="Close dialog"
             >
               <X size={16} />
@@ -192,7 +192,7 @@ export default function MemberLoginModal({
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="e.g. user@example.com"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] text-xs sm:text-sm"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20] focus:ring-1 focus:ring-[#b58a20] text-xs sm:text-sm"
                   />
                 </div>
               </div>
@@ -214,7 +214,7 @@ export default function MemberLoginModal({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your temporary or private password"
-                    className="w-full pl-9 pr-10 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] text-xs sm:text-sm"
+                    className="w-full pl-9 pr-10 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20] focus:ring-1 focus:ring-[#b58a20] text-xs sm:text-sm"
                   />
                   <button
                     type="button"
@@ -229,7 +229,7 @@ export default function MemberLoginModal({
               <button
                 type="submit"
                 disabled={isLoading || !identifier || !password}
-                className="w-full mt-2 py-3 rounded-xl bg-[#701C35] hover:bg-[#511327] text-white font-semibold text-xs sm:text-sm transition shadow-lg shadow-[#701C35]/25 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full mt-2 py-3 rounded-xl bg-[#e2b82f] hover:bg-[#d4aa25] text-[#332500] font-semibold text-xs sm:text-sm transition shadow-lg shadow-[#b58a20]/25 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <LogIn size={16} />
                 <span>{isLoading ? 'Verifying Credentials...' : 'Sign In to Account'}</span>
@@ -243,7 +243,7 @@ export default function MemberLoginModal({
                   onClose()
                   if (onOpenRegister) onOpenRegister()
                 }}
-                className="text-[#701C35] font-semibold hover:underline cursor-pointer"
+                className="text-[#795705] font-semibold hover:underline cursor-pointer"
               >
                 Register on Kerala Kalyans
               </button>

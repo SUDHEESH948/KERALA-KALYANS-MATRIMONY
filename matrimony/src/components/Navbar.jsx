@@ -1,4 +1,4 @@
-import { Heart, Menu, X, ShieldCheck, LogIn, LogOut, UserCheck, Sparkles } from 'lucide-react'
+import { Menu, X, ShieldCheck, LogIn, LogOut, UserCheck, Sparkles, Home, Users, Crown, UserPlus } from 'lucide-react'
 import { useNotification } from '../context/NotificationContext'
 
 export default function Navbar({
@@ -14,41 +14,28 @@ export default function Navbar({
   const { unreadCount = 0 } = useNotification() || {}
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#e9dfd2] bg-[#FAF7F1]/95 backdrop-blur-lg">
+    <nav className="sticky top-0 z-50 bg-white/95 shadow-[0_8px_28px_rgba(36,42,45,0.06)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between px-3 sm:px-5 py-3 sm:py-4 lg:px-12">
-        <a href="#" className="flex items-center gap-2.5">
+        <a href="#" className="flex shrink-0 items-center" aria-label="Kerala Kalyans home">
           <img
             src="/kerala-kalyan-logo.png"
             alt="Kerala Kalyans Matrimony"
-            className="h-9 sm:h-11 md:h-12 w-auto object-contain mix-blend-multiply"
+            className="h-12 w-auto object-contain contrast-[1.12] saturate-[1.2] drop-shadow-[0_1px_0_rgba(180,135,35,0.12)] sm:h-14 md:h-16"
           />
-          <div className="hidden sm:block">
-            <h2 className="text-lg sm:text-xl text-[#701C35] leading-tight tracking-tight uppercase">
-              Kerala Kalyans
-            </h2>
-            <p className="text-[8px] sm:text-[9px] font-semibold tracking-[2px] text-[#9C8158]">
-              MATRIMONY
-            </p>
-          </div>
         </a>
 
-        <div className="hidden items-center gap-7 text-sm font-semibold text-[#51464a] lg:flex">
-          <a href="#" className="text-[#701C35] hover:text-[#511327] transition">Home</a>
-          <a href="#how-it-works" className="hover:text-[#701C35] transition">How It Works</a>
-          <a href="#community" className="hover:text-[#701C35] transition">Community</a>
-          <a href="#stories" className="hover:text-[#701C35] transition">Success Stories</a>
-          <a href="#membership" className="hover:text-[#701C35] transition">Membership</a>
-          <a href="#about" className="hover:text-[#701C35] transition">About Us</a>
+        <div className="hidden items-center gap-8 text-sm font-semibold font-sans text-[#545b5f] lg:flex">
+          <a href="#" className="text-[#701C35] transition hover:text-[#c79c18]">Home</a>
+          <a href="#membership" className="transition hover:text-[#c79c18]">Membership</a>
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
           <button
             onClick={onOpenAdmin}
-            className="relative px-3 py-2 text-sm font-semibold text-[#701C35] hover:text-[#511327] transition cursor-pointer flex items-center gap-1.5"
+            className="relative rounded-full p-2 text-[#687074] transition hover:bg-[#e9ecec] hover:text-[#701C35] cursor-pointer"
             title="Admin Management"
           >
             <ShieldCheck size={16} />
-            <span>Admin Portal</span>
             {unreadCount > 0 && (
               <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white shadow-xs animate-pulse">
                 {unreadCount}
@@ -63,20 +50,20 @@ export default function Navbar({
                 className="px-3.5 py-1.5 rounded-full bg-[#701C35] hover:bg-[#511327] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                 title="View your compatible matches"
               >
-                <Sparkles size={13} className="text-[#E8CA91]" />
+                <Sparkles size={13} className="text-[#e0b629]" />
                 <span>My Matches</span>
               </button>
               <div
                 onClick={onOpenMatches}
-                className="flex items-center gap-2.5 bg-white hover:bg-[#701C35]/5 px-3 py-1.5 rounded-full border border-[#eadfce] shadow-xs cursor-pointer transition"
+                className="flex items-center gap-2.5 bg-white hover:bg-[#f1f3f3] px-3 py-1.5 rounded-full border border-[#eadfce] shadow-xs cursor-pointer transition"
                 title="View your compatible matches"
               >
                 <img
                   src={currentMember.photo}
                   alt={currentMember.name}
-                  className="h-7 w-7 rounded-full object-cover border border-[#701C35]/30"
+                  className="h-7 w-7 rounded-full object-cover border border-[#c79c18]/40"
                 />
-                <div className="text-left">
+                <div className="text-left font-sans">
                   <p className="text-xs font-bold text-gray-800 leading-tight max-w-[110px] truncate">
                     {currentMember.name}
                   </p>
@@ -101,7 +88,7 @@ export default function Navbar({
               {/* Automatically added Login button */}
               <button
                 onClick={onOpenLogin}
-                className="px-4 py-2 text-sm font-semibold text-[#701C35] hover:text-[#511327] transition cursor-pointer flex items-center gap-1.5 border border-[#701C35]/30 rounded-full hover:bg-[#701C35]/5"
+                className="font-sans px-4 py-2 text-sm font-semibold text-[#701C35] hover:text-[#511327] transition cursor-pointer flex items-center gap-1.5 border border-[#701C35]/30 rounded-full hover:bg-[#701C35]/5"
               >
                 <LogIn size={15} />
                 <span>Login</span>
@@ -109,7 +96,7 @@ export default function Navbar({
 
               <button
                 onClick={onOpenRegister}
-                className="rounded-full bg-[#701C35] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#701C35]/15 transition hover:bg-[#511327] cursor-pointer"
+                className="font-sans rounded-full border border-[#b58a20] bg-white px-6 py-2.5 text-sm font-bold text-[#332500] shadow-sm transition-colors hover:bg-[#e2b82f] focus-visible:bg-[#e2b82f] cursor-pointer"
               >
                 Register
               </button>
@@ -132,13 +119,13 @@ export default function Navbar({
               <span className="text-[11px] font-bold max-w-[75px] truncate">
                 {currentMember.name}
               </span>
-              <Sparkles size={11} className="text-[#E8CA91]" />
+              <Sparkles size={11} className="text-[#e0b629]" />
             </button>
           )}
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="text-[#701C35] p-1.5"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#eadfce] bg-white text-[#363b3e] shadow-sm transition hover:border-[#d3a825] hover:bg-[#f7f1dc]"
             aria-label="Toggle navigation"
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -147,14 +134,14 @@ export default function Navbar({
       </div>
 
       {menuOpen && (
-        <div className="flex flex-col gap-3.5 border-t border-[#e9dfd2] bg-[#FAF7F1] px-4 py-5 lg:hidden font-medium text-sm">
+        <div className="border-t border-[#eadfce] bg-[#FAF7F1] px-4 py-5 lg:hidden font-sans text-sm text-[#545b5f] shadow-[0_18px_30px_rgba(36,42,45,0.08)]">
           {currentMember && (
-            <div className="p-3 bg-white rounded-xl border border-[#eadfce] flex items-center justify-between mb-1">
+            <div className="mb-4 flex items-center justify-between rounded-2xl border border-[#eadfce] bg-white p-3">
               <div className="flex items-center gap-2.5 min-w-0">
                 <img
                   src={currentMember.photo}
                   alt={currentMember.name}
-                  className="h-9 w-9 rounded-full object-cover border border-[#701C35]/30"
+                  className="h-9 w-9 rounded-full object-cover border border-[#c79c18]/40"
                 />
                 <div className="min-w-0">
                   <p className="font-bold text-xs text-gray-900 truncate">{currentMember.name}</p>
@@ -181,26 +168,34 @@ export default function Navbar({
                 setMenuOpen(false)
                 onOpenMatches?.()
               }}
-              className="w-full py-2.5 px-4 rounded-xl bg-[#701C35] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+              className="mb-4 w-full rounded-xl bg-[#3a4144] px-4 py-2.5 text-xs font-bold text-white flex items-center justify-center gap-2 shadow-xs cursor-pointer"
             >
-              <Sparkles size={14} className="text-[#E8CA91]" />
+              <Sparkles size={14} className="text-[#e0b629]" />
               <span>Explore My Matches</span>
             </button>
           )}
 
-          <a href="#" onClick={() => setMenuOpen(false)} className="text-[#701C35] font-semibold">Home</a>
-          <a href="#how-it-works" onClick={() => setMenuOpen(false)} className="hover:text-[#701C35] transition">How It Works</a>
-          <a href="#community" onClick={() => setMenuOpen(false)} className="hover:text-[#701C35] transition">Community</a>
-          <a href="#stories" onClick={() => setMenuOpen(false)} className="hover:text-[#701C35] transition">Success Stories</a>
-          <a href="#membership" onClick={() => setMenuOpen(false)} className="hover:text-[#701C35] transition">Membership</a>
-          <a href="#about" onClick={() => setMenuOpen(false)} className="hover:text-[#701C35] transition">About Us</a>
+          <div className="grid grid-cols-3 gap-2">
+            <a href="#" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[10px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
+              <Home size={18} className="text-[#d3a825]" />
+              <span>Home</span>
+            </a>
+            <a href="#community" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[10px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
+              <Users size={18} className="text-[#d3a825]" />
+              <span>Community</span>
+            </a>
+            <a href="#membership" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[10px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
+              <Crown size={18} className="text-[#d3a825]" />
+              <span>Membership</span>
+            </a>
+          </div>
 
           <button
             onClick={() => {
               setMenuOpen(false)
               onOpenAdmin?.()
             }}
-            className="text-left text-sm font-semibold text-[#701C35] flex items-center justify-between py-1 cursor-pointer"
+            className="mt-3 flex w-full items-center justify-between rounded-xl border border-[#eadfce] bg-white px-3 py-3 text-left font-sans text-xs font-semibold text-[#3a4144] shadow-xs cursor-pointer"
           >
             <div className="flex items-center gap-1.5">
               <ShieldCheck size={16} />
@@ -214,13 +209,13 @@ export default function Navbar({
           </button>
 
           {!currentMember && (
-            <div className="grid grid-cols-2 gap-2 pt-2">
+            <div className="grid grid-cols-2 gap-2 pt-3">
               <button
                 onClick={() => {
                   setMenuOpen(false)
                   onOpenLogin?.()
                 }}
-                className="text-center rounded-full border border-[#701C35] py-2.5 text-[#701C35] text-xs font-semibold shadow-xs cursor-pointer flex items-center justify-center gap-1"
+                className="text-center rounded-full border border-[#aeb4b6] py-2.5 text-[#3a4144] text-xs font-semibold font-sans shadow-xs cursor-pointer flex items-center justify-center gap-1"
               >
                 <LogIn size={14} />
                 <span>Login</span>
@@ -230,8 +225,9 @@ export default function Navbar({
                   setMenuOpen(false)
                   onOpenRegister?.()
                 }}
-                className="text-center rounded-full bg-[#701C35] py-2.5 text-white text-xs font-semibold shadow-md cursor-pointer"
+                className="flex items-center justify-center gap-1 rounded-full border border-[#b58a20] bg-white py-2.5 text-center text-xs font-bold text-[#332500] font-sans shadow-sm transition-colors hover:bg-[#e2b82f] focus-visible:bg-[#e2b82f] cursor-pointer"
               >
+                <UserPlus size={14} />
                 Register
               </button>
             </div>

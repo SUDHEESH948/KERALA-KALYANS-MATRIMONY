@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import HeroSection from '../components/HeroSection'
 import TrustSection from '../components/TrustSection'
-import HowItWorksSection from '../components/HowItWorksSection'
 import CommunitySection from '../components/CommunitySection'
 import StoriesSection from '../components/StoriesSection'
 import MembershipSection from '../components/MembershipSection'
 import FooterSection from '../components/FooterSection'
 import RegisterModal from '../components/RegisterModal'
 import MemberLoginModal from '../components/MemberLoginModal'
-import TermsDisclaimerModal from '../components/TermsDisclaimerModal'
+import TermsPolicyDialog from '../components/TermsPolicyDialog'
 import { API_BASE } from '../config/api'
 
 export default function HomePage({ onOpenAdmin, onOpenMatches }) {
@@ -100,7 +99,7 @@ export default function HomePage({ onOpenAdmin, onOpenMatches }) {
   }
 
   return (
-    <div className="overflow-hidden bg-[#FAF7F1]">
+    <div className="overflow-hidden bg-[#FAF7F1] font-sans text-slate-800">
       {/* 1. Navbar */}
       <Navbar
         onOpenAdmin={onOpenAdmin}
@@ -135,9 +134,6 @@ export default function HomePage({ onOpenAdmin, onOpenMatches }) {
       {/* 3. Trust & Statistics Section */}
       <TrustSection platformStats={platformStats} />
 
-      {/* 4. How It Works Section */}
-      <HowItWorksSection />
-
       {/* 5. Matrimony By Community Section */}
       <CommunitySection />
 
@@ -147,12 +143,10 @@ export default function HomePage({ onOpenAdmin, onOpenMatches }) {
       {/* 7. Membership & Policy Section */}
       <MembershipSection
         onOpenRegister={() => setIsRegisterOpen(true)}
-        onOpenTerms={() => setIsTermsOpen(true)}
       />
 
       {/* 8. Footer Section */}
       <FooterSection
-        onOpenAdmin={onOpenAdmin}
         onOpenRegister={() => setIsRegisterOpen(true)}
         onOpenTerms={() => setIsTermsOpen(true)}
       />
@@ -198,7 +192,7 @@ export default function HomePage({ onOpenAdmin, onOpenMatches }) {
       />
 
       {/* 11. Terms, Policy & Legal Disclaimer Modal */}
-      <TermsDisclaimerModal
+      <TermsPolicyDialog
         isOpen={isTermsOpen}
         onClose={() => setIsTermsOpen(false)}
       />

@@ -12,7 +12,7 @@ import {
   HeartHandshake
 } from 'lucide-react'
 
-export default function TermsDisclaimerModal({ isOpen, onClose }) {
+export default function TermsPolicyDialog({ isOpen, onClose }) {
   if (!isOpen) return null
 
   return (
@@ -25,7 +25,7 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
           className="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl border border-[#eadfce] overflow-hidden my-4 text-gray-800"
         >
           {/* Header Banner */}
-          <div className="bg-[#701C35] px-5 sm:px-6 py-4 text-white flex items-center justify-between">
+          <div className="bg-[#e2b82f] px-5 sm:px-6 py-4 text-[#332500] flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0">
               <img
                 src="/kerala-kalyan-logo.png"
@@ -36,7 +36,7 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
                 <h3 className="text-lg sm:text-xl leading-tight truncate">
                   Terms, Policy &amp; Legal Disclaimer
                 </h3>
-                <p className="text-[10px] text-[#E8CA91] font-semibold tracking-wide uppercase truncate">
+                <p className="text-[10px] text-[#573b0b] font-semibold tracking-wide uppercase truncate">
                   Kerala Kalyans Matrimony · Official Guidelines
                 </p>
               </div>
@@ -44,7 +44,7 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
 
             <button
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition cursor-pointer flex-shrink-0"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-black/10 hover:bg-black/20 text-[#332500] transition cursor-pointer flex-shrink-0"
               aria-label="Close dialog"
             >
               <X size={18} />
@@ -54,12 +54,12 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
           {/* Modal Content */}
           <div className="p-5 sm:p-7 max-h-[80vh] overflow-y-auto space-y-5 text-xs sm:text-sm">
             {/* 1. Registration Fee & Free for Girls */}
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 space-y-2.5">
-              <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm sm:text-base">
-                <CheckCircle2 size={18} className="text-emerald-700 flex-shrink-0" />
+            <div className="rounded-xl border border-[#e6cd8d] bg-[#fff9e9] p-4 space-y-2.5">
+              <div className="flex items-center gap-2 text-[#573b0b] font-bold text-sm sm:text-base">
+                <CheckCircle2 size={18} className="text-[#795705] flex-shrink-0" />
                 <span>Registration Fee &amp; Free Registration for Girls</span>
               </div>
-              <ul className="space-y-1.5 text-xs text-emerald-950/90 leading-relaxed pl-1">
+              <ul className="space-y-1.5 text-xs text-gray-700 leading-relaxed pl-1">
                 <li>
                   <b>One-Time Registration Fee:</b> Only a one-time registration fee is charged. The registration fee is strictly non-refundable.
                 </li>
@@ -70,12 +70,12 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
             </div>
 
             {/* 2. Profile Services & Zero Extra Fees */}
-            <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 space-y-2.5">
-              <div className="flex items-center gap-2 text-amber-900 font-bold text-sm sm:text-base">
-                <Calendar size={18} className="text-amber-700 flex-shrink-0" />
+            <div className="rounded-xl border border-[#e6cd8d] bg-[#fff9e9] p-4 space-y-2.5">
+              <div className="flex items-center gap-2 text-[#573b0b] font-bold text-sm sm:text-base">
+                <Calendar size={18} className="text-[#795705] flex-shrink-0" />
                 <span>Profile Services &amp; No Hidden Commission</span>
               </div>
-              <ul className="space-y-1.5 text-xs text-amber-950/90 leading-relaxed pl-1">
+              <ul className="space-y-1.5 text-xs text-gray-700 leading-relaxed pl-1">
                 <li>
                   <b>Profile Services:</b> During the 3-month registration period, <b>6 verified profiles will be sent every Saturday</b>.
                 </li>
@@ -86,9 +86,9 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
             </div>
 
             {/* 3. Voluntary Registration & No 100% Guarantee */}
-            <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-4 space-y-2.5">
-              <div className="flex items-center gap-2 text-[#701C35] font-bold text-sm sm:text-base">
-                <HeartHandshake size={18} className="text-[#701C35] flex-shrink-0" />
+            <div className="rounded-xl border border-[#e6cd8d] bg-[#fff9e9] p-4 space-y-2.5">
+              <div className="flex items-center gap-2 text-[#573b0b] font-bold text-sm sm:text-base">
+                <HeartHandshake size={18} className="text-[#573b0b] flex-shrink-0" />
                 <span>Registration Method &amp; Realistic Expectations</span>
               </div>
               <ul className="space-y-1.5 text-xs text-gray-700 leading-relaxed pl-1">
@@ -102,26 +102,26 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
             </div>
 
             {/* 4. PRIVACY, LIABILITY & LEGAL DISCLAIMER */}
-            <div className="rounded-xl border border-red-200 bg-red-50/70 p-4 space-y-2.5">
-              <div className="flex items-center gap-2 text-red-900 font-bold text-sm sm:text-base">
-                <ShieldAlert size={18} className="text-red-700 flex-shrink-0" />
+            <div className="rounded-xl border border-[#e6cd8d] bg-[#fff9e9] p-4 space-y-2.5">
+              <div className="flex items-center gap-2 text-[#573b0b] font-bold text-sm sm:text-base">
+                <ShieldAlert size={18} className="text-[#795705] flex-shrink-0" />
                 <span>PRIVACY, LIABILITY &amp; LEGAL DISCLAIMER</span>
               </div>
-              <ul className="space-y-2 text-xs text-red-950 leading-relaxed pl-1">
+              <ul className="space-y-2 text-xs text-gray-700 leading-relaxed pl-1">
                 <li className="flex items-start gap-2">
-                  <Lock size={14} className="text-red-700 flex-shrink-0 mt-0.5" />
+                  <Lock size={14} className="text-[#795705] flex-shrink-0 mt-0.5" />
                   <span>
                     <b>No Profile Sharing:</b> The profiles and details sent to you are strictly for your personal matrimonial use only. You are strictly not allowed to forward, share, publish, screenshot, or reuse them with anyone else.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <AlertTriangle size={14} className="text-red-700 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle size={14} className="text-[#795705] flex-shrink-0 mt-0.5" />
                   <span>
                     <b>No Liability:</b> We are not responsible or liable for any consequences, issues, misunderstandings, or disputes arising from the misuse or unauthorized sharing of profile details provided by us. The user takes complete responsibility.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <ShieldAlert size={14} className="text-red-700 flex-shrink-0 mt-0.5" />
+                  <ShieldAlert size={14} className="text-[#795705] flex-shrink-0 mt-0.5" />
                   <span>
                     <b>Strict Legal Action:</b> Strict legal action will be taken against those who misuse the profile information or violate these privacy and data protection terms.
                   </span>
@@ -142,7 +142,7 @@ export default function TermsDisclaimerModal({ isOpen, onClose }) {
             </span>
             <button
               onClick={onClose}
-              className="w-full sm:w-auto px-6 py-2 rounded-xl bg-[#701C35] hover:bg-[#511327] text-white font-semibold text-xs transition cursor-pointer shadow-sm ml-auto"
+              className="w-full sm:w-auto px-6 py-2 rounded-xl bg-[#e2b82f] hover:bg-[#d4aa25] text-[#332500] font-semibold text-xs transition cursor-pointer shadow-sm ml-auto"
             >
               I Understand &amp; Agree
             </button>

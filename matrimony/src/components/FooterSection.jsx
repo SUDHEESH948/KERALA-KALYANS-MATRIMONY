@@ -1,298 +1,115 @@
-import {
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  FileText,
-  ShieldAlert,
-  Phone,
-  Mail,
-  Clock
-} from 'lucide-react'
+import { Camera, ChevronDown, Clock3, FileText, Globe2, Mail, Phone, ShieldCheck } from 'lucide-react'
+import { useState } from 'react'
 
-export default function FooterSection({ onOpenAdmin, onOpenRegister, onOpenTerms }) {
-  const callPhone = '(+91) 80755 88406'
-  const whatsappPhone = '(+91) 79073 48468'
-  const officeTiming = '10:00 AM to 5:00 PM'
-  const contactEmail = 'keralakalyanmatrimonial@gmail.com'
-  const whatsappLink = 'https://wa.me/917907348468?text=Hello%20Kerala%20Kalyans%20Matrimony%2C%20I%20am%20interested%20in%20registration%20and%20profile%20services.'
+const policies = ['One-Time Fee Policy', '6 Profiles Every Saturday', 'Voluntary Registration']
 
+function WhatsAppIcon({ size = 16, className = '' }) {
+  return <svg aria-hidden="true" className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path fill="currentColor" d="M12.04 2a9.95 9.95 0 0 0-8.58 15.02L2 22l5.11-1.4A9.96 9.96 0 1 0 12.04 2Zm0 18.12a8.13 8.13 0 0 1-4.14-1.13l-.3-.18-3.04.83.81-2.96-.2-.31a8.14 8.14 0 1 1 6.87 3.75Z" />
+    <path fill="currentColor" d="M16.5 14.28c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.23-.62.76-.76.92-.14.16-.28.18-.52.06a6.51 6.51 0 0 1-1.91-1.18 7.13 7.13 0 0 1-1.32-1.65c-.14-.24-.01-.37.1-.49.1-.1.24-.27.36-.4.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.4h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2 0 1.18.86 2.32.98 2.48.12.16 1.7 2.6 4.12 3.65.58.25 1.03.4 1.38.5.58.19 1.1.16 1.52.1.46-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28Z" />
+  </svg>
+}
+
+function FooterLink({ icon: Icon, children, href = '#' }) {
+  return <a href={href} className="group flex items-center gap-2.5 text-xs text-white/60 transition hover:text-[#E8CA91]">
+    <Icon size={14} className="shrink-0 text-[#c79c18] transition group-hover:scale-110" />
+    <span>{children}</span>
+  </a>
+}
+
+function ContactForm() {
+  const [details, setDetails] = useState({ name: '', phone: '', email: '', enquiry: 'Profile registration', time: 'Any time', message: '' })
+
+  const submit = (event) => {
+    event.preventDefault()
+    const message = `Hello Kerala Kalyans Matrimony,\n\nName: ${details.name}\nPhone: ${details.phone}\nEmail: ${details.email || 'Not provided'}\nEnquiry: ${details.enquiry}\nPreferred contact time: ${details.time}\nMessage: ${details.message || 'I would like to know more about your matrimonial services.'}`
+    window.location.assign(`https://wa.me/917907348468?text=${encodeURIComponent(message)}`)
+  }
+
+  const fieldClass = 'mt-2 h-12 w-full rounded-xl border border-[#ded5c3] bg-white/70 px-4 text-base font-normal text-[#343a3d] outline-none transition placeholder:text-[#a1a7aa] focus:border-[#701C35] focus:bg-white focus:ring-4 focus:ring-[#701C35]/10'
+
+  return <section className="relative overflow-hidden bg-[#FAF7F1] px-5 py-20 sm:px-6 sm:py-28">
+    <div className="pointer-events-none absolute left-0 top-0 h-px w-full bg-[#d8bd7b]/55" />
+    <div className="mx-auto grid max-w-[1240px] gap-14 lg:grid-cols-[.8fr_1.2fr] lg:gap-24">
+      <div className="relative pl-6 sm:pl-8 lg:py-3">
+        <span className="absolute bottom-auto left-0 top-1 h-28 w-0.5 bg-[#c79c18]" />
+        <div className="flex items-center gap-3"><p className="font-sans text-xs font-bold tracking-[.2em] text-[#bc8b37]">GET IN TOUCH</p><span className="h-px w-10 bg-[#c79c18]/60" /></div>
+        <h2 className="font-serif mt-5 max-w-md text-4xl font-semibold leading-[1.04] text-[#293130] sm:text-5xl">Let&apos;s find the right beginning.</h2>
+        <p className="mt-6 max-w-sm text-base leading-7 text-[#697277]">Tell us a little about what you need. Our support team will receive every detail directly on WhatsApp.</p>
+        <p className="mt-5 font-sans text-[0.68rem] font-bold tracking-[.14em] text-[#9b8050]">PRIVATE, RESPECTFUL SUPPORT</p>
+        <div className="mt-10 space-y-0 border-t border-[#d9d0bf] text-sm">
+          <a href="https://wa.me/917907348468" className="flex items-center gap-4 border-b border-[#d9d0bf] py-5 text-[#4d585a] transition hover:text-[#a87815]"><WhatsAppIcon size={25} className="shrink-0 text-[#1c8c58]" /><span><span className="block font-sans text-[0.68rem] font-bold tracking-[.13em] text-[#788084]">WHATSAPP SUPPORT</span><span className="mt-1 block text-lg font-semibold">(+91) 79073 48468</span></span></a>
+          <a href="tel:+918075588406" className="flex items-center gap-4 border-b border-[#d9d0bf] py-5 text-[#4d585a] transition hover:text-[#a87815]"><Phone size={22} strokeWidth={1.7} className="shrink-0 text-[#c79c18]" /><span><span className="block font-sans text-[0.68rem] font-bold tracking-[.13em] text-[#788084]">CUSTOMER CARE</span><span className="mt-1 block text-lg font-semibold">(+91) 80755 88406</span></span></a>
+        </div>
+      </div>
+      <form onSubmit={submit} className="border-t border-[#d9d0bf] pt-7 lg:border-t-0 lg:border-l lg:pl-12 lg:pt-3">
+        <div className="mb-8"><div className="flex items-center gap-3"><p className="font-sans text-[0.68rem] font-bold tracking-[.18em] text-[#bc8b37]">PERSONAL CONCIERGE</p><span className="h-px w-9 bg-[#c79c18]/60" /></div><h3 className="font-serif mt-3 text-3xl font-semibold text-[#293130]">Share your details.</h3><p className="mt-2 text-sm leading-6 text-[#788084]">We will open WhatsApp with your enquiry already prepared.</p></div>
+        <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+          <label className="font-sans text-xs font-bold tracking-wide text-[#3f4748]">FULL NAME<input required value={details.name} onChange={event => setDetails({ ...details, name: event.target.value })} placeholder="Enter your name" className={fieldClass} /></label>
+          <label className="font-sans text-xs font-bold tracking-wide text-[#3f4748]">PHONE NUMBER<input required type="tel" value={details.phone} onChange={event => setDetails({ ...details, phone: event.target.value })} placeholder="Enter phone number" className={fieldClass} /></label>
+          <label className="font-sans text-xs font-bold tracking-wide text-[#3f4748]">EMAIL ADDRESS<input type="email" value={details.email} onChange={event => setDetails({ ...details, email: event.target.value })} placeholder="you@example.com" className={fieldClass} /></label>
+          <label className="font-sans text-xs font-bold tracking-wide text-[#3f4748]">I NEED HELP WITH<span className="relative block"><select value={details.enquiry} onChange={event => setDetails({ ...details, enquiry: event.target.value })} className={`${fieldClass} appearance-none pr-12`}><option>Profile registration</option><option>Finding matches</option><option>Membership details</option><option>Existing account support</option><option>Other enquiry</option></select><ChevronDown size={18} strokeWidth={1.8} className="pointer-events-none absolute right-4 top-[calc(50%+0.25rem)] -translate-y-1/2 text-[#66736b]" /></span></label>
+          <label className="font-sans text-xs font-bold tracking-wide text-[#3f4748] sm:col-span-2">PREFERRED CONTACT TIME<span className="relative block"><select value={details.time} onChange={event => setDetails({ ...details, time: event.target.value })} className={`${fieldClass} appearance-none pr-12`}><option>Any time</option><option>10:00 AM – 1:00 PM</option><option>1:00 PM – 3:00 PM</option><option>3:00 PM – 5:00 PM</option></select><ChevronDown size={18} strokeWidth={1.8} className="pointer-events-none absolute right-4 top-[calc(50%+0.25rem)] -translate-y-1/2 text-[#66736b]" /></span></label>
+        </div>
+        <label className="mt-5 block font-sans text-xs font-bold tracking-wide text-[#3f4748]">MESSAGE<textarea value={details.message} onChange={event => setDetails({ ...details, message: event.target.value })} rows="4" placeholder="Tell us what you are looking for" className="mt-2 w-full resize-none rounded-xl border border-[#ded5c3] bg-white/70 px-4 py-3 text-base font-normal text-[#343a3d] outline-none transition placeholder:text-[#a1a7aa] focus:border-[#701C35] focus:bg-white focus:ring-4 focus:ring-[#701C35]/10" /></label>
+        <button type="submit" className="mt-7 inline-flex h-13 w-full items-center justify-center gap-2 rounded-full bg-[#701C35] px-6 text-sm font-bold tracking-wide text-white shadow-[0_12px_24px_rgba(41,49,48,0.16)] transition hover:-translate-y-0.5 hover:bg-[#511327] hover:text-white"><WhatsAppIcon size={19} />Continue on WhatsApp</button>
+      </form>
+    </div>
+  </section>
+}
+
+export default function FooterSection({ onOpenRegister, onOpenTerms }) {
   return (
     <>
-      {/* FINAL CTA */}
-      <section className="relative px-2.5 sm:px-6 py-12 sm:py-28 text-center">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1600"
-            alt=""
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-[#2a111b]/80" />
+    <ContactForm />
+    <footer className="bg-[#701C35] px-4 py-10 text-white sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="grid gap-9 border-b border-white/10 pb-9 sm:gap-10 lg:grid-cols-[1.25fr_.9fr_.9fr]">
+          <section>
+            <img src="/kerala-kalyan-logo.png" alt="Kerala Kalyans Matrimony" className="h-12 w-auto rounded-lg bg-white p-1.5 mix-blend-normal" />
+            <p className="mt-4 max-w-sm text-sm leading-6 text-white/60">Meaningful matrimonial connections built with trust, care, and transparency.</p>
+            <div className="mt-5 flex items-center gap-2.5">
+              <a href="#" aria-label="Facebook" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/55 transition hover:border-[#c79c18] hover:text-[#E8CA91]"><Globe2 size={15} /></a>
+              <a href="#" aria-label="Instagram" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/55 transition hover:border-[#c79c18] hover:text-[#E8CA91]"><Camera size={15} /></a>
+              <a href="https://wa.me/917907348468" aria-label="WhatsApp" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/55 transition hover:border-[#c79c18] hover:text-[#E8CA91]"><WhatsAppIcon size={16} /></a>
+            </div>
+          </section>
+
+          <section>
+            <h3 className="font-sans text-xs font-bold tracking-[.16em] text-[#E8CA91] uppercase">Support</h3>
+            <div className="mt-5 space-y-3.5">
+              <FooterLink icon={Phone} href="tel:+918075588406">(+91) 80755 88406</FooterLink>
+              <FooterLink icon={WhatsAppIcon} href="https://wa.me/917907348468">(+91) 79073 48468</FooterLink>
+              <FooterLink icon={Mail} href="mailto:keralakalyan.matrimonial@gmail.com">keralakalyan.matrimonial@gmail.com</FooterLink>
+              <div className="flex items-center gap-2.5 text-xs text-white/60"><Clock3 size={14} className="shrink-0 text-[#c79c18]" />10:00 AM – 5:00 PM</div>
+            </div>
+          </section>
+
+          <section>
+            <h3 className="font-sans text-xs font-bold tracking-[.16em] text-[#E8CA91] uppercase">Information</h3>
+            <div className="mt-5 space-y-3.5">
+              {policies.map(policy => (
+                <button key={policy} type="button" onClick={onOpenTerms} className="group flex items-center gap-2.5 text-left text-xs text-white/60 transition hover:text-[#E8CA91]">
+                  <FileText size={14} className="shrink-0 text-[#c79c18] transition group-hover:scale-110" />
+                  {policy}
+                </button>
+              ))}
+              <FooterLink icon={ShieldCheck} href="#legal-notice">Privacy &amp; Legal Notice</FooterLink>
+            </div>
+            <button onClick={onOpenRegister} className="mt-6 rounded-full border border-[#c79c18]/70 px-4 py-2 text-xs font-semibold text-[#E8CA91] transition hover:bg-[#511327] hover:text-white">Create your profile</button>
+          </section>
         </div>
 
-        <div className="relative mx-auto max-w-3xl">
-          <Sparkles className="mx-auto mb-3 sm:mb-6 text-[#E8CA91]" size={26} />
-          <h2 className="text-xl sm:text-4xl text-white sm:text-6xl leading-tight">
-            Your Forever Story Starts Today.
-          </h2>
-          <p className="mt-3 sm:mt-6 text-xs sm:text-lg text-white/80">
-            Take the first step towards finding someone truly special. Free registration for girls &amp; verified matchmaking.
-          </p>
-          <button
-            onClick={onOpenRegister}
-            className="mt-5 sm:mt-9 w-full sm:w-auto rounded-full bg-[#C8A96B] px-5 sm:px-10 py-3 sm:py-4 text-xs sm:text-base font-bold text-[#321b1e] hover:bg-[#e0c58e] tracking-wide cursor-pointer transition shadow-lg text-center"
-          >
-            Create Your Profile <ArrowRight className="ml-1.5 sm:ml-2 inline" size={15} />
-          </button>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="bg-[#24151A] px-3 sm:px-6 py-10 sm:py-16 text-white">
-        <div className="mx-auto grid grid-cols-1 md:grid-cols-12 max-w-[1300px] gap-8 sm:gap-10">
-          {/* Brand Info */}
-          <div className="md:col-span-4 space-y-3.5">
-            <div className="flex items-center gap-3">
-              <img
-                src="/kerala-kalyan-logo.png"
-                alt="Kerala Kalyans Matrimony"
-                className="h-11 w-auto object-contain bg-white rounded-lg p-1.5 shadow-md"
-              />
-              <div>
-                <h2 className="text-xl sm:text-2xl text-[#E8CA91]">
-                  Kerala Kalyans
-                </h2>
-                <p className="text-[9px] tracking-[2px] text-white/70 font-semibold uppercase">
-                  Matrimony
-                </p>
-              </div>
-            </div>
-            <p className="text-xs sm:text-sm leading-6 text-white/60">
-              Bringing hearts together through meaningful connections, trust,
-              and transparent beginnings across Kerala and worldwide.
-            </p>
-            <div className="pt-1 text-[11px] text-emerald-300 font-semibold flex items-center gap-1.5 flex-wrap">
-              <span>✓ 100% Free for Girls</span>
-              <span className="text-white/40">·</span>
-              <span>Zero Post-Marriage Commission</span>
-            </div>
-
-            {/* Social Media Links */}
-            <div className="pt-2">
-              <p className="text-[11px] text-[#E8CA91] font-semibold mb-2 uppercase tracking-wider">Connect With Us</p>
-              <div className="flex items-center gap-3">
-                {/* Facebook */}
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full bg-white/10 hover:bg-[#1877F2] text-white/80 hover:text-white flex items-center justify-center transition cursor-pointer shadow-sm"
-                  title="Facebook - Kerala Kalyans Matrimony"
-                  aria-label="Facebook"
-                >
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                  </svg>
-                </a>
-
-                {/* Instagram */}
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full bg-white/10 hover:bg-[#E4405F] text-white/80 hover:text-white flex items-center justify-center transition cursor-pointer shadow-sm"
-                  title="Instagram - Kerala Kalyans Matrimony"
-                  aria-label="Instagram"
-                >
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                  </svg>
-                </a>
-
-                {/* WhatsApp */}
-                <a
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full bg-white/10 hover:bg-[#25D366] text-white/80 hover:text-white flex items-center justify-center transition cursor-pointer shadow-sm"
-                  title="WhatsApp - Kerala Kalyans Matrimony"
-                  aria-label="WhatsApp"
-                >
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Details (From Image) */}
-          <div className="md:col-span-5 space-y-3.5">
-            <h3 className="text-sm sm:text-base text-[#E8CA91] tracking-wide">
-              Official Contact &amp; Support
-            </h3>
-
-            {/* Now on WhatsApp Badge */}
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cta inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-[#25D366]/20 border border-[#25D366]/50 hover:bg-[#25D366]/30 text-white transition group cursor-pointer"
-            >
-              <div className="h-7 w-7 rounded-full bg-[#25D366] text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition shadow-sm">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white leading-tight">Now we&apos;re on WhatsApp!</p>
-                <p className="text-[11px] text-emerald-300 font-semibold">{whatsappPhone}</p>
-              </div>
-            </a>
-
-            <ul className="space-y-2.5 text-xs text-white/80">
-              {/* Call Phone */}
-              <li className="flex items-center gap-2.5">
-                <div className="h-6 w-6 rounded-md bg-white/10 flex items-center justify-center text-[#E8CA91] flex-shrink-0">
-                  <Phone size={13} />
-                </div>
-                <div>
-                  <span className="text-[10px] text-white/50 block">Customer Care / Calling</span>
-                  <a href="tel:+918075588406" className="font-semibold text-white hover:text-[#E8CA91] transition">
-                    {callPhone}
-                  </a>
-                </div>
-              </li>
-
-              {/* WhatsApp Only Phone */}
-              <li className="flex items-center gap-2.5">
-                <div className="h-6 w-6 rounded-md bg-[#25D366]/20 flex items-center justify-center text-[#25D366] flex-shrink-0">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                  </svg>
-                </div>
-                <div>
-                  <span className="text-[10px] text-white/50 block">WhatsApp Only Support</span>
-                  <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="font-semibold text-emerald-300 hover:underline">
-                    {whatsappPhone}
-                  </a>
-                </div>
-              </li>
-
-              {/* Email Address */}
-              <li className="flex items-center gap-2.5">
-                <div className="h-6 w-6 rounded-md bg-white/10 flex items-center justify-center text-[#E8CA91] flex-shrink-0">
-                  <Mail size={13} />
-                </div>
-                <div>
-                  <span className="text-[10px] text-white/50 block">Email Inquiries &amp; Verification</span>
-                  <a href={`mailto:${contactEmail}`} className="font-semibold text-white hover:text-[#E8CA91] transition break-all">
-                    {contactEmail}
-                  </a>
-                </div>
-              </li>
-
-              {/* Office Timing */}
-              <li className="flex items-center gap-2.5">
-                <div className="h-6 w-6 rounded-md bg-white/10 flex items-center justify-center text-[#E8CA91] flex-shrink-0">
-                  <Clock size={13} />
-                </div>
-                <div>
-                  <span className="text-[10px] text-white/50 block">Office Working Hours</span>
-                  <span className="font-medium text-white/90">
-                    {officeTiming}
-                  </span>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          {/* Quick Legal & Terms Links */}
-          <div className="md:col-span-3 space-y-3">
-            <h3 className="text-sm sm:text-base text-[#E8CA91] tracking-wide">
-              Terms &amp; Policies
-            </h3>
-            <ul className="space-y-2 text-xs text-white/70">
-              <li>
-                <button
-                  type="button"
-                  onClick={onOpenTerms}
-                  className="hover:text-[#E8CA91] transition cursor-pointer text-left flex items-center gap-1.5"
-                >
-                  <FileText size={13} className="text-[#E8CA91] flex-shrink-0" />
-                  <span>One-Time Fee Policy</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={onOpenTerms}
-                  className="hover:text-[#E8CA91] transition cursor-pointer text-left flex items-center gap-1.5"
-                >
-                  <FileText size={13} className="text-[#E8CA91] flex-shrink-0" />
-                  <span>6 Profiles Every Saturday</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={onOpenTerms}
-                  className="hover:text-[#E8CA91] transition cursor-pointer text-left flex items-center gap-1.5"
-                >
-                  <FileText size={13} className="text-[#E8CA91] flex-shrink-0" />
-                  <span>Voluntary Registration</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={onOpenTerms}
-                  className="hover:text-red-300 transition cursor-pointer text-left flex items-center gap-1.5 text-red-200/90 font-medium"
-                >
-                  <ShieldAlert size={13} className="text-red-400 flex-shrink-0" />
-                  <span>Privacy &amp; Legal Disclaimer</span>
-                </button>
-              </li>
-            </ul>
-
-            <div className="pt-2">
-              <button
-                onClick={onOpenRegister}
-                className="w-full rounded-full bg-[#701C35] px-4 py-2 text-xs font-semibold tracking-wide cursor-pointer hover:bg-[#5a1429] transition shadow-md border border-[#701C35]/50 text-center block"
-              >
-                Join Kerala Kalyans
-              </button>
-            </div>
-          </div>
+        <div id="legal-notice" className="border-b border-white/10 py-5 text-[11px] leading-5 text-white/40">
+          <span className="font-semibold text-white/60">Privacy notice:</span> Profiles and details are for personal matrimonial use only. Registration is voluntary; Kerala Kalyans Matrimony does not guarantee marriage outcomes.
         </div>
 
-        {/* Disclaimer summary paragraph */}
-        <div className="mx-auto mt-8 max-w-[1300px] rounded-xl bg-black/40 border border-white/10 p-4 text-[11px] text-white/60 leading-relaxed space-y-1">
-          <p>
-            <b className="text-white/90">Privacy Notice &amp; Legal Disclaimer:</b> Profiles and details provided by Kerala Kalyans Matrimony are strictly for your personal matrimonial use only. You are strictly not allowed to forward, share, or reuse them. We are not liable for any issues arising from misuse. Strict legal action will be taken against violators. Registration is voluntary; no 100% guarantee of marriage is provided.
-          </p>
-        </div>
-
-        {/* Copyright Bar */}
-        <div className="mx-auto mt-6 max-w-[1300px] border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] sm:text-xs text-white/40">
+        <div className="flex flex-col gap-2 pt-5 text-[11px] text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <span>© 2026 Kerala Kalyans Matrimony. All rights reserved.</span>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onOpenTerms}
-              className="hover:text-[#E8CA91] transition cursor-pointer"
-            >
-              Terms &amp; Disclaimer
-            </button>
-            <span>•</span>
-            <button
-              onClick={onOpenAdmin}
-              className="text-white/50 hover:text-[#E8CA91] transition flex items-center gap-1.5 cursor-pointer font-medium"
-            >
-              <ShieldCheck size={13} className="text-[#E8CA91]" />
-              <span>Admin Control Panel</span>
-            </button>
-          </div>
+          <span className="tracking-wide text-white">Developed by <span className="font-semibold">Winshine Infotech</span></span>
         </div>
-      </footer>
+      </div>
+    </footer>
     </>
   )
 }

@@ -1,143 +1,86 @@
-import {
-  Heart,
-  Calendar,
-  CheckCircle2,
-  ShieldAlert,
-  ArrowRight,
-  Sparkles,
-  Lock,
-  FileText,
-  BadgePercent
-} from 'lucide-react'
+import { Check, Crown, Gem, HeartHandshake, ShieldCheck, Sparkles } from 'lucide-react'
 
-export default function MembershipSection({ onOpenRegister, onOpenTerms }) {
-  const policies = [
-    {
-      title: 'Free Registration for Girls',
-      badge: '100% Free',
-      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30',
-      description: 'Registration is completely free for girls\' profiles. Zero listing or renewal fees.',
-      icon: Sparkles
-    },
-    {
-      title: 'One-Time Registration Fee',
-      badge: 'Non-Refundable',
-      badgeColor: 'bg-amber-500/20 text-amber-200 border-amber-400/30',
-      description: 'Only a one-time registration fee is charged. The registration fee is strictly non-refundable with zero hidden charges.',
-      icon: CheckCircle2
-    },
-    {
-      title: 'Weekly Profile Services',
-      badge: '6 Profiles / Saturday',
-      badgeColor: 'bg-sky-500/20 text-sky-200 border-sky-400/30',
-      description: 'During the 3-month registration period, 6 verified compatible profiles will be sent every Saturday directly to you.',
-      icon: Calendar
-    },
-    {
-      title: 'Zero Post-Marriage Extra Fees',
-      badge: 'No ₹25K / ₹50K Demands',
-      badgeColor: 'bg-purple-500/20 text-purple-200 border-purple-400/30',
-      description: 'Once the marriage is fixed, you do NOT need to pay any extra payments like ₹25,000 or ₹50,000, or any hidden commission.',
-      icon: BadgePercent
-    }
+export default function MembershipSection({ onOpenRegister }) {
+  const benefits = [
+    { title: 'Private contact access', detail: 'Connect with confidence when a match feels right.' },
+    { title: 'Unlimited expressions of interest', detail: 'Make every meaningful introduction count.' },
+    { title: 'Priority profile placement', detail: 'Be seen sooner by compatible families.' },
+    { title: 'Direct, considered messaging', detail: 'Begin conversations at your own pace.' }
   ]
 
   return (
-    <section id="membership" className="bg-[#701C35] px-3 sm:px-6 py-12 sm:py-24 text-white">
-      <div className="mx-auto max-w-[1240px]">
-        {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
-          <p className="text-xs font-bold tracking-[3px] text-[#E8CA91] uppercase">
-            TRANSPARENT &amp; ETHICAL MATCHMAKING
-          </p>
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl leading-tight mt-2 sm:mt-3">
-            Registration Fee, Service Plans &amp; Policy
-          </h2>
-          <p className="mt-3 text-xs sm:text-base leading-6 text-white/80 max-w-2xl mx-auto">
-            Honest, verified matrimonial matchmaking with absolute clarity. No hidden commission, voluntary registration, and strict privacy protection.
-          </p>
-        </div>
-
-        {/* 4 Feature Highlight Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
-          {policies.map((p) => {
-            const Icon = p.icon
-            return (
-              <div
-                key={p.title}
-                className="rounded-2xl border border-white/15 bg-white/10 p-5 sm:p-6 backdrop-blur-md flex flex-col justify-between hover:bg-white/15 transition duration-300"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 border border-white/20 text-[#E8CA91]">
-                      <Icon size={20} />
-                    </div>
-                    <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${p.badgeColor}`}>
-                      {p.badge}
-                    </span>
-                  </div>
-                  <h3 className="card-title text-lg text-white mb-2">
-                    {p.title}
-                  </h3>
-                  <p className="text-xs text-white/80 leading-relaxed">
-                    {p.description}
-                  </p>
-                </div>
+    <section id="membership" className="bg-[#FAF7F1] px-3 py-5 text-[#293130] sm:px-6 sm:py-12 lg:px-10">
+      <div className="relative isolate mx-auto flex max-w-[1440px] items-center overflow-hidden rounded-[22px] bg-[linear-gradient(145deg,#ffffff,#FAF7F1)] px-5 py-14 sm:min-h-[740px] sm:rounded-[34px] sm:px-10 sm:py-20 lg:min-h-[780px] lg:px-12 lg:py-24">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_13%,rgba(209,167,54,0.14),transparent_26%),radial-gradient(circle_at_88%_82%,rgba(163,173,174,0.2),transparent_31%)]" />
+        <div className="mx-auto grid w-full max-w-[1320px] items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 xl:gap-20">
+        <div className="relative">
+          <div className="mb-8 flex items-start gap-3 sm:mb-11 sm:items-center sm:gap-5">
+            <span className="grid size-14 shrink-0 place-items-center rounded-full border border-[#cda74c]/60 bg-[#f8f2e4] text-[#ad7d29] shadow-[0_0_0_8px_rgba(205,167,76,0.09)] sm:size-16">
+              <Crown size={28} strokeWidth={1.45} />
+            </span>
+            <div className="min-w-0">
+              <div className="mb-1.5 flex items-center gap-3">
+                <span className="font-sans text-[0.62rem] font-bold tracking-[0.28em] text-[#ad7d29]">INTRODUCING</span>
+                <span className="h-px w-8 bg-[#c79c18]/60 sm:w-14" />
               </div>
-            )
-          })}
-        </div>
-
-        {/* Policy & Legal Disclaimer Banner Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
-          {/* Voluntary Registration & Realistic Expectations */}
-          <div className="rounded-2xl border border-[#E8CA91]/30 bg-black/25 p-5 sm:p-7 backdrop-blur-md space-y-3">
-            <div className="flex items-center gap-2.5 text-[#E8CA91] font-bold text-sm sm:text-base">
-              <CheckCircle2 size={18} />
-              <span>Voluntary Registration &amp; Honest Disclaimer</span>
+              <p className="font-serif text-2xl leading-none text-[#293130] sm:whitespace-nowrap sm:text-3xl">The Premier Circle</p>
             </div>
-            <p className="text-xs text-white/85 leading-relaxed">
-              <b>Registration Method:</b> Customers register here voluntarily after seeing our advertisement and contacting us. We never force anyone to register here. Only those who are interested may register.
-            </p>
-            <p className="text-xs text-amber-200/90 leading-relaxed border-t border-white/10 pt-2.5">
-              <b>No 100% Guarantee:</b> We do not give any 100% guarantee that we will conduct the marriage. Matrimonial decisions depend upon mutual consent and family compatibility.
-            </p>
           </div>
 
-          {/* Strict Privacy, Liability & Legal Disclaimer */}
-          <div className="rounded-2xl border border-red-400/30 bg-red-950/40 p-5 sm:p-7 backdrop-blur-md space-y-3">
-            <div className="flex items-center gap-2.5 text-red-200 font-bold text-sm sm:text-base">
-              <ShieldAlert size={18} className="text-red-300" />
-              <span>PRIVACY, LIABILITY &amp; LEGAL DISCLAIMER</span>
-            </div>
-            <p className="text-xs text-white/85 leading-relaxed">
-              <b className="text-red-200">No Profile Sharing:</b> Profiles and details sent to you are strictly for your personal use only. You are strictly not allowed to forward, share, or reuse them with anyone else.
-            </p>
-            <p className="text-xs text-red-200/90 leading-relaxed border-t border-white/10 pt-2.5">
-              <b>No Liability &amp; Strict Legal Action:</b> We are not responsible or liable for any consequences, issues, or disputes arising from misuse or unauthorized sharing of profile details. Strict legal action will be taken against violators.
-            </p>
-          </div>
-        </div>
+          <h2 className="font-serif max-w-2xl text-[2.45rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[#293130] sm:text-5xl lg:text-6xl xl:text-7xl">
+            More intention.<br />
+            <span className="text-[#701C35]">More possibility.</span>
+          </h2>
+          <p className="mt-7 max-w-xl text-base leading-8 text-[#697277] sm:text-lg xl:text-xl xl:leading-9">
+            A refined membership for those ready to move from introductions to a lasting connection—with more privacy, visibility and personal guidance.
+          </p>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 text-center">
+          <div className="mt-8 flex flex-col gap-3 border-y border-[#d6d9d7] py-5 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-x-7 sm:gap-y-4 xl:gap-x-10 xl:py-6">
+            <div className="flex items-center gap-2.5 text-sm text-[#465054]"><ShieldCheck size={17} className="text-[#ad7d29]" /> Verified community</div>
+            <div className="flex items-center gap-2.5 text-sm text-[#465054]"><HeartHandshake size={17} className="text-[#ad7d29]" /> Thoughtful support</div>
+          </div>
+
           <button
             onClick={onOpenRegister}
-            className="w-full sm:w-auto rounded-full bg-[#C8A96B] px-8 py-3.5 text-xs sm:text-sm font-bold text-[#321b1e] hover:bg-[#e0c58e] tracking-wide cursor-pointer transition shadow-lg flex items-center justify-center gap-2"
+            className="font-sans mt-8 w-full rounded-full bg-[#701C35] px-8 py-4 text-sm font-bold tracking-wide text-white shadow-[0_12px_35px_rgba(99,32,57,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#511327] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#701C35] sm:mt-9 sm:w-auto xl:px-10 xl:py-5"
           >
-            <span>Register Now</span>
-            <ArrowRight size={15} />
+            Explore membership plans
           </button>
+        </div>
 
-          {onOpenTerms && (
-            <button
-              onClick={onOpenTerms}
-              className="w-full sm:w-auto rounded-full border border-white/30 hover:border-white/60 bg-white/10 hover:bg-white/15 px-6 py-3.5 text-xs sm:text-sm font-semibold text-white tracking-wide cursor-pointer transition flex items-center justify-center gap-2"
-            >
-              <FileText size={15} className="text-[#E8CA91]" />
-              <span>Read Full Legal Terms &amp; Disclaimer</span>
-            </button>
-          )}
+        <div className="relative rounded-[1.5rem] border border-[#cbd2d2] bg-white/75 p-1.5 shadow-[0_20px_44px_rgba(44,54,56,0.12)] backdrop-blur-md sm:rounded-[2rem] sm:p-3">
+          <div className="rounded-[1.55rem] border border-[#dce0df] bg-[linear-gradient(145deg,#ffffff,#FAF7F1)] p-5 sm:p-8">
+            <div className="flex flex-col gap-5 border-b border-[#eadfce] pb-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <span className="grid size-12 place-items-center rounded-2xl bg-[#701C35] text-[#f5d66d] shadow-lg shadow-[#701C35]/20"><Gem size={22} strokeWidth={1.7} /></span>
+                <div>
+                  <p className="font-sans text-[0.68rem] font-bold tracking-[0.2em] text-[#ad7d29]">MEMBERSHIP</p>
+                  <h3 className="font-serif mt-1 text-2xl font-semibold text-[#293130]">Premier benefits</h3>
+                </div>
+              </div>
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[#cda74c]/55 bg-[#f8f2e4] px-3 py-1.5 font-sans text-[0.68rem] font-bold tracking-wider text-[#9d7226]"><Sparkles size={13} /> CURATED</span>
+            </div>
+
+            <div className="divide-y divide-[#eadfce]">
+              {benefits.map((item, index) => (
+                <div key={item.title} className="group flex gap-3 py-5 first:pt-6 sm:gap-5">
+                  <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full border border-[#cda74c]/60 bg-[#f8f2e4] text-[#ad7d29] transition group-hover:bg-[#c79c18] group-hover:text-white">
+                    <Check size={15} strokeWidth={2.5} />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex items-start gap-2.5 sm:items-center sm:gap-3"><span className="mt-1 font-sans text-[0.65rem] font-bold tracking-widest text-[#ad7d29] sm:mt-0">0{index + 1}</span><h4 className="text-[0.95rem] font-semibold leading-6 text-[#293130] sm:text-[1.05rem]">{item.title}</h4></div>
+                    <p className="mt-1.5 text-sm leading-6 text-[#697277]">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-2 rounded-2xl bg-[#e8ecec] px-4 py-4 sm:flex sm:items-center sm:justify-between">
+              <p className="text-sm font-medium text-[#465054]">Personal matchmaking guidance</p>
+              <p className="mt-1 font-sans text-[0.66rem] font-bold tracking-[0.17em] text-[#9d7226] sm:mt-0">INCLUDED WITH PREMIER</p>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     </section>
