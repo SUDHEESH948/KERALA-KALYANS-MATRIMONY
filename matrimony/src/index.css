@@ -22,6 +22,17 @@
 }
 
 @theme {
+  --text-xs: calc(0.75rem + 2px);
+  --text-sm: calc(0.875rem + 2px);
+  --text-base: calc(1rem + 2px);
+  --text-lg: calc(1.125rem + 2px);
+  --text-xl: calc(1.25rem + 2px);
+  --text-2xl: calc(1.5rem + 2px);
+  --text-3xl: calc(1.875rem + 2px);
+  --text-4xl: calc(2.25rem + 2px);
+  --text-5xl: calc(3rem + 2px);
+  --text-6xl: calc(3.75rem + 2px);
+  --text-7xl: calc(4.5rem + 2px);
   --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Gotham", "DM Sans", system-ui, sans-serif;
   --font-weight-semibold: 500;
@@ -38,6 +49,7 @@
     overflow-x: hidden;
     min-width: 320px;
     font-family: var(--font-sans);
+    font-size: var(--text-base);
     font-weight: 400;
     line-height: 1.55;
   }
@@ -67,7 +79,7 @@
   }
 
   .hero-heading {
-    font-size: clamp(2.375rem, 7vw, 4.5rem);
+    font-size: calc(clamp(2.375rem, 7vw, 4.5rem) + 2px);
     font-weight: 500;
     line-height: 1.06;
     letter-spacing: -0.025em;

@@ -16,7 +16,7 @@ export default function TrustSection({ platformStats }) {
       <div className="mx-auto max-w-[1320px]">
       <div className="mb-9 flex flex-col gap-4 border-b border-[#ded4c2] pb-7 sm:mb-11 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-sans text-[0.7rem] font-bold tracking-[0.22em] text-[#b98231]">BUILT ON TRUST</p>
+          <p className="font-sans text-[length:calc(0.7rem+2px)] font-bold tracking-[0.22em] text-[#b98231]">BUILT ON TRUST</p>
           <h2 className="font-serif mt-2 text-3xl font-semibold text-[#293130] sm:text-4xl">A more considered way to connect.</h2>
         </div>
         <p className="max-w-sm text-sm leading-6 text-[#697277]">Thoughtful matchmaking, with care and confidence at every step.</p>
@@ -36,9 +36,9 @@ export default function TrustSection({ platformStats }) {
               <div className="absolute right-0 top-0 size-16 rounded-bl-full bg-[#E8CA91]/70 transition group-hover:bg-[#f1cc4b]/20" />
               <div className="relative flex items-start justify-between">
                 <span className="grid size-11 place-items-center rounded-full border border-[#cda74c]/60 bg-[#f8f2e4] text-[#ad7d29] transition group-hover:bg-[#c79c18] group-hover:text-white"><Icon size={21} strokeWidth={1.7} /></span>
-                <span className="font-sans text-[0.65rem] font-bold tracking-[0.18em] text-[#a6792e]">0{i + 1}</span>
+                <span className="font-sans text-[length:calc(0.65rem+2px)] font-bold tracking-[0.18em] text-[#a6792e]">0{i + 1}</span>
               </div>
-              <h3 className="font-serif relative mt-7 text-4xl font-normal leading-none tracking-tight text-[#701C35] sm:text-[2.8rem]">
+              <h3 className="font-serif relative mt-7 text-4xl font-normal leading-none tracking-tight text-[#701C35] sm:text-[length:calc(2.8rem+2px)]">
                 <AnimatedCounter target={stat.target} suffix={stat.suffix} duration={2.2} />
               </h3>
               <p className="font-sans relative mt-3 text-sm font-semibold tracking-wide text-[#465054]">{stat.label}</p>
@@ -47,7 +47,7 @@ export default function TrustSection({ platformStats }) {
           )
         })}
       </div>
-      <p className="mt-6 text-center font-sans text-[0.68rem] font-semibold tracking-[0.14em] text-[#8b8171]">VERIFIED PLATFORM ASSURANCE · SECURE MATCHMAKING</p>
+      <p className="mt-6 text-center font-sans text-[length:calc(0.68rem+2px)] font-semibold tracking-[0.14em] text-[#8b8171]">VERIFIED PLATFORM ASSURANCE · SECURE MATCHMAKING</p>
       </div>
     </section>
   )

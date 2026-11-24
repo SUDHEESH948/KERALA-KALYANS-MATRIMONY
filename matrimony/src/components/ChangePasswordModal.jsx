@@ -118,7 +118,7 @@ export default function ChangePasswordModal({
                 <h3 className="text-xl sm:text-2xl leading-tight">
                   Mandatory Password Change
                 </h3>
-                <p className="text-[11px] text-[#E8CA91] font-semibold tracking-wider uppercase">
+                <p className="text-[13px] text-[#E8CA91] font-semibold tracking-wider uppercase">
                   FIRST-TIME LOGIN SECURITY REQUIRED
                 </p>
               </div>
@@ -136,7 +136,7 @@ export default function ChangePasswordModal({
                 You signed in using a single-use temporary password. To protect your matrimonial profile, you must set a permanent private password before accessing the member dashboard.
               </p>
               {userEmail && (
-                <p className="text-[11px] text-amber-800 pt-1 border-t border-amber-200">
+                <p className="text-[13px] text-amber-800 pt-1 border-t border-amber-200">
                   Account: <b>{userEmail}</b>
                 </p>
               )}
@@ -236,10 +236,10 @@ export default function ChangePasswordModal({
 
               {/* Password Strength Checklist */}
               <div className="rounded-xl bg-[#FAF7F1] border border-[#eadfce] p-3.5 space-y-2">
-                <p className="text-[11px] font-bold text-[#701C35] uppercase tracking-wider">
+                <p className="text-[13px] font-bold text-[#701C35] uppercase tracking-wider">
                   Password Strength Requirements
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[13px]">
                   {rules.map((rule, idx) => (
                     <div key={idx} className="flex items-center gap-1.5">
                       {rule.met ? (

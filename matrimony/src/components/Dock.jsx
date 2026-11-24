@@ -17,7 +17,7 @@ export default function Dock({ items }) {
             <span className={`flex h-10 w-10 items-center justify-center rounded-xl border text-white transition duration-200 sm:h-11 sm:w-11 ${active ? 'border-[#e2b82f] bg-[#701C35] text-white shadow-lg shadow-black/30' : 'border-white/10 bg-white/10 hover:border-white/25 hover:bg-white/20'}`}>
               {item.icon}
             </span>
-            <span className={`pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#511327] px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-lg transition ${active ? 'opacity-100' : ''}`}>
+            <span className={`pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#511327] px-2 py-1 text-[12px] font-semibold text-white opacity-0 shadow-lg transition ${active ? 'opacity-100' : ''}`}>
               {item.label}
             </span>
           </>

@@ -5,7 +5,7 @@ import { Admin } from '../models/Admin.js'
 import { Profile } from '../models/Profile.js'
 import { sendWelcomeEmail } from '../services/emailService.js'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'apremiya_jwt_secret_key_2026_super_secure_auth'
+import { getJwtSecret } from '../config/jwt.js'
 
 /**
  * Validate password strength
@@ -59,7 +59,7 @@ export const loginAdmin = async (req, res) => {
         role: 'admin',
         isAdmin: true
       },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '12h' }
     )
 
@@ -274,7 +274,7 @@ export const loginMember = async (req, res) => {
           role: 'member',
           mustChangePassword: true
         },
-        JWT_SECRET,
+        getJwtSecret(),
         { expiresIn: '15m' }
       )
 
@@ -302,7 +302,7 @@ export const loginMember = async (req, res) => {
         role: 'member',
         mustChangePassword: false
       },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '7d' }
     )
 
@@ -364,7 +364,7 @@ export const changePassword = async (req, res) => {
       if (authHeader) {
         const rawToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader
         try {
-          req.user = jwt.verify(rawToken, JWT_SECRET)
+          req.user = jwt.verify(rawToken, getJwtSecret())
         } catch {}
       }
     }
@@ -431,7 +431,7 @@ export const changePassword = async (req, res) => {
         role: 'member',
         mustChangePassword: false
       },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '7d' }
     )
 

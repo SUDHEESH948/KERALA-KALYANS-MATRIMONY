@@ -1,8 +1,27 @@
 import jwt from 'jsonwebtoken'
 import { Profile } from '../models/Profile.js'
 import { Admin } from '../models/Admin.js'
+import { getJwtSecret } from '../config/jwt.js'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'apremiya_jwt_secret_key_2026_super_secure_auth'
+export const requireSignedSession = (req, res, next) => {
+  const header = req.headers.authorization || req.headers['x-auth-token']
+  try {
+    const token = header?.startsWith('Bearer ') ? header.slice(7) : header
+    req.user = jwt.verify(token, getJwtSecret(), { algorithms: ['HS256'] })
+  } catch {
+    return res.status(401).json({ error: 'Please sign in to continue.' })
+  }
+  next()
+}
+
+export const requireSignedAdmin = (req, res, next) => {
+  requireSignedSession(req, res, () => {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Administrator privileges required.' })
+    }
+    next()
+  })
+}
 
 /**
  * Universal token verification middleware
@@ -24,7 +43,7 @@ export const verifyToken = async (req, res, next) => {
 
     // 2. Verify JWT token
     try {
-      const decoded = jwt.verify(token, JWT_SECRET)
+      const decoded = jwt.verify(token, getJwtSecret())
       req.user = decoded
       return next()
     } catch (jwtErr) {
@@ -58,7 +77,7 @@ export const requireAdmin = async (req, res, next) => {
     }
 
     try {
-      const decoded = jwt.verify(token, JWT_SECRET)
+      const decoded = jwt.verify(token, getJwtSecret())
       if (decoded.role === 'admin' || decoded.isAdmin) {
         req.user = decoded
         return next()

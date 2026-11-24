@@ -7,6 +7,8 @@ import ProfileDetailsPage from './pages/ProfileDetailsPage'
 import { NotificationProvider } from './context/NotificationContext'
 import NotificationCenterModal from './components/NotificationCenterModal'
 import FloatingWhatsAppButton from './components/FloatingWhatsAppButton'
+import MembershipWarning from './components/MembershipWarning'
+import { defaultContact, requestContact } from './config/contact'
 
 export default function App() {
   const [currentMember, setCurrentMember] = useState(() => {
@@ -20,6 +22,14 @@ export default function App() {
   const [isAdminView, setIsAdminView] = useState(() => {
     return window.location.hash === '#admin' || window.location.pathname === '/admin'
   })
+  const [contact, setContact] = useState(defaultContact)
+
+  useEffect(() => {
+    if (isAdminView) return
+    const request = new AbortController()
+    requestContact({ signal: request.signal }).then(setContact).catch(() => {})
+    return () => request.abort()
+  }, [isAdminView])
 
   const [isChangePasswordView, setIsChangePasswordView] = useState(() => {
     try {
@@ -181,6 +191,7 @@ export default function App() {
           />
         ) : (
           <HomePage
+            contact={contact}
             onOpenAdmin={openAdmin}
             onOpenMatches={openMatches}
             currentMember={currentMember}
@@ -189,8 +200,11 @@ export default function App() {
         )}
         {/* Global Common Notification Pop-up Stack & Center Drawer */}
         <NotificationCenterModal onNavigateAdmin={openAdmin} />
+        {currentMember && !currentMember.mustChangePassword && !isAdminView && !isChangePasswordView && (
+          <MembershipWarning key={currentMember.id} memberId={currentMember.id} />
+        )}
         {/* Floating WhatsApp Contact Button (Hidden on Admin Page) */}
-        {!isAdminView && <FloatingWhatsAppButton />}
+        {!isAdminView && <FloatingWhatsAppButton number={contact.whatsapp} />}
       </div>
     </NotificationProvider>
   )

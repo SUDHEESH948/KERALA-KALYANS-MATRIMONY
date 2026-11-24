@@ -208,7 +208,7 @@ export default function RegisterModal({
                 <h3 className="text-base sm:text-2xl leading-tight truncate">
                   Register on Kerala Kalyans
                 </h3>
-                <p className="text-[9px] sm:text-xs text-[#573b0b] font-semibold tracking-wide truncate">
+                <p className="text-[11px] sm:text-xs text-[#573b0b] font-semibold tracking-wide truncate">
                   FIND YOUR SPECIAL SOMEONE
                 </p>
               </div>
@@ -264,11 +264,11 @@ export default function RegisterModal({
                     <span className="text-gray-600 font-semibold">
                       Account Status:
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[13px] font-bold">
                       Under Review (Pending Approval)
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-gray-600 text-[11px] pt-1.5 border-t border-[#eadfce]">
+                  <div className="flex items-center justify-between text-gray-600 text-[13px] pt-1.5 border-t border-[#eadfce]">
                     <span className="font-semibold">Notification Email:</span>
                     <span className="font-medium text-gray-900">{email}</span>
                   </div>
@@ -315,7 +315,7 @@ export default function RegisterModal({
                           if (rel === "Daughter" || rel === "Sister")
                             setGender("Bride");
                         }}
-                        className={`py-2 px-1 text-center rounded-lg border text-[11px] font-semibold transition cursor-pointer ${
+                        className={`py-2 px-1 text-center rounded-lg border text-[13px] font-semibold transition cursor-pointer ${
                           profileFor === rel
                             ? "bg-[#e2b82f] text-[#332500] border-[#b58a20]"
                             : "bg-[#FAF7F1] text-gray-700 border-[#eadfce] hover:bg-gray-100"
@@ -333,7 +333,7 @@ export default function RegisterModal({
                     <label className="block text-gray-800 text-xs sm:text-sm">
                       Add Profile Photo
                     </label>
-                    <p className="text-[10px] sm:text-[11px] text-[#9C8158] font-medium">
+                    <p className="text-[12px] sm:text-[13px] text-[#9C8158] font-medium">
                       Profiles with photos receive 8x more verified partner
                       requests
                     </p>
@@ -361,21 +361,21 @@ export default function RegisterModal({
                         <p className="text-xs font-semibold text-gray-800 truncate">
                           Photo Attached Successfully
                         </p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">
+                        <p className="text-[12px] text-gray-400 mt-0.5">
                           Ready for your matrimonial profile
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="px-3 py-1 rounded-md text-[11px] font-medium bg-[#e2b82f] text-[#332500] hover:bg-[#d4aa25] transition cursor-pointer"
+                            className="px-3 py-1 rounded-md text-[13px] font-medium bg-[#e2b82f] text-[#332500] hover:bg-[#d4aa25] transition cursor-pointer"
                           >
                             Change Photo
                           </button>
                           <button
                             type="button"
                             onClick={handleRemovePhoto}
-                            className="px-2.5 py-1 rounded-md text-[11px] font-medium text-red-600 hover:bg-red-50 border border-red-200 transition cursor-pointer flex items-center gap-1"
+                            className="px-2.5 py-1 rounded-md text-[13px] font-medium text-red-600 hover:bg-red-50 border border-red-200 transition cursor-pointer flex items-center gap-1"
                           >
                             <Trash2 size={12} />
                             <span>Remove</span>
@@ -394,7 +394,7 @@ export default function RegisterModal({
                       <p className="text-xs font-semibold text-gray-800 group-hover:text-[#795705] transition">
                         Click to upload your portrait photo
                       </p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">
+                      <p className="text-[12px] text-gray-400 mt-0.5">
                         Supports JPG, PNG, WEBP (Max 5MB)
                       </p>
                     </div>
@@ -452,11 +452,11 @@ export default function RegisterModal({
                       </button>
                     </div>
                     {gender === "Bride" ? (
-                      <p className="text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1">
+                      <p className="text-[13px] text-emerald-700 font-semibold mt-1 flex items-center gap-1">
                         <span>✨ Free Registration for Girls' Profiles · No Charges</span>
                       </p>
                     ) : (
-                      <p className="text-[11px] text-amber-800 font-semibold mt-1 flex items-center gap-1">
+                      <p className="text-[13px] text-amber-800 font-semibold mt-1 flex items-center gap-1">
                         <span>📋 One-Time Fee · 6 Profiles Every Saturday (3 Months)</span>
                       </p>
                     )}
@@ -698,7 +698,7 @@ export default function RegisterModal({
                 </div>
 
                 {/* Registration & Privacy Disclaimer Box */}
-                <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-3 sm:p-3.5 space-y-2 text-[11px] text-gray-700">
+                <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-3 sm:p-3.5 space-y-2 text-[13px] text-gray-700">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-[#795705] flex items-center gap-1.5">
                       <ShieldCheck size={14} className="text-[#795705]" />
@@ -707,7 +707,7 @@ export default function RegisterModal({
                     <button
                       type="button"
                       onClick={() => setShowTermsModal(true)}
-                      className="text-[#795705] font-semibold hover:underline text-[10px] cursor-pointer"
+                      className="text-[#795705] font-semibold hover:underline text-[12px] cursor-pointer"
                     >
                       View Full Policy →
                     </button>
@@ -729,7 +729,7 @@ export default function RegisterModal({
                       <b>Privacy &amp; Legal:</b> Profiles are strictly for personal use only. Sharing or forwarding is strictly prohibited. Strict legal action will be taken against violators.
                     </li>
                   </ul>
-                  <p className="text-[10px] text-gray-400 pt-1 border-t border-[#eadfce]">
+                  <p className="text-[12px] text-gray-400 pt-1 border-t border-[#eadfce]">
                     By clicking Complete Registration, you agree to our Terms of Service, Privacy Policy &amp; Legal Disclaimer.
                   </p>
                 </div>

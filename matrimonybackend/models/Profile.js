@@ -106,6 +106,10 @@ const profileSchema = new mongoose.Schema(
     approvedAt: {
       type: Date
     },
+    openedProfileIds: {
+      type: [String],
+      select: false
+    },
     rejectedAt: {
       type: Date
     },

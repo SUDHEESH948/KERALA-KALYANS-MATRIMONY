@@ -1,4 +1,6 @@
-# React + Vite
+# Kerala Kalyans Matrimony frontend
+
+See the [project README](../README.md) for local setup, membership limits, and profile API changes.
 
 ## API configuration
 

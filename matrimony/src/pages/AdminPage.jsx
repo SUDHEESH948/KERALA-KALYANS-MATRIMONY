@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   ShieldCheck,
   Heart,
@@ -32,12 +32,24 @@ import {
 } from "lucide-react";
 
 import { API_BASE } from "../config/api";
+import AdminContactDialog from "../components/AdminContactDialog";
 import { useNotification } from "../context/NotificationContext";
 import AdminWhatsAppFollowUps from "../components/AdminWhatsAppFollowUps";
 
 const gothamStylesheet = import.meta.env.VITE_ADMIN_GOTHAM_STYLESHEET?.trim();
 
+function sessionExpiresAt(token) {
+  try {
+    const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const { exp } = JSON.parse(atob(payload));
+    return Number.isFinite(exp) ? exp * 1000 : 0;
+  } catch {
+    return 0;
+  }
+}
+
 export default function AdminPage({ onExit }) {
+  const [contactOpen, setContactOpen] = useState(false);
   useEffect(() => {
     if (!gothamStylesheet) return;
     const link = document.createElement("link");
@@ -114,27 +126,30 @@ export default function AdminPage({ onExit }) {
     setTimeout(() => setToast(null), 3500);
   };
 
-  // Check login
+  const signIn = async (email, password) => {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok && data?.error) throw new Error(data.error);
+    if (!res.ok || !data?.token || !data?.admin) {
+      throw new Error("The sign-in service is unavailable. Please try again later.");
+    }
+
+    localStorage.setItem("apremiya_admin_token", data.token);
+    localStorage.setItem("apremiya_admin_user", JSON.stringify(data.admin));
+    setToken(data.token);
+    setAdminUser(data.admin);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError("");
     setIsLoggingIn(true);
     try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
-      });
-      const data = await res.json().catch(() => null);
-      if (!res.ok && data?.error) throw new Error(data.error);
-      if (!res.ok || !data?.token || !data?.admin) {
-        throw new Error("The sign-in service is unavailable. Please try again later.");
-      }
-
-      localStorage.setItem("apremiya_admin_token", data.token);
-      localStorage.setItem("apremiya_admin_user", JSON.stringify(data.admin));
-      setToken(data.token);
-      setAdminUser(data.admin);
+      await signIn(loginEmail, loginPassword);
       addNotification(
         "Welcome Back",
         "Administrator session authenticated successfully.",
@@ -151,12 +166,63 @@ export default function AdminPage({ onExit }) {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("apremiya_admin_token");
-    localStorage.removeItem("apremiya_admin_user");
+  const clearSession = useCallback((message) => {
     setToken("");
     setAdminUser(null);
-    showToast("Signed out successfully");
+    setLoginPassword("");
+    setContactOpen(false);
+    setEditingProfile(null);
+    setConfirmModal(null);
+    setApprovalModal(null);
+    setProfiles([]);
+    setInquiries([]);
+    setLoginError(message);
+  }, []);
+
+  const endSession = useCallback((message) => {
+    if (localStorage.getItem("apremiya_admin_token") !== token) return;
+    localStorage.removeItem("apremiya_admin_token");
+    localStorage.removeItem("apremiya_admin_user");
+    clearSession(message);
+  }, [token, clearSession]);
+
+  const expireSession = useCallback(() => {
+    endSession("Your admin session ended. Sign in again to continue.");
+  }, [endSession]);
+
+  useEffect(() => {
+    if (!token) return;
+    const expiresAt = sessionExpiresAt(token);
+    let timer;
+    const checkSession = () => {
+      clearTimeout(timer);
+      if (localStorage.getItem("apremiya_admin_token") !== token) {
+        clearSession("Your admin session changed. Sign in again to continue.");
+        return;
+      }
+      const remaining = expiresAt - Date.now();
+      if (remaining <= 0) expireSession();
+      else timer = setTimeout(checkSession, Math.min(remaining, 2_147_483_647));
+    };
+    const checkStorage = (event) => {
+      if (event.key === "apremiya_admin_token" || event.key === null) checkSession();
+    };
+    checkSession();
+    window.addEventListener("storage", checkStorage);
+    window.addEventListener("focus", checkSession);
+    document.addEventListener("visibilitychange", checkSession);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("storage", checkStorage);
+      window.removeEventListener("focus", checkSession);
+      document.removeEventListener("visibilitychange", checkSession);
+    };
+  }, [token, clearSession, expireSession]);
+
+  const fetchAsAdmin = async (url, options) => {
+    const response = await fetch(url, options);
+    if (response.status === 401 || response.status === 403) expireSession();
+    return response;
   };
 
   // Fetch all data (with silent background auto-refresh & real-time notification detection)
@@ -166,9 +232,13 @@ export default function AdminPage({ onExit }) {
     try {
       const [resStats, resProfiles, resInquiries] = await Promise.all([
         fetch(`${API_BASE}/stats`),
-        fetch(`${API_BASE}/profiles`),
+        fetchAsAdmin(`${API_BASE}/profiles/admin`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
         fetch(`${API_BASE}/inquiries`),
       ]);
+      if (resProfiles.status === 401 || resProfiles.status === 403 ||
+          localStorage.getItem("apremiya_admin_token") !== token) return;
 
       if (resStats.ok) {
         const statsData = await resStats.json();
@@ -221,7 +291,7 @@ export default function AdminPage({ onExit }) {
   // Admin Approve User Registration
   const handleApproveProfile = async (id, name) => {
     try {
-      const res = await fetch(`${API_BASE}/profiles/${id}/approve`, {
+      const res = await fetchAsAdmin(`${API_BASE}/profiles/${id}/approve`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -274,7 +344,7 @@ export default function AdminPage({ onExit }) {
   // Admin Reject User Registration
   const handleRejectProfile = async (id, name) => {
     try {
-      const res = await fetch(`${API_BASE}/profiles/${id}/reject`, {
+      const res = await fetchAsAdmin(`${API_BASE}/profiles/${id}/reject`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -315,7 +385,7 @@ export default function AdminPage({ onExit }) {
   // Resend Temporary Credentials Email
   const handleResendApproval = async (id, name) => {
     try {
-      const res = await fetch(`${API_BASE}/profiles/${id}/resend-approval`, {
+      const res = await fetchAsAdmin(`${API_BASE}/profiles/${id}/resend-approval`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -353,7 +423,7 @@ export default function AdminPage({ onExit }) {
     if (p.isApproved || p.verified) {
       // Revert to pending
       try {
-        const res = await fetch(`${API_BASE}/profiles/${id}/verify`, {
+        const res = await fetchAsAdmin(`${API_BASE}/profiles/${id}/verify`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -382,7 +452,7 @@ export default function AdminPage({ onExit }) {
       onConfirm: async () => {
         setConfirmModal(null);
         try {
-          const res = await fetch(`${API_BASE}/profiles/${id}`, {
+          const res = await fetchAsAdmin(`${API_BASE}/profiles/${id}`, {
             method: "DELETE",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -410,7 +480,7 @@ export default function AdminPage({ onExit }) {
     e.preventDefault();
     if (!editingProfile) return;
     try {
-      const res = await fetch(`${API_BASE}/profiles/${editingProfile.id}`, {
+      const res = await fetchAsAdmin(`${API_BASE}/profiles/${editingProfile.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -421,7 +491,7 @@ export default function AdminPage({ onExit }) {
       const updated = await res.json();
       if (res.ok) {
         setProfiles((prev) =>
-          prev.map((p) => (p.id === updated.id ? updated : p)),
+          prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)),
         );
         setEditingProfile(null);
         addNotification(
@@ -649,7 +719,7 @@ export default function AdminPage({ onExit }) {
               <h2 className="text-base sm:text-xl leading-tight truncate">
                 Kerala Kalyans
               </h2>
-              <p className="text-[8px] sm:text-[9px] tracking-[1.5px] sm:tracking-[2px] text-[var(--admin-gold-text)] font-semibold truncate">
+              <p className="text-[10px] sm:text-[11px] tracking-[1.5px] sm:tracking-[2px] text-[var(--admin-gold-text)] font-semibold truncate">
                 ADMIN CONSOLE
               </p>
             </div>
@@ -660,7 +730,7 @@ export default function AdminPage({ onExit }) {
               <p className="font-semibold truncate max-w-[120px]">
                 {adminUser?.name || "Administrator"}
               </p>
-              <p className="text-[10px] text-[var(--admin-gold-text)] truncate max-w-[120px]">
+              <p className="text-[12px] text-[var(--admin-gold-text)] truncate max-w-[120px]">
                 {adminUser?.email}
               </p>
             </div>
@@ -678,7 +748,7 @@ export default function AdminPage({ onExit }) {
               <Bell size={15} />
               <span className="hidden md:inline">Notifications</span>
               {unreadCount > 0 && (
-                <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-[var(--admin-gold-strong)] text-[9px] font-bold text-white shadow-xs animate-pulse">
+                <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-[var(--admin-gold-strong)] text-[11px] font-bold text-white shadow-xs animate-pulse">
                   {unreadCount}
                 </span>
               )}
@@ -697,7 +767,7 @@ export default function AdminPage({ onExit }) {
             )}
 
             <button
-              onClick={handleLogout}
+              onClick={() => endSession("")}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white transition cursor-pointer font-semibold"
               aria-label="Sign out"
               title="Sign Out"
@@ -713,7 +783,7 @@ export default function AdminPage({ onExit }) {
       <div className="mx-auto max-w-[1400px] px-2.5 sm:px-6 py-4 sm:py-6">
         {/* Navigation Tabs */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b border-[var(--admin-border)] pb-4">
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap sm:items-center">
             {[
               { id: "profiles", label: "Profiles", count: profiles.length },
               { id: "whatsapp", label: "WhatsApp Follow-ups" },
@@ -733,17 +803,19 @@ export default function AdminPage({ onExit }) {
             ].map((tab) => (
               <button
                 key={tab.id}
+                type="button"
+                aria-pressed={activeTab === tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`admin-tab whitespace-nowrap px-2.5 py-2 sm:px-3 sm:py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5 ${
+                className={`admin-tab min-h-11 min-w-0 px-2 py-2 sm:min-h-0 sm:whitespace-nowrap sm:px-3 sm:py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
                   activeTab === tab.id
                     ? "bg-[var(--admin-gold-strong)] text-white shadow-md"
                     : "bg-white text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] border border-[var(--admin-border)]"
                 }`}
               >
-                <span>{tab.label}</span>
+                <span className="min-w-0 text-center wrap-anywhere">{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
-                    className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${
+                    className={`shrink-0 text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
                       activeTab === tab.id
                         ? "bg-white/25 text-white"
                         : tab.isBadge && tab.count > 0
@@ -756,8 +828,18 @@ export default function AdminPage({ onExit }) {
                 )}
               </button>
             ))}
+            <button
+              type="button"
+              aria-haspopup="dialog"
+              onClick={() => setContactOpen(true)}
+              className="admin-tab min-h-11 rounded-lg border border-[var(--admin-border)] bg-white px-2 py-2 text-xs text-[var(--admin-gold-text)] transition hover:bg-[var(--admin-surface)] sm:min-h-0 sm:px-3 sm:py-1.5"
+            >
+              Contact
+            </button>
           </div>
         </div>
+
+        {contactOpen && <AdminContactDialog token={token} onSessionEnded={expireSession} onClose={() => setContactOpen(false)} />}
 
         {activeTab === "whatsapp" && (
           <AdminWhatsAppFollowUps
@@ -784,7 +866,7 @@ export default function AdminPage({ onExit }) {
                 }`}
                 title="Click to view all registrations"
               >
-                <p className="text-[10px] sm:text-xs text-[var(--admin-gold-text)] font-semibold truncate">
+                <p className="text-[12px] sm:text-xs text-[var(--admin-gold-text)] font-semibold truncate">
                   Total Registrations
                 </p>
                 <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-ink)] mt-0.5">
@@ -800,7 +882,7 @@ export default function AdminPage({ onExit }) {
                 }`}
                 title="Click to view pending approval registrations"
               >
-                <p className="text-[10px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
+                <p className="text-[12px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
                   Pending Approval
                 </p>
                 <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-text)] mt-0.5">
@@ -825,7 +907,7 @@ export default function AdminPage({ onExit }) {
                 }`}
                 title="Click to view approved active members"
               >
-                <p className="text-[10px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
+                <p className="text-[12px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
                   Approved & Active
                 </p>
                 <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-text)] mt-0.5">
@@ -841,7 +923,7 @@ export default function AdminPage({ onExit }) {
                 }`}
                 title="Click to view rejected applications"
               >
-                <p className="text-[10px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
+                <p className="text-[12px] sm:text-xs text-[var(--admin-gold-ink)] font-semibold truncate">
                   Rejected
                 </p>
                 <h3 className="text-xl sm:text-2xl text-[var(--admin-gold-text)] mt-0.5">
@@ -903,7 +985,7 @@ export default function AdminPage({ onExit }) {
             <div className="bg-white rounded-xl border border-[var(--admin-border)] shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="admin-profiles w-full text-left text-xs" role="table" aria-label="Registered profiles">
-                  <thead role="rowgroup" className="bg-[var(--admin-surface)] border-b border-[var(--admin-border)] text-[var(--admin-gold-text)] font-semibold uppercase tracking-wider text-[10px]">
+                  <thead role="rowgroup" className="bg-[var(--admin-surface)] border-b border-[var(--admin-border)] text-[var(--admin-gold-text)] font-semibold uppercase tracking-wider text-[12px]">
                     <tr role="row">
                       <th role="columnheader" scope="col" className="px-4 py-3">Profile</th>
                       <th role="columnheader" scope="col" className="px-4 py-3">Age & Height</th>
@@ -971,10 +1053,10 @@ export default function AdminPage({ onExit }) {
                                     />
                                   )}
                                 </div>
-                                <div className="text-[11px] text-[var(--admin-gold-ink)] font-medium lg:truncate lg:max-w-[190px]">
+                                <div className="text-[13px] text-[var(--admin-gold-ink)] font-medium lg:truncate lg:max-w-[190px]">
                                   {p.email}
                                 </div>
-                                <span className="text-[10px] text-[var(--admin-gold-text)]">
+                                <span className="text-[12px] text-[var(--admin-gold-text)]">
                                   {p.phone ? `${p.phone} · ` : ""}
                                   {p.id} · {p.gender} ·{" "}
                                   <span className="text-[var(--admin-gold-ink)] font-medium">
@@ -983,6 +1065,9 @@ export default function AdminPage({ onExit }) {
                                       "Never Married"}
                                   </span>
                                 </span>
+                                <div className="mt-1 text-[13px] font-medium text-[var(--admin-gold-ink)]">
+                                  Profiles opened {p.profileOpenCount} / {p.profileOpenLimit}
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -991,7 +1076,7 @@ export default function AdminPage({ onExit }) {
                               Age & Height
                             </span>
                             <div>{p.age} yrs</div>
-                            <div className="text-[10px] text-[var(--admin-gold-text)]">
+                            <div className="text-[12px] text-[var(--admin-gold-text)]">
                               {p.height}
                             </div>
                           </td>
@@ -1000,7 +1085,7 @@ export default function AdminPage({ onExit }) {
                               Community
                             </span>
                             <div>{p.religion}</div>
-                            <div className="text-[10px] text-[var(--admin-gold-text)]">
+                            <div className="text-[12px] text-[var(--admin-gold-text)]">
                               {p.caste || p.motherTongue}
                             </div>
                           </td>
@@ -1011,7 +1096,7 @@ export default function AdminPage({ onExit }) {
                             <div className="font-medium text-[var(--admin-gold-ink)]">
                               {p.profession}
                             </div>
-                            <div className="text-[10px] text-[var(--admin-gold-text)]">
+                            <div className="text-[12px] text-[var(--admin-gold-text)]">
                               {p.education}
                             </div>
                           </td>
@@ -1024,7 +1109,7 @@ export default function AdminPage({ onExit }) {
                           <td role="cell" className="px-4 py-3 text-left lg:text-center">
                             {p.status === "rejected" ? (
                               <div className="flex flex-col items-start gap-1 lg:items-center">
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] border border-[var(--admin-border)]">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[12px] font-bold bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] border border-[var(--admin-border)]">
                                   <XCircle size={12} />
                                   <span>Rejected</span>
                                 </span>
@@ -1032,7 +1117,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleApproveProfile(p.id, p.name)
                                   }
-                                  className="text-[10px] text-[var(--admin-gold-ink)] hover:underline font-semibold cursor-pointer"
+                                  className="text-[12px] text-[var(--admin-gold-ink)] hover:underline font-semibold cursor-pointer"
                                   title="Re-approve application"
                                 >
                                   Re-Approve
@@ -1040,7 +1125,7 @@ export default function AdminPage({ onExit }) {
                               </div>
                             ) : p.isApproved || p.verified ? (
                               <div className="flex flex-col items-start gap-1 lg:items-center">
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] border border-[var(--admin-border)]">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-[var(--admin-surface)] text-[var(--admin-gold-ink)] border border-[var(--admin-border)]">
                                   <CheckCircle2 size={12} />
                                   <span>Approved</span>
                                 </span>
@@ -1048,7 +1133,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleResendApproval(p.id, p.name)
                                   }
-                                  className="text-[9px] text-[var(--admin-gold-ink)] hover:underline font-medium cursor-pointer"
+                                  className="text-[11px] text-[var(--admin-gold-ink)] hover:underline font-medium cursor-pointer"
                                   title="Resend temporary login credentials email"
                                 >
                                   Resend Email
@@ -1060,7 +1145,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleApproveProfile(p.id, p.name)
                                   }
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white shadow-xs transition cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[12px] font-bold bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white shadow-xs transition cursor-pointer"
                                   title="Approve user, hash temporary password & send approval email"
                                 >
                                   <CheckCircle2 size={13} />
@@ -1070,7 +1155,7 @@ export default function AdminPage({ onExit }) {
                                   onClick={() =>
                                     handleRejectProfile(p.id, p.name)
                                   }
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-[var(--admin-surface)] hover:bg-[var(--admin-surface)] text-[var(--admin-gold-text)] border border-[var(--admin-border)] transition cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[12px] font-semibold bg-[var(--admin-surface)] hover:bg-[var(--admin-surface)] text-[var(--admin-gold-text)] border border-[var(--admin-border)] transition cursor-pointer"
                                   title="Reject registration & notify applicant"
                                 >
                                   <XCircle size={13} />
@@ -1149,11 +1234,11 @@ export default function AdminPage({ onExit }) {
                     className="min-w-0 wrap-anywhere bg-white p-4 sm:p-5 rounded-xl border border-[var(--admin-border)] shadow-sm space-y-3"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-[var(--admin-gold-text)]">
+                      <span className="text-[12px] font-bold text-[var(--admin-gold-text)]">
                         {inq.id}
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                        className={`px-2 py-0.5 rounded text-[12px] font-semibold ${
                           inq.status === "New"
                             ? "bg-[var(--admin-surface)] text-[var(--admin-gold-ink)]"
                             : inq.status === "Contacted"
@@ -1195,7 +1280,7 @@ export default function AdminPage({ onExit }) {
                           {inq.email}
                         </div>
                       )}
-                      <div className="flex items-center gap-1 text-[10px] text-[var(--admin-gold-text)] pt-1">
+                      <div className="flex items-center gap-1 text-[12px] text-[var(--admin-gold-text)] pt-1">
                         <Calendar size={11} />{" "}
                         {new Date(inq.date).toLocaleDateString()}
                       </div>
@@ -1363,7 +1448,7 @@ export default function AdminPage({ onExit }) {
                           <p className="text-xs text-[var(--admin-gold-text)] mt-1 leading-relaxed">
                             {notif.message}
                           </p>
-                          <div className="flex items-center gap-3 mt-2 text-[10px] text-[var(--admin-gold-text)]">
+                          <div className="flex items-center gap-3 mt-2 text-[12px] text-[var(--admin-gold-text)]">
                             <span>
                               {new Date(notif.timestamp).toLocaleString()}
                             </span>
@@ -1489,7 +1574,7 @@ export default function AdminPage({ onExit }) {
 
               <button
                 type="submit"
-                className="mt-4 px-6 py-2.5 rounded-lg bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-semibold text-xs transition cursor-pointer shadow"
+                className="mt-4 min-h-11 w-full px-4 py-2.5 sm:w-auto sm:px-6 rounded-lg bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-semibold text-xs transition cursor-pointer shadow"
               >
                 Save Platform Stats
               </button>
@@ -1801,7 +1886,7 @@ export default function AdminPage({ onExit }) {
             <div className="mt-5 bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-xl p-4">
               <div className="flex items-center justify-between text-xs text-[var(--admin-gold-text)] font-semibold mb-1">
                 <span>Temporary Password</span>
-                <span className="text-[10px] text-[var(--admin-gold-ink)] bg-[var(--admin-surface)] border border-[var(--admin-gold)] px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[12px] text-[var(--admin-gold-ink)] bg-[var(--admin-surface)] border border-[var(--admin-gold)] px-2 py-0.5 rounded-full font-bold">
                   ⏱️ Expires in 10 mins
                 </span>
               </div>
@@ -1833,7 +1918,7 @@ export default function AdminPage({ onExit }) {
                   )}
                 </button>
               </div>
-              <p className="text-[10px] text-[var(--admin-gold-text)] mt-2">
+              <p className="text-[12px] text-[var(--admin-gold-text)] mt-2">
                 Combination of uppercase, lowercase, numbers &amp; special
                 characters. Valid for 10 minutes.
               </p>
@@ -1844,7 +1929,7 @@ export default function AdminPage({ onExit }) {
                 <CheckCircle2 size={14} className="text-[var(--admin-gold-text)]" />
                 <span>Nodemailer Dispatched</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-[var(--admin-gold-ink)]">
+              <p className="text-[13px] leading-relaxed text-[var(--admin-gold-ink)]">
                 Email has been sent to <b>{approvalModal.email}</b>. If not
                 visible in the inbox, ask the member to check their <b>Spam</b>{" "}
                 or <b>Promotions</b> folder.
@@ -1884,7 +1969,7 @@ export default function AdminPage({ onExit }) {
             <div className="mt-5 bg-[var(--admin-surface)] border border-[var(--admin-border)] rounded-xl p-4">
               <div className="flex items-center justify-between text-xs text-[var(--admin-gold-text)] font-semibold mb-1">
                 <span>Temporary Password</span>
-                <span className="text-[10px] text-[var(--admin-gold-ink)] bg-[var(--admin-surface)] border border-[var(--admin-gold)] px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[12px] text-[var(--admin-gold-ink)] bg-[var(--admin-surface)] border border-[var(--admin-gold)] px-2 py-0.5 rounded-full font-bold">
                   ⏱️ Expires in 10 mins
                 </span>
               </div>
@@ -1916,7 +2001,7 @@ export default function AdminPage({ onExit }) {
                   )}
                 </button>
               </div>
-              <p className="text-[10px] text-[var(--admin-gold-text)] mt-2">
+              <p className="text-[12px] text-[var(--admin-gold-text)] mt-2">
                 Combination of uppercase, lowercase, numbers &amp; special
                 characters. Valid for 10 minutes.
               </p>
@@ -1927,7 +2012,7 @@ export default function AdminPage({ onExit }) {
                 <CheckCircle2 size={14} className="text-[var(--admin-gold-text)]" />
                 <span>Nodemailer Dispatched</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-[var(--admin-gold-ink)]">
+              <p className="text-[13px] leading-relaxed text-[var(--admin-gold-ink)]">
                 Email has been sent to <b>{approvalModal.email}</b>. If not
                 visible in the inbox, ask the member to check their <b>Spam</b>{" "}
                 or <b>Promotions</b> folder.

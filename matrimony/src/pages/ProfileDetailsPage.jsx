@@ -44,13 +44,23 @@ export default function ProfileDetailsPage({
   // Load profile from API or database
   useEffect(() => {
     if (!profileId) return;
+    const controller = new AbortController();
     const fetchProfile = async () => {
+      if (controller.signal.aborted) return;
       setIsLoading(true);
+      setError("");
+      setProfile(null);
       try {
-        const res = await fetch(`${API_BASE}/profiles/${profileId}`);
+        const token = localStorage.getItem("apremiya_member_token");
+        const res = await fetch(`${API_BASE}/profiles/${encodeURIComponent(profileId)}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (controller.signal.aborted) return;
         if (res.ok) {
-          const data = await res.json();
           setProfile(data);
+          window.dispatchEvent(new Event("apremiya-profile-opened"));
           // Check if interest was sent
           try {
             const savedInterests = JSON.parse(
@@ -65,16 +75,18 @@ export default function ProfileDetailsPage({
             setIsShortlisted(savedShortlist.includes(data.id));
           } catch {}
         } else {
-          setError("Profile not found");
+          setError(data.error || "Failed to load profile details.");
         }
       } catch {
-        setError("Failed to load profile details");
+        if (!controller.signal.aborted) setError("Failed to load profile details.");
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     };
-    fetchProfile();
-  }, [profileId, currentMember]);
+    // Defer the request so React's development effect replay cannot open the final profile twice.
+    queueMicrotask(fetchProfile);
+    return () => controller.abort();
+  }, [profileId, currentMember?.id]);
 
   const handleToggleInterest = () => {
     if (!profile) return;
@@ -142,11 +154,10 @@ export default function ProfileDetailsPage({
             <User size={32} />
           </div>
           <h2 className="text-2xl text-gray-900">
-            Profile Not Found
+            Profile unavailable
           </h2>
           <p className="text-xs text-gray-500">
-            The profile you are trying to view does not exist or has been
-            removed.
+            {error || "Profile not found."}
           </p>
           <button
             onClick={onBack}
@@ -220,11 +231,11 @@ export default function ProfileDetailsPage({
 
               {/* Status Tags */}
               <div className="absolute top-4 left-4 flex items-center gap-2">
-                <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-[11px] font-bold text-white border border-white/20">
+                <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-[13px] font-bold text-white border border-white/20">
                   {profile.gender}
                 </span>
                 {(profile.isApproved || profile.verified) && (
-                  <span className="px-3 py-1 rounded-full bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 shadow-xs">
+                  <span className="px-3 py-1 rounded-full bg-emerald-700 text-white text-[13px] font-bold flex items-center gap-1 shadow-xs">
                     <ShieldCheck size={13} /> Verified Member
                   </span>
                 )}
@@ -273,7 +284,7 @@ export default function ProfileDetailsPage({
                 {/* Grid of Key Attributes */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-xs">
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
                       Age &amp; Height
                     </span>
                     <span className="font-bold text-gray-900 text-sm mt-0.5 block">
@@ -282,7 +293,7 @@ export default function ProfileDetailsPage({
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
                       Marriage Type
                     </span>
                     <span className="font-bold text-[#701C35] text-sm mt-0.5 block">
@@ -293,7 +304,7 @@ export default function ProfileDetailsPage({
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
                       Religion
                     </span>
                     <span className="font-bold text-[#701C35] text-sm mt-0.5 block">
@@ -302,7 +313,7 @@ export default function ProfileDetailsPage({
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
                       Community / Caste
                     </span>
                     <span className="font-bold text-gray-900 text-sm mt-0.5 block">
@@ -311,7 +322,7 @@ export default function ProfileDetailsPage({
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
                       Mother Tongue
                     </span>
                     <span className="font-bold text-gray-900 text-sm mt-0.5 block">
@@ -320,7 +331,7 @@ export default function ProfileDetailsPage({
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
                       Profession
                     </span>
                     <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">
@@ -329,7 +340,7 @@ export default function ProfileDetailsPage({
                   </div>
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
                       Base Location
                     </span>
                     <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">
@@ -349,7 +360,7 @@ export default function ProfileDetailsPage({
                     <span className="font-bold block">
                       Interested in this profile?
                     </span>
-                    <span className="text-[11px] text-emerald-700">
+                    <span className="text-[13px] text-emerald-700">
                       Express your interest directly to start communication.
                     </span>
                   </div>
@@ -406,7 +417,7 @@ export default function ProfileDetailsPage({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Highest Qualification
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
@@ -415,7 +426,7 @@ export default function ProfileDetailsPage({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Designation / Profession
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
@@ -424,7 +435,7 @@ export default function ProfileDetailsPage({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Work Location
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
@@ -433,7 +444,7 @@ export default function ProfileDetailsPage({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Employment Type
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
@@ -456,7 +467,7 @@ export default function ProfileDetailsPage({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Religion
                   </span>
                   <p className="font-bold text-[#701C35] text-sm">
@@ -465,7 +476,7 @@ export default function ProfileDetailsPage({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Caste / Division
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
@@ -474,7 +485,7 @@ export default function ProfileDetailsPage({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Mother Tongue
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
@@ -483,7 +494,7 @@ export default function ProfileDetailsPage({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
                     Values &amp; Lifestyle
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
@@ -511,7 +522,7 @@ export default function ProfileDetailsPage({
                   <b className="text-[#701C35]">{profile.religion}</b> community
                   who values both cultural heritage and modern aspirations.
                 </p>
-                <div className="pt-2 flex flex-wrap gap-2 text-[11px]">
+                <div className="pt-2 flex flex-wrap gap-2 text-[13px]">
                   <span className="px-3 py-1 bg-[#FAF7F1] rounded-full border border-[#eadfce] font-semibold text-gray-700">
                     Preferably {profile.religion}
                   </span>
@@ -550,7 +561,7 @@ export default function ProfileDetailsPage({
                       <Mail size={15} />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] text-gray-400 uppercase font-semibold block">
+                      <span className="text-[12px] text-gray-400 uppercase font-semibold block">
                         Email Address
                       </span>
                       <span className="font-bold text-gray-900 truncate block">
@@ -569,7 +580,7 @@ export default function ProfileDetailsPage({
                       <Phone size={15} />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] text-gray-400 uppercase font-semibold block">
+                      <span className="text-[12px] text-gray-400 uppercase font-semibold block">
                         Verified Mobile Number
                       </span>
                       <span className="font-bold text-gray-900 block">
@@ -599,7 +610,7 @@ export default function ProfileDetailsPage({
                 <Award size={16} />
                 <span>Kerala Kalyans Assurance</span>
               </div>
-              <ul className="space-y-2 text-[11px] list-disc list-inside text-gray-600">
+              <ul className="space-y-2 text-[13px] list-disc list-inside text-gray-600">
                 <li>Government ID verified profile</li>
                 <li>100% confidential and secure matching</li>
                 <li>Manual screening by admissions team</li>
@@ -625,7 +636,7 @@ export default function ProfileDetailsPage({
               <span className="text-xs font-bold text-gray-900 block leading-tight">
                 {profile.name}
               </span>
-              <span className="text-[10px] text-gray-400 block">
+              <span className="text-[12px] text-gray-400 block">
                 {profile.age} yrs · {profile.location}
               </span>
             </div>

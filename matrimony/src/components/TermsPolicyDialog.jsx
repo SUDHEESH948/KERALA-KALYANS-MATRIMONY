@@ -36,7 +36,7 @@ export default function TermsPolicyDialog({ isOpen, onClose }) {
                 <h3 className="text-lg sm:text-xl leading-tight truncate">
                   Terms, Policy &amp; Legal Disclaimer
                 </h3>
-                <p className="text-[10px] text-[#573b0b] font-semibold tracking-wide uppercase truncate">
+                <p className="text-[12px] text-[#573b0b] font-semibold tracking-wide uppercase truncate">
                   Kerala Kalyans Matrimony · Official Guidelines
                 </p>
               </div>
@@ -89,7 +89,7 @@ export default function TermsPolicyDialog({ isOpen, onClose }) {
             <div className="rounded-xl border border-[#e6cd8d] bg-[#fff9e9] p-4 space-y-2.5">
               <div className="flex items-center gap-2 text-[#573b0b] font-bold text-sm sm:text-base">
                 <HeartHandshake size={18} className="text-[#573b0b] flex-shrink-0" />
-                <span>Registration Method &amp; Realistic Expectations</span>
+                <span>Voluntary Registration &amp; Realistic Expectations</span>
               </div>
               <ul className="space-y-1.5 text-xs text-gray-700 leading-relaxed pl-1">
                 <li>
@@ -99,6 +99,21 @@ export default function TermsPolicyDialog({ isOpen, onClose }) {
                   <b>Registration Method:</b> Customers register here voluntarily after seeing our advertisement and contacting us. We never force anyone to register here. Only those who are genuinely interested may register.
                 </li>
               </ul>
+              <section aria-label="Membership rules" className="space-y-2.5 border-t border-[#e6cd8d] pt-3 text-xs leading-relaxed text-gray-700">
+                <h3 className="text-sm font-bold text-[#573b0b]">Membership Rules</h3>
+                <p>
+                  Access expires at the first limit. The server applies both limits to each active membership:
+                  <strong> 6 months from activation</strong> or <strong>145 distinct profile detail openings</strong>,
+                  whichever comes first.
+                </p>
+                <ul className="space-y-2">
+                  <li><strong>Browse or search.</strong> You can view search results without using your allowance.</li>
+                  <li><strong>Open or reopen.</strong> Only the first full-detail opening of each profile counts.</li>
+                  <li><strong>Open the 145th profile.</strong> The final profile opens, then all further profile access ends.</li>
+                  <li><strong>Reach 6 months first.</strong> Access ends automatically even if profile views remain.</li>
+                </ul>
+                <p>Your view count and expiry date carry over when you change devices or sign in again.</p>
+              </section>
             </div>
 
             {/* 4. PRIVACY, LIABILITY & LEGAL DISCLAIMER */}
@@ -137,7 +152,7 @@ export default function TermsPolicyDialog({ isOpen, onClose }) {
 
           {/* Modal Footer */}
           <div className="bg-[#FAF7F1] border-t border-[#eadfce] px-5 sm:px-6 py-3.5 flex items-center justify-between">
-            <span className="text-[11px] text-gray-500 font-medium hidden sm:inline">
+            <span className="text-[13px] text-gray-500 font-medium hidden sm:inline">
               Kerala Kalyans Matrimony · Transparent &amp; Secure
             </span>
             <button

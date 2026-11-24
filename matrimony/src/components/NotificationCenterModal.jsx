@@ -68,7 +68,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
                     <h3 className="text-base sm:text-lg text-[#701C35] leading-tight truncate">
                       Notification Center
                     </h3>
-                    <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold tracking-wide truncate">
+                    <p className="text-[11px] sm:text-[12px] text-gray-500 font-semibold tracking-wide truncate">
                       {unreadCount} UNREAD NOTIFICATIONS
                     </p>
                   </div>
@@ -86,14 +86,14 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
               {/* Action Bar & Quick Filter */}
               <div className="border-b border-[#eadfce] bg-white px-3.5 sm:px-5 py-2.5 sm:py-3 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-500 font-medium text-[10px] sm:text-[11px]">
+                  <span className="text-gray-500 font-medium text-[12px] sm:text-[13px]">
                     Total: {notifications.length}
                   </span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={markAllNotificationsAsRead}
                       disabled={unreadCount === 0}
-                      className="flex items-center gap-1 text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 disabled:opacity-40 cursor-pointer"
+                      className="flex items-center gap-1 text-[13px] font-semibold text-emerald-700 hover:text-emerald-800 disabled:opacity-40 cursor-pointer"
                     >
                       <Check size={13} />
                       <span>Mark all read</span>
@@ -102,7 +102,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
                     <button
                       onClick={clearAllNotifications}
                       disabled={notifications.length === 0}
-                      className="flex items-center gap-1 text-[11px] font-semibold text-red-600 hover:text-red-700 disabled:opacity-40 cursor-pointer"
+                      className="flex items-center gap-1 text-[13px] font-semibold text-red-600 hover:text-red-700 disabled:opacity-40 cursor-pointer"
                     >
                       <Trash2 size={13} />
                       <span>Clear all</span>
@@ -123,7 +123,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
                     <button
                       key={tab.id}
                       onClick={() => setFilter(tab.id)}
-                      className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[10px] font-semibold transition cursor-pointer ${
+                      className={`whitespace-nowrap px-2.5 py-1 rounded-full text-[12px] font-semibold transition cursor-pointer ${
                         filter === tab.id
                           ? "bg-[#701C35] text-white"
                           : "bg-[#FAF7F1] text-gray-600 hover:bg-gray-100 border border-[#eadfce]"
@@ -143,7 +143,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
                     <p className="text-xs font-semibold text-gray-600">
                       No notifications found
                     </p>
-                    <p className="text-[10px] text-gray-400 mt-0.5 max-w-xs">
+                    <p className="text-[12px] text-gray-400 mt-0.5 max-w-xs">
                       All new member registrations, inquiry submissions, and
                       status updates will appear here automatically.
                     </p>
@@ -197,10 +197,10 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
                             />
                           )}
                         </div>
-                        <p className="text-[11px] text-gray-600 mt-0.5 leading-relaxed">
+                        <p className="text-[13px] text-gray-600 mt-0.5 leading-relaxed">
                           {notif.message}
                         </p>
-                        <div className="flex items-center justify-between mt-2 text-[10px] text-gray-400">
+                        <div className="flex items-center justify-between mt-2 text-[12px] text-gray-400">
                           <span>
                             {new Date(notif.timestamp).toLocaleTimeString([], {
                               hour: "2-digit",
@@ -239,7 +239,7 @@ export default function NotificationCenterModal({ onNavigateAdmin }) {
               </div>
 
               {/* Drawer Footer */}
-              <div className="border-t border-[#eadfce] bg-white p-3.5 text-center text-[10px] text-gray-400">
+              <div className="border-t border-[#eadfce] bg-white p-3.5 text-center text-[12px] text-gray-400">
                 Kerala Kalyans Live Notification Engine · Synchronized with MongoDB
                 Atlas
               </div>

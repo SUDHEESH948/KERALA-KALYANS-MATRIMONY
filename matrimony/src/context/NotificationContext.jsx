@@ -83,7 +83,11 @@ export function NotificationProvider({ children }) {
 
     const syncPendingData = async () => {
       try {
-        const resProfiles = await fetch(`${API_BASE}/profiles`).catch(() => null);
+        const token = localStorage.getItem("apremiya_admin_token");
+        if (!token) return;
+        const resProfiles = await fetch(`${API_BASE}/profiles/admin`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!isMounted || !resProfiles || !resProfiles.ok) return;
 
         const profiles = await resProfiles.json();

@@ -11,7 +11,7 @@ import MemberLoginModal from '../components/MemberLoginModal'
 import TermsPolicyDialog from '../components/TermsPolicyDialog'
 import { API_BASE } from '../config/api'
 
-export default function HomePage({ onOpenAdmin, onOpenMatches }) {
+export default function HomePage({ onOpenAdmin, onOpenMatches, contact }) {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isTermsOpen, setIsTermsOpen] = useState(false)
@@ -147,6 +147,7 @@ export default function HomePage({ onOpenAdmin, onOpenMatches }) {
 
       {/* 8. Footer Section */}
       <FooterSection
+        contact={contact}
         onOpenRegister={() => setIsRegisterOpen(true)}
         onOpenTerms={() => setIsTermsOpen(true)}
       />

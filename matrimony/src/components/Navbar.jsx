@@ -37,7 +37,7 @@ export default function Navbar({
           >
             <ShieldCheck size={16} />
             {unreadCount > 0 && (
-              <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white shadow-xs animate-pulse">
+              <span className="flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white shadow-xs animate-pulse">
                 {unreadCount}
               </span>
             )}
@@ -67,7 +67,7 @@ export default function Navbar({
                   <p className="text-xs font-bold text-gray-800 leading-tight max-w-[110px] truncate">
                     {currentMember.name}
                   </p>
-                  <span className="text-[9px] font-bold text-emerald-600 flex items-center gap-0.5">
+                  <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-0.5">
                     <UserCheck size={10} /> Active
                   </span>
                 </div>
@@ -76,7 +76,7 @@ export default function Navbar({
                     e.stopPropagation()
                     onLogoutMember()
                   }}
-                  className="ml-1 text-[11px] font-semibold text-gray-400 hover:text-red-600 transition cursor-pointer p-1"
+                  className="ml-1 text-[13px] font-semibold text-gray-400 hover:text-red-600 transition cursor-pointer p-1"
                   title="Log out of account"
                 >
                   <LogOut size={14} />
@@ -116,7 +116,7 @@ export default function Navbar({
                 alt={currentMember.name}
                 className="h-5 w-5 rounded-full object-cover border border-white/40"
               />
-              <span className="text-[11px] font-bold max-w-[75px] truncate">
+              <span className="text-[13px] font-bold max-w-[75px] truncate">
                 {currentMember.name}
               </span>
               <Sparkles size={11} className="text-[#e0b629]" />
@@ -145,7 +145,7 @@ export default function Navbar({
                 />
                 <div className="min-w-0">
                   <p className="font-bold text-xs text-gray-900 truncate">{currentMember.name}</p>
-                  <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                  <p className="text-[12px] text-emerald-600 font-semibold flex items-center gap-1">
                     <UserCheck size={11} /> Verified Member
                   </p>
                 </div>
@@ -176,15 +176,15 @@ export default function Navbar({
           )}
 
           <div className="grid grid-cols-3 gap-2">
-            <a href="#" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[10px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
+            <a href="#" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[12px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
               <Home size={18} className="text-[#d3a825]" />
               <span>Home</span>
             </a>
-            <a href="#community" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[10px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
+            <a href="#community" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[12px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
               <Users size={18} className="text-[#d3a825]" />
               <span>Community</span>
             </a>
-            <a href="#membership" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[10px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
+            <a href="#membership" onClick={() => setMenuOpen(false)} className="flex min-h-[72px] flex-col items-center justify-center gap-1.5 rounded-xl border border-[#eadfce] bg-white px-1 text-center text-[12px] font-bold text-[#343a3d] shadow-xs transition active:scale-95">
               <Crown size={18} className="text-[#d3a825]" />
               <span>Membership</span>
             </a>
@@ -202,7 +202,7 @@ export default function Navbar({
               <span>Admin Portal</span>
             </div>
             {unreadCount > 0 && (
-              <span className="flex h-4 min-w-4 px-1.5 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white shadow-xs">
+              <span className="flex h-4 min-w-4 px-1.5 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white shadow-xs">
                 {unreadCount}
               </span>
             )}

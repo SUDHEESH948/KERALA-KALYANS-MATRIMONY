@@ -1,8 +1,8 @@
-export default function FloatingWhatsAppButton() {
-  const whatsappNumber = '917907348468'
-  const displayPhone = '(+91) 79073 48468'
+import { whatsappLink } from '../config/contact'
+
+export default function FloatingWhatsAppButton({ number }) {
   const message = encodeURIComponent('Hello Kerala Kalyans Matrimony, I am interested in registration and profile services.')
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`
+  const whatsappUrl = `${whatsappLink(number)}?text=${message}`
 
   return (
     <aside
@@ -15,7 +15,7 @@ export default function FloatingWhatsAppButton() {
         target="_blank"
         rel="noopener noreferrer"
         className="relative flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-2xl hover:shadow-emerald-500/40 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
-        title={`Chat with Kerala Kalyans on WhatsApp: ${displayPhone}`}
+        title={`Chat with Kerala Kalyans on WhatsApp: ${number}`}
         aria-label="Chat on WhatsApp"
       >
         {/* Soft ripple pulse */}

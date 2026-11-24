@@ -1,5 +1,6 @@
 import { Camera, ChevronDown, Clock3, FileText, Globe2, Mail, Phone, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
+import { emailLink, phoneLink, whatsappLink } from '../config/contact'
 
 const policies = ['One-Time Fee Policy', '6 Profiles Every Saturday', 'Voluntary Registration']
 
@@ -13,17 +14,17 @@ function WhatsAppIcon({ size = 16, className = '' }) {
 function FooterLink({ icon: Icon, children, href = '#' }) {
   return <a href={href} className="group flex items-center gap-2.5 text-xs text-white/60 transition hover:text-[#E8CA91]">
     <Icon size={14} className="shrink-0 text-[#c79c18] transition group-hover:scale-110" />
-    <span>{children}</span>
+    <span className="min-w-0 wrap-anywhere">{children}</span>
   </a>
 }
 
-function ContactForm() {
+function ContactForm({ contact }) {
   const [details, setDetails] = useState({ name: '', phone: '', email: '', enquiry: 'Profile registration', time: 'Any time', message: '' })
 
   const submit = (event) => {
     event.preventDefault()
     const message = `Hello Kerala Kalyans Matrimony,\n\nName: ${details.name}\nPhone: ${details.phone}\nEmail: ${details.email || 'Not provided'}\nEnquiry: ${details.enquiry}\nPreferred contact time: ${details.time}\nMessage: ${details.message || 'I would like to know more about your matrimonial services.'}`
-    window.location.assign(`https://wa.me/917907348468?text=${encodeURIComponent(message)}`)
+    window.location.assign(`${whatsappLink(contact.whatsapp)}?text=${encodeURIComponent(message)}`)
   }
 
   const fieldClass = 'mt-2 h-12 w-full rounded-xl border border-[#ded5c3] bg-white/70 px-4 text-base font-normal text-[#343a3d] outline-none transition placeholder:text-[#a1a7aa] focus:border-[#701C35] focus:bg-white focus:ring-4 focus:ring-[#701C35]/10'
@@ -36,14 +37,14 @@ function ContactForm() {
         <div className="flex items-center gap-3"><p className="font-sans text-xs font-bold tracking-[.2em] text-[#bc8b37]">GET IN TOUCH</p><span className="h-px w-10 bg-[#c79c18]/60" /></div>
         <h2 className="font-serif mt-5 max-w-md text-4xl font-semibold leading-[1.04] text-[#293130] sm:text-5xl">Let&apos;s find the right beginning.</h2>
         <p className="mt-6 max-w-sm text-base leading-7 text-[#697277]">Tell us a little about what you need. Our support team will receive every detail directly on WhatsApp.</p>
-        <p className="mt-5 font-sans text-[0.68rem] font-bold tracking-[.14em] text-[#9b8050]">PRIVATE, RESPECTFUL SUPPORT</p>
+        <p className="mt-5 font-sans text-[length:calc(0.68rem+2px)] font-bold tracking-[.14em] text-[#9b8050]">PRIVATE, RESPECTFUL SUPPORT</p>
         <div className="mt-10 space-y-0 border-t border-[#d9d0bf] text-sm">
-          <a href="https://wa.me/917907348468" className="flex items-center gap-4 border-b border-[#d9d0bf] py-5 text-[#4d585a] transition hover:text-[#a87815]"><WhatsAppIcon size={25} className="shrink-0 text-[#1c8c58]" /><span><span className="block font-sans text-[0.68rem] font-bold tracking-[.13em] text-[#788084]">WHATSAPP SUPPORT</span><span className="mt-1 block text-lg font-semibold">(+91) 79073 48468</span></span></a>
-          <a href="tel:+918075588406" className="flex items-center gap-4 border-b border-[#d9d0bf] py-5 text-[#4d585a] transition hover:text-[#a87815]"><Phone size={22} strokeWidth={1.7} className="shrink-0 text-[#c79c18]" /><span><span className="block font-sans text-[0.68rem] font-bold tracking-[.13em] text-[#788084]">CUSTOMER CARE</span><span className="mt-1 block text-lg font-semibold">(+91) 80755 88406</span></span></a>
+          <a href={whatsappLink(contact.whatsapp)} className="flex items-center gap-4 border-b border-[#d9d0bf] py-5 text-[#4d585a] transition hover:text-[#a87815]"><WhatsAppIcon size={25} className="shrink-0 text-[#1c8c58]" /><span><span className="block font-sans text-[length:calc(0.68rem+2px)] font-bold tracking-[.13em] text-[#788084]">WHATSAPP SUPPORT</span><span className="mt-1 block text-lg font-semibold">{contact.whatsapp}</span></span></a>
+          <a href={phoneLink(contact.phone)} className="flex items-center gap-4 border-b border-[#d9d0bf] py-5 text-[#4d585a] transition hover:text-[#a87815]"><Phone size={22} strokeWidth={1.7} className="shrink-0 text-[#c79c18]" /><span><span className="block font-sans text-[length:calc(0.68rem+2px)] font-bold tracking-[.13em] text-[#788084]">CUSTOMER CARE</span><span className="mt-1 block text-lg font-semibold">{contact.phone}</span></span></a>
         </div>
       </div>
       <form onSubmit={submit} className="border-t border-[#d9d0bf] pt-7 lg:border-t-0 lg:border-l lg:pl-12 lg:pt-3">
-        <div className="mb-8"><div className="flex items-center gap-3"><p className="font-sans text-[0.68rem] font-bold tracking-[.18em] text-[#bc8b37]">PERSONAL CONCIERGE</p><span className="h-px w-9 bg-[#c79c18]/60" /></div><h3 className="font-serif mt-3 text-3xl font-semibold text-[#293130]">Share your details.</h3><p className="mt-2 text-sm leading-6 text-[#788084]">We will open WhatsApp with your enquiry already prepared.</p></div>
+        <div className="mb-8"><div className="flex items-center gap-3"><p className="font-sans text-[length:calc(0.68rem+2px)] font-bold tracking-[.18em] text-[#bc8b37]">PERSONAL CONCIERGE</p><span className="h-px w-9 bg-[#c79c18]/60" /></div><h3 className="font-serif mt-3 text-3xl font-semibold text-[#293130]">Share your details.</h3><p className="mt-2 text-sm leading-6 text-[#788084]">We will open WhatsApp with your enquiry already prepared.</p></div>
         <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2">
           <label className="font-sans text-xs font-bold tracking-wide text-[#3f4748]">FULL NAME<input required value={details.name} onChange={event => setDetails({ ...details, name: event.target.value })} placeholder="Enter your name" className={fieldClass} /></label>
           <label className="font-sans text-xs font-bold tracking-wide text-[#3f4748]">PHONE NUMBER<input required type="tel" value={details.phone} onChange={event => setDetails({ ...details, phone: event.target.value })} placeholder="Enter phone number" className={fieldClass} /></label>
@@ -58,10 +59,10 @@ function ContactForm() {
   </section>
 }
 
-export default function FooterSection({ onOpenRegister, onOpenTerms }) {
+export default function FooterSection({ onOpenRegister, onOpenTerms, contact }) {
   return (
     <>
-    <ContactForm />
+    <ContactForm contact={contact} />
     <footer className="bg-[#701C35] px-4 py-10 text-white sm:px-6 sm:py-12">
       <div className="mx-auto max-w-[1200px]">
         <div className="grid gap-9 border-b border-white/10 pb-9 sm:gap-10 lg:grid-cols-[1.25fr_.9fr_.9fr]">
@@ -71,16 +72,16 @@ export default function FooterSection({ onOpenRegister, onOpenTerms }) {
             <div className="mt-5 flex items-center gap-2.5">
               <a href="#" aria-label="Facebook" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/55 transition hover:border-[#c79c18] hover:text-[#E8CA91]"><Globe2 size={15} /></a>
               <a href="#" aria-label="Instagram" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/55 transition hover:border-[#c79c18] hover:text-[#E8CA91]"><Camera size={15} /></a>
-              <a href="https://wa.me/917907348468" aria-label="WhatsApp" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/55 transition hover:border-[#c79c18] hover:text-[#E8CA91]"><WhatsAppIcon size={16} /></a>
+              <a href={whatsappLink(contact.whatsapp)} aria-label="WhatsApp" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/55 transition hover:border-[#c79c18] hover:text-[#E8CA91]"><WhatsAppIcon size={16} /></a>
             </div>
           </section>
 
           <section>
             <h3 className="font-sans text-xs font-bold tracking-[.16em] text-[#E8CA91] uppercase">Support</h3>
             <div className="mt-5 space-y-3.5">
-              <FooterLink icon={Phone} href="tel:+918075588406">(+91) 80755 88406</FooterLink>
-              <FooterLink icon={WhatsAppIcon} href="https://wa.me/917907348468">(+91) 79073 48468</FooterLink>
-              <FooterLink icon={Mail} href="mailto:keralakalyan.matrimonial@gmail.com">keralakalyan.matrimonial@gmail.com</FooterLink>
+              <FooterLink icon={Phone} href={phoneLink(contact.phone)}>{contact.phone}</FooterLink>
+              <FooterLink icon={WhatsAppIcon} href={whatsappLink(contact.whatsapp)}>{contact.whatsapp}</FooterLink>
+              <FooterLink icon={Mail} href={emailLink(contact.email)}>{contact.email}</FooterLink>
               <div className="flex items-center gap-2.5 text-xs text-white/60"><Clock3 size={14} className="shrink-0 text-[#c79c18]" />10:00 AM – 5:00 PM</div>
             </div>
           </section>
@@ -100,11 +101,11 @@ export default function FooterSection({ onOpenRegister, onOpenTerms }) {
           </section>
         </div>
 
-        <div id="legal-notice" className="border-b border-white/10 py-5 text-[11px] leading-5 text-white/40">
+        <div id="legal-notice" className="border-b border-white/10 py-5 text-[13px] leading-5 text-white/40">
           <span className="font-semibold text-white/60">Privacy notice:</span> Profiles and details are for personal matrimonial use only. Registration is voluntary; Kerala Kalyans Matrimony does not guarantee marriage outcomes.
         </div>
 
-        <div className="flex flex-col gap-2 pt-5 text-[11px] text-white/40 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 pt-5 text-[13px] text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <span>© 2026 Kerala Kalyans Matrimony. All rights reserved.</span>
           <span className="tracking-wide text-white">Developed by <span className="font-semibold">Winshine Infotech</span></span>
         </div>

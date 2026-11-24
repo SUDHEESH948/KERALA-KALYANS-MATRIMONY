@@ -22,7 +22,7 @@ section {
 }
 
 .sec-h h2 {
-  font-size: clamp(30px, 4.2vw, 44px);
+  font-size: calc(clamp(30px, 4.2vw, 44px) + 2px);
   color: var(--text);
   font-weight: 600;
   letter-spacing: -0.015em;
@@ -31,7 +31,7 @@ section {
 
 .sec-h p {
   color: var(--muted);
-  font-size: 1.05rem;
+  font-size: calc(1.05rem + 2px);
   line-height: 1.6;
 }
 
@@ -47,7 +47,7 @@ section {
   cursor: pointer;
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 17px;
   padding: 13px 26px;
   border-radius: var(--radius-md);
   background: var(--burg);
@@ -86,7 +86,7 @@ section {
 }
 
 .demo {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   text-align: center;
   margin-top: 24px;
@@ -132,7 +132,7 @@ nav .wrap {
 
 .logo-text b {
   font-family: var(--font-serif);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--burg);
   display: block;
@@ -142,7 +142,7 @@ nav .wrap {
 
 .logo-text small {
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   font-weight: 500;
   letter-spacing: 0.05em;
@@ -151,7 +151,7 @@ nav .wrap {
 .links {
   display: flex;
   gap: 32px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   list-style: none;
 }
@@ -257,7 +257,7 @@ nav .wrap {
 
 .hero-kicker {
   font-family: var(--font-sans);
-  font-size: 11.5px;
+  font-size: 13.5px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -268,7 +268,7 @@ nav .wrap {
 
 .hero-exact-title {
   font-family: var(--font-serif);
-  font-size: clamp(40px, 4.8vw, 64px);
+  font-size: calc(clamp(40px, 4.8vw, 64px) + 2px);
   font-weight: 600;
   color: var(--burg);
   line-height: 1.15;
@@ -278,7 +278,7 @@ nav .wrap {
 
 .hero-exact-subhead {
   font-family: var(--font-sans);
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.6;
   color: var(--muted);
   margin-bottom: 32px;
@@ -293,7 +293,7 @@ nav .wrap {
   color: #ffffff;
   padding: 14px 28px;
   border-radius: 12px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -308,7 +308,7 @@ nav .wrap {
 }
 
 .hero-tagline-bottom {
-  font-size: 13.5px;
+  font-size: 15.5px;
   color: #8c7e7b;
   margin-top: 24px;
   font-weight: 400;
@@ -338,13 +338,13 @@ nav .wrap {
   display: grid;
   place-items: center;
   color: var(--burg);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
 }
 
 .trust-badge-text strong {
   display: block;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #282323;
   line-height: 1.25;
@@ -352,7 +352,7 @@ nav .wrap {
 
 .trust-badge-text span {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   color: #7a7070;
   margin-top: 2px;
 }
@@ -419,7 +419,7 @@ nav .wrap {
 
 .stat .n {
   font-family: 'Times New Normal', 'Times New Roman', Times, Georgia, serif;
-  font-size: 38px;
+  font-size: 40px;
   font-weight: 400;
   color: var(--burg);
   line-height: 1.1;
@@ -429,7 +429,7 @@ nav .wrap {
 .stat p {
   margin: 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -512,7 +512,7 @@ nav .wrap {
 }
 
 .card h3 {
-  font-size: 21px;
+  font-size: 23px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -523,7 +523,7 @@ nav .wrap {
 
 .ver {
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   background: var(--rose);
   color: var(--burg);
@@ -539,7 +539,7 @@ nav .wrap {
   padding: 0;
   margin: 14px 0 20px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
   display: grid;
   gap: 4px;
   line-height: 1.5;
@@ -560,7 +560,7 @@ nav .wrap {
   width: 100%;
   text-align: center;
   padding: 11px 16px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* ==========================================================================
@@ -619,7 +619,7 @@ nav .wrap {
 .step h3 {
   font-family: 'Raleway', system-ui, -apple-system, sans-serif;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 8px;
   color: var(--text);
 }
@@ -629,7 +629,7 @@ nav .wrap {
   color: var(--muted);
   max-width: 290px;
   margin: 8px auto 0;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.6;
 }
 
@@ -685,7 +685,7 @@ nav .wrap {
   position: relative;
   z-index: 1;
   font-family: var(--font-serif);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
   color: #ffffff;
 }
@@ -693,7 +693,7 @@ nav .wrap {
 .cat small {
   position: relative;
   z-index: 1;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--gold-light);
   font-weight: 500;
   margin-top: 4px;
@@ -749,7 +749,7 @@ nav .wrap {
 }
 
 .story h3 {
-  font-size: 20px;
+  font-size: 22px;
   color: var(--burg);
   margin-bottom: 8px;
 }
@@ -757,7 +757,7 @@ nav .wrap {
 .story q {
   display: block;
   color: var(--text);
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.6;
   margin: 8px 0 16px;
   quotes: none;
@@ -766,7 +766,7 @@ nav .wrap {
 
 .story small {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -802,14 +802,14 @@ nav .wrap {
 }
 
 .prem h2 {
-  font-size: clamp(30px, 4.2vw, 44px);
+  font-size: calc(clamp(30px, 4.2vw, 44px) + 2px);
   color: #ffffff;
   line-height: 1.2;
 }
 
 .prem p {
   color: #e8d9d9;
-  font-size: 1.05rem;
+  font-size: calc(1.05rem + 2px);
 }
 
 .feat {
@@ -828,7 +828,7 @@ nav .wrap {
   border: 1px solid rgba(200, 169, 107, 0.35);
   padding: 16px 20px;
   border-radius: 14px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: #ffffff;
   transition: background 0.2s ease;
@@ -855,7 +855,7 @@ nav .wrap {
 }
 
 .final h2 {
-  font-size: clamp(34px, 5.2vw, 56px);
+  font-size: calc(clamp(34px, 5.2vw, 56px) + 2px);
   color: #ffffff;
   margin-bottom: 12px;
 }
@@ -864,7 +864,7 @@ nav .wrap {
   margin: 0 auto 36px;
   max-width: 580px;
   color: #f0e4e4;
-  font-size: 1.15rem;
+  font-size: calc(1.15rem + 2px);
 }
 
 /* ==========================================================================
@@ -874,7 +874,7 @@ footer {
   background: #1d1517;
   color: #d9cdc6;
   padding: 72px 0 32px;
-  font-size: 14px;
+  font-size: 16px;
   border-top: 1px solid #3a2c2f;
 }
 
@@ -886,7 +886,7 @@ footer {
 
 footer h4 {
   font-family: var(--font-serif);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--gold);
   margin: 0 0 16px;
@@ -910,7 +910,7 @@ footer a:hover {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  font-size: 13.5px;
+  font-size: 15.5px;
   color: #8c7e7b;
 }
 
@@ -929,7 +929,7 @@ footer a:hover {
   place-items: center;
   margin: 0;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 14px;
   color: #d9cdc6;
   transition: all 0.2s ease;
 }
@@ -1003,7 +1003,7 @@ footer a:hover {
   align-items: center;
   gap: 10px;
   z-index: 9999;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   animation: slideIn 0.25s ease;
 }

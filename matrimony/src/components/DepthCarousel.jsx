@@ -67,9 +67,9 @@ export default function DepthCarousel({ items, visibleCards = 4, depth = 100, sp
             >
               <img src={item.image} alt={item.alt || item.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#121718]/95 via-[#121718]/28 to-black/5" />
-              <span className="absolute left-4 top-4 rounded-full border border-white/30 bg-black/20 px-2.5 py-1 font-sans text-[0.6rem] font-bold tracking-[0.16em] text-white/90 backdrop-blur-sm sm:left-5 sm:top-5">COMMUNITY 0{index + 1}</span>
+              <span className="absolute left-4 top-4 rounded-full border border-white/30 bg-black/20 px-2.5 py-1 font-sans text-[length:calc(0.6rem+2px)] font-bold tracking-[0.16em] text-white/90 backdrop-blur-sm sm:left-5 sm:top-5">COMMUNITY 0{index + 1}</span>
               <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-                <h3 className="font-serif text-2xl font-semibold leading-tight text-white sm:text-[1.75rem]">{item.title}</h3>
+                <h3 className="font-serif text-2xl font-semibold leading-tight text-white sm:text-[length:calc(1.75rem+2px)]">{item.title}</h3>
                 <span className="mt-3 inline-flex border-b border-[#f1cb4d]/70 pb-1 font-sans text-xs font-bold tracking-[0.12em] text-[#E8CA91]">
                   EXPLORE COMMUNITY
                 </span>

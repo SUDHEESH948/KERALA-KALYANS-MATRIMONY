@@ -20,7 +20,7 @@ export default function HeroSection({ lookingFor, setLookingFor, ageFrom, setAge
     <div className="relative z-10 mx-auto flex min-h-[620px] w-full max-w-[1320px] flex-col px-5 py-10 sm:min-h-[650px] sm:px-10 sm:py-12 md:min-h-[680px] md:px-12 md:py-12">
       <motion.div className="flex h-full flex-1 flex-col justify-between" initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <div className="max-w-[680px] text-left">
-          <p className="font-sans text-[10px] font-bold tracking-[.22em] text-[#E8CA91] sm:text-xs">KERALA&apos;S TRUSTED MATCHMAKING</p>
+          <p className="font-sans text-[12px] font-bold tracking-[.22em] text-[#E8CA91] sm:text-xs">KERALA&apos;S TRUSTED MATCHMAKING</p>
           <h1 className="font-serif mt-3 text-4xl font-bold leading-[.98] text-white drop-shadow-lg sm:text-6xl md:text-7xl">Choose your forever.</h1>
           <p className="mt-5 max-w-md text-sm leading-6 text-white/90 drop-shadow sm:text-base">Find love on your terms with meaningful, verified connections.</p>
         </div>

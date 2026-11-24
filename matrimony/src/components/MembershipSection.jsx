@@ -20,14 +20,14 @@ export default function MembershipSection({ onOpenRegister }) {
             </span>
             <div className="min-w-0">
               <div className="mb-1.5 flex items-center gap-3">
-                <span className="font-sans text-[0.62rem] font-bold tracking-[0.28em] text-[#ad7d29]">INTRODUCING</span>
+                <span className="font-sans text-[length:calc(0.62rem+2px)] font-bold tracking-[0.28em] text-[#ad7d29]">INTRODUCING</span>
                 <span className="h-px w-8 bg-[#c79c18]/60 sm:w-14" />
               </div>
               <p className="font-serif text-2xl leading-none text-[#293130] sm:whitespace-nowrap sm:text-3xl">The Premier Circle</p>
             </div>
           </div>
 
-          <h2 className="font-serif max-w-2xl text-[2.45rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[#293130] sm:text-5xl lg:text-6xl xl:text-7xl">
+          <h2 className="font-serif max-w-2xl text-[length:calc(2.45rem+2px)] font-semibold leading-[1.02] tracking-[-0.04em] text-[#293130] sm:text-5xl lg:text-6xl xl:text-7xl">
             More intention.<br />
             <span className="text-[#701C35]">More possibility.</span>
           </h2>
@@ -54,11 +54,11 @@ export default function MembershipSection({ onOpenRegister }) {
               <div className="flex items-center gap-4">
                 <span className="grid size-12 place-items-center rounded-2xl bg-[#701C35] text-[#f5d66d] shadow-lg shadow-[#701C35]/20"><Gem size={22} strokeWidth={1.7} /></span>
                 <div>
-                  <p className="font-sans text-[0.68rem] font-bold tracking-[0.2em] text-[#ad7d29]">MEMBERSHIP</p>
+                  <p className="font-sans text-[length:calc(0.68rem+2px)] font-bold tracking-[0.2em] text-[#ad7d29]">MEMBERSHIP</p>
                   <h3 className="font-serif mt-1 text-2xl font-semibold text-[#293130]">Premier benefits</h3>
                 </div>
               </div>
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[#cda74c]/55 bg-[#f8f2e4] px-3 py-1.5 font-sans text-[0.68rem] font-bold tracking-wider text-[#9d7226]"><Sparkles size={13} /> CURATED</span>
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[#cda74c]/55 bg-[#f8f2e4] px-3 py-1.5 font-sans text-[length:calc(0.68rem+2px)] font-bold tracking-wider text-[#9d7226]"><Sparkles size={13} /> CURATED</span>
             </div>
 
             <div className="divide-y divide-[#eadfce]">
@@ -68,7 +68,7 @@ export default function MembershipSection({ onOpenRegister }) {
                     <Check size={15} strokeWidth={2.5} />
                   </span>
                   <div className="min-w-0">
-                    <div className="flex items-start gap-2.5 sm:items-center sm:gap-3"><span className="mt-1 font-sans text-[0.65rem] font-bold tracking-widest text-[#ad7d29] sm:mt-0">0{index + 1}</span><h4 className="text-[0.95rem] font-semibold leading-6 text-[#293130] sm:text-[1.05rem]">{item.title}</h4></div>
+                    <div className="flex items-start gap-2.5 sm:items-center sm:gap-3"><span className="mt-1 font-sans text-[length:calc(0.65rem+2px)] font-bold tracking-widest text-[#ad7d29] sm:mt-0">0{index + 1}</span><h4 className="text-[length:calc(0.95rem+2px)] font-semibold leading-6 text-[#293130] sm:text-[length:calc(1.05rem+2px)]">{item.title}</h4></div>
                     <p className="mt-1.5 text-sm leading-6 text-[#697277]">{item.detail}</p>
                   </div>
                 </div>
@@ -77,7 +77,21 @@ export default function MembershipSection({ onOpenRegister }) {
 
             <div className="mt-2 rounded-2xl bg-[#e8ecec] px-4 py-4 sm:flex sm:items-center sm:justify-between">
               <p className="text-sm font-medium text-[#465054]">Personal matchmaking guidance</p>
-              <p className="mt-1 font-sans text-[0.66rem] font-bold tracking-[0.17em] text-[#9d7226] sm:mt-0">INCLUDED WITH PREMIER</p>
+              <p className="mt-1 font-sans text-[length:calc(0.66rem+2px)] font-bold tracking-[0.17em] text-[#9d7226] sm:mt-0">INCLUDED WITH PREMIER</p>
+            </div>
+
+            <div className="mt-5 border-t border-[#eadfce] pt-5">
+              <h3 className="font-serif text-xl font-semibold">Access expires at the first limit</h3>
+              <p className="mt-2 text-sm leading-6 text-[#465054]">
+                Each membership lasts up to <strong>6 months from activation</strong> or
+                <strong> 145 distinct profile openings</strong>, whichever comes first.
+              </p>
+              <ul className="mt-3 space-y-2 text-sm leading-6 text-[#465054]">
+                <li><strong>Browse or search.</strong> Viewing search results does not use the allowance.</li>
+                <li><strong>Open or reopen.</strong> A first full-detail opening counts once. Reopening it does not count again.</li>
+                <li><strong>Open the 145th profile.</strong> The profile opens and further full-detail access ends.</li>
+                <li><strong>Reach 6 months first.</strong> Full-detail access ends even if openings remain.</li>
+              </ul>
             </div>
           </div>
         </div>

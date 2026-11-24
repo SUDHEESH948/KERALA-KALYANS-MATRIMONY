@@ -47,7 +47,7 @@ export default function StoriesSection() {
               <div className="flex h-full max-w-[250px] flex-col justify-end">
                 <Stars />
                 <p className="font-serif mt-3 text-2xl font-bold leading-tight">Together, forever.</p>
-                <p className="mt-2 font-sans text-[11px] font-semibold tracking-[.08em] text-white/75">MAYA & VIVEK · BENGALURU</p>
+                <p className="mt-2 font-sans text-[13px] font-semibold tracking-[.08em] text-white/75">MAYA & VIVEK · BENGALURU</p>
               </div>
             </article>
           </div>

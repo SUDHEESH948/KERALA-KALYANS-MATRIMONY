@@ -132,7 +132,7 @@ export default function MemberLoginModal({
                 <h3 className="text-lg sm:text-xl leading-tight truncate">
                   Member Login
                 </h3>
-                <p className="text-[10px] text-[#573b0b] font-semibold tracking-wide truncate">
+                <p className="text-[12px] text-[#573b0b] font-semibold tracking-wide truncate">
                   KERALA KALYANS MATRIMONY
                 </p>
               </div>
@@ -158,7 +158,7 @@ export default function MemberLoginModal({
                 <p className="leading-relaxed">
                   Your registration has been submitted successfully. Please wait for admin approval before logging in.
                 </p>
-                <p className="text-[11px] text-amber-700/90 pt-1 border-t border-amber-200">
+                <p className="text-[13px] text-amber-700/90 pt-1 border-t border-amber-200">
                   Once approved by our administrator, an approval confirmation with your temporary password will be sent to your registered email address.
                 </p>
               </div>
@@ -202,7 +202,7 @@ export default function MemberLoginModal({
                   <label className="block text-gray-700">
                     Account Password *
                   </label>
-                  <span className="text-[10px] text-gray-400">
+                  <span className="text-[12px] text-gray-400">
                     Use temporary password from approval email
                   </span>
                 </div>

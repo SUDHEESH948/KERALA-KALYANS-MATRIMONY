@@ -7,6 +7,25 @@ import {
   sendRejectionEmail
 } from '../services/emailService.js'
 
+const ACTIVE_PROFILE_STATUSES = ['approved', 'Active']
+const PROFILE_VIEW_LIMIT = 145
+const MEMBERSHIP_MONTHS = 6
+const PROFILE_WARNING_THRESHOLD = 140
+const DAY_MS = 24 * 60 * 60 * 1000
+const EXPIRY_WARNING_MS = 7 * DAY_MS
+const membershipActivation = { $ifNull: ['$approvedAt', '$createdAt'] }
+const membershipExpiry = {
+  $dateAdd: {
+    startDate: membershipActivation,
+    unit: 'month',
+    amount: MEMBERSHIP_MONTHS,
+    timezone: 'Asia/Kolkata'
+  }
+}
+const openedProfileCount = { $size: { $ifNull: ['$openedProfileIds', []] } }
+const PROFILE_PREVIEW_FIELDS = 'id name gender age height marriageType maritalStatus religion caste motherTongue education profession location photo isApproved verified'
+const PROFILE_DETAIL_FIELDS = `${PROFILE_PREVIEW_FIELDS} email phone`
+
 /**
  * Generate cryptographically secure random temporary password
  * Contains a guaranteed combination of:
@@ -54,16 +73,17 @@ export const getProfiles = async (req, res) => {
   try {
     const { search, gender, religion, status, verified, isApproved, marriageType, maritalStatus } = req.query
     const query = {}
+    const isAdmin = req.user?.role === 'admin'
 
     if (search) {
       const regex = new RegExp(search, 'i')
       query.$or = [
         { name: regex },
-        { email: regex },
         { profession: regex },
         { location: regex },
         { caste: regex }
       ]
+      if (isAdmin) query.$or.push({ email: regex })
     }
 
     const mType = marriageType || maritalStatus
@@ -88,9 +108,9 @@ export const getProfiles = async (req, res) => {
 
     if (status && status !== 'all') {
       if (status === 'pending') {
-        query.$or = [{ status: 'pending' }, { status: 'Under Review' }]
+        query.status = { $in: ['pending', 'Under Review'] }
       } else if (status === 'approved') {
-        query.$or = [{ status: 'approved' }, { status: 'Active' }]
+        query.status = { $in: ACTIVE_PROFILE_STATUSES }
       } else {
         query.status = status
       }
@@ -104,8 +124,56 @@ export const getProfiles = async (req, res) => {
       query.isApproved = isApproved === 'true'
     }
 
-    const profiles = await Profile.find(query).sort({ createdAt: -1 })
+    const filter = isAdmin
+      ? query
+      : { $and: [query, { status: { $in: ACTIVE_PROFILE_STATUSES } }] }
+    const fields = isAdmin ? '-password -marriageSurvey +openedProfileIds' : PROFILE_PREVIEW_FIELDS
+    const profiles = await Profile.find(filter).select(fields).sort({ createdAt: -1 }).lean()
+    if (isAdmin) {
+      return res.json(profiles.map(({ openedProfileIds, ...profile }) => ({
+        ...profile,
+        profileOpenCount: openedProfileIds?.length ?? 0,
+        profileOpenLimit: PROFILE_VIEW_LIMIT
+      })))
+    }
     res.json(profiles)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+}
+
+export const getMembershipStatus = async (req, res) => {
+  try {
+    const { id, role, mustChangePassword } = req.user
+    if (role !== 'member' || typeof id !== 'string' || mustChangePassword) {
+      return res.status(403).json({ error: 'An active membership is required.' })
+    }
+
+    const [membership] = await Profile.aggregate([
+      { $match: { id, status: { $in: ACTIVE_PROFILE_STATUSES }, mustChangePassword: { $ne: true } } },
+      {
+        $project: {
+          _id: 0,
+          activatedAt: membershipActivation,
+          expiresAt: membershipExpiry,
+          opened: openedProfileCount,
+          now: '$$NOW'
+        }
+      }
+    ])
+    res.set('Cache-Control', 'private, no-store')
+    const remainingMs = membership ? membership.expiresAt - membership.now : 0
+    if (remainingMs <= 0 || membership.opened >= PROFILE_VIEW_LIMIT) {
+      return res.json({ profileWarning: false, expiryWarning: false })
+    }
+
+    res.json({
+      activatedAt: membership.activatedAt,
+      profilesRemaining: PROFILE_VIEW_LIMIT - membership.opened,
+      daysRemaining: Math.ceil(remainingMs / DAY_MS),
+      profileWarning: membership.opened >= PROFILE_WARNING_THRESHOLD,
+      expiryWarning: remainingMs <= EXPIRY_WARNING_MS
+    })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
@@ -113,8 +181,43 @@ export const getProfiles = async (req, res) => {
 
 export const getProfileById = async (req, res) => {
   try {
-    const profile = await Profile.findOne({ id: req.params.id })
+    const { id, role, mustChangePassword } = req.user
+    const isAdmin = role === 'admin'
+    if (!isAdmin && (role !== 'member' || !id || mustChangePassword)) {
+      return res.status(403).json({ error: 'An active membership is required to open profile details.' })
+    }
+
+    const target = { id: req.params.id }
+    if (!isAdmin) target.status = { $in: ACTIVE_PROFILE_STATUSES }
+    const profile = await Profile.findOne(target).select(PROFILE_DETAIL_FIELDS).lean()
     if (!profile) return res.status(404).json({ error: 'Profile not found' })
+
+    if (!isAdmin) {
+      // MongoDB checks both limits and records the opening in one atomic update.
+      const membership = await Profile.collection.findOneAndUpdate(
+        {
+          id,
+          status: { $in: ACTIVE_PROFILE_STATUSES },
+          mustChangePassword: { $ne: true },
+          $expr: {
+            $and: [
+              { $gt: [membershipExpiry, '$$NOW'] },
+              { $lt: [openedProfileCount, PROFILE_VIEW_LIMIT] }
+            ]
+          }
+        },
+        { $addToSet: { openedProfileIds: profile.id } },
+        { returnDocument: 'after', projection: { _id: 1 } }
+      )
+
+      if (!membership) {
+        return res.status(403).json({
+          error: 'Profile access requires an active membership and ends after 6 months or 145 distinct profile openings, whichever comes first.'
+        })
+      }
+    }
+
+    res.set('Cache-Control', 'private, no-store')
     res.json(profile)
   } catch (err) {
     res.status(500).json({ error: err.message })
@@ -276,11 +379,15 @@ export const approveProfile = async (req, res) => {
 
     // 3. Update MongoDB record
     profile.password = temporaryPasswordHash
+    if (!profile.approvedAt) {
+      profile.approvedAt = ACTIVE_PROFILE_STATUSES.includes(profile.status) && profile.createdAt
+        ? profile.createdAt
+        : new Date()
+    }
     profile.status = 'approved'
     profile.isApproved = true
     profile.verified = true
     profile.mustChangePassword = true
-    profile.approvedAt = new Date()
     profile.rejectedAt = null
     profile.temporaryPasswordExpiresAt = new Date(Date.now() + 10 * 60 * 1000) // Valid for 10 minutes only
     profile.updatedAt = new Date()

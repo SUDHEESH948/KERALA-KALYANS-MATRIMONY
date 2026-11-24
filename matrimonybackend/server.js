@@ -11,6 +11,7 @@ import authRoutes from './routes/authRoutes.js'
 import profileRoutes from './routes/profileRoutes.js'
 import inquiryRoutes from './routes/inquiryRoutes.js'
 import statsRoutes from './routes/statsRoutes.js'
+import contactRoutes from './routes/contactRoutes.js'
 import { purgeDummyData } from './controllers/statsController.js'
 import { notFound, errorHandler } from './middleware/errorHandler.js'
 import { startMarriageSurveyScheduler } from './services/marriageSurvey.js'
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/profiles', profileRoutes)
 app.use('/api/inquiries', inquiryRoutes)
 app.use('/api/stats', statsRoutes)
+app.use('/api/contact', contactRoutes)
 app.post('/api/admin/clean-dummy-data', purgeDummyData)
 
 // Health Check

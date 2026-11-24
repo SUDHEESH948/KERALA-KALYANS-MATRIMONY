@@ -254,7 +254,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 <span className="text-lg sm:text-xl font-bold tracking-tight text-[#701C35] block leading-tight">
                   Kerala Kalyans
                 </span>
-                <span className="text-[9px] sm:text-[10px] tracking-[2px] font-semibold text-[#B28D53] uppercase block">
+                <span className="text-[11px] sm:text-[12px] tracking-[2px] font-semibold text-[#B28D53] uppercase block">
                   Matrimony
                 </span>
               </div>
@@ -302,7 +302,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 <div className="text-xs font-bold text-gray-900 leading-tight max-w-[120px] truncate group-hover:text-[#701C35]">
                   {currentMember?.name || 'Member'}
                 </div>
-                <div className="text-[10px] font-semibold text-[#701C35] flex items-center gap-1">
+                <div className="text-[12px] font-semibold text-[#701C35] flex items-center gap-1">
                   <Eye size={10} />
                   <span>View My Profile</span>
                 </div>
@@ -493,28 +493,28 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
           {/* Active Filter Pills Bar */}
           <div className="flex items-center gap-2 text-xs text-gray-500 pt-2 border-t border-gray-100 flex-wrap">
-            <span className="font-semibold text-gray-400 text-[11px] uppercase tracking-wider">Active Filters:</span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-semibold">
+            <span className="font-semibold text-gray-400 text-[13px] uppercase tracking-wider">Active Filters:</span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[13px] font-semibold">
               Looking for: {targetGenderLabel}
             </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-semibold">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[13px] font-semibold">
               Religion: {strictSameReligion ? `${memberReligion} Only` : 'All Religions'}
             </span>
             {strictSameCaste && memberCaste ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-800 border border-purple-200 text-[11px] font-semibold">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-800 border border-purple-200 text-[13px] font-semibold">
                 Category: {memberCaste.toUpperCase()} Only
               </span>
             ) : selectedCaste !== 'all' ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-[11px] font-semibold">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-[13px] font-semibold">
                 Caste: {selectedCaste}
               </span>
             ) : null}
             {selectedMarriageType !== 'all' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-800 border border-rose-200 text-[11px] font-semibold">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-800 border border-rose-200 text-[13px] font-semibold">
                 Status: {selectedMarriageType}
               </span>
             )}
-            <span className="text-gray-400 text-[11px] ml-auto">
+            <span className="text-gray-400 text-[13px] ml-auto">
               Found <b>{matchedProfiles.length}</b> verified matches
             </span>
           </div>
@@ -589,10 +589,10 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     {/* Top Badges */}
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white tracking-wide border border-white/20">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[12px] font-bold text-white tracking-wide border border-white/20">
                           {p.gender}
                         </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[10px] font-bold text-[#701C35] shadow-xs border border-[#eadfce]">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[12px] font-bold text-[#701C35] shadow-xs border border-[#eadfce]">
                           {p.marriageType || p.maritalStatus || 'Never Married'}
                         </span>
                       </div>
@@ -743,19 +743,19 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 </h4>
                 <div className="grid grid-cols-2 gap-2 text-gray-700">
                   <div>
-                    <span className="text-gray-400 block text-[10px] uppercase font-semibold">Religion:</span>
+                    <span className="text-gray-400 block text-[12px] uppercase font-semibold">Religion:</span>
                     <span className="font-bold text-gray-900">{viewingProfile.religion}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400 block text-[10px] uppercase font-semibold">Caste / Sub-caste:</span>
+                    <span className="text-gray-400 block text-[12px] uppercase font-semibold">Caste / Sub-caste:</span>
                     <span className="font-bold text-gray-900">{viewingProfile.caste || 'Open / Not specified'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400 block text-[10px] uppercase font-semibold">Mother Tongue:</span>
+                    <span className="text-gray-400 block text-[12px] uppercase font-semibold">Mother Tongue:</span>
                     <span className="font-bold text-gray-900">{viewingProfile.motherTongue}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400 block text-[10px] uppercase font-semibold">Profile ID:</span>
+                    <span className="text-gray-400 block text-[12px] uppercase font-semibold">Profile ID:</span>
                     <span className="text-gray-900 font-bold">{viewingProfile.id}</span>
                   </div>
                 </div>
@@ -768,15 +768,15 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 </h4>
                 <div className="grid grid-cols-2 gap-2 text-gray-700">
                   <div>
-                    <span className="text-gray-400 block text-[10px] uppercase font-semibold">Education:</span>
+                    <span className="text-gray-400 block text-[12px] uppercase font-semibold">Education:</span>
                     <span className="font-semibold text-gray-900">{viewingProfile.education}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400 block text-[10px] uppercase font-semibold">Profession:</span>
+                    <span className="text-gray-400 block text-[12px] uppercase font-semibold">Profession:</span>
                     <span className="font-semibold text-gray-900">{viewingProfile.profession}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-gray-400 block text-[10px] uppercase font-semibold">Location / Base:</span>
+                    <span className="text-gray-400 block text-[12px] uppercase font-semibold">Location / Base:</span>
                     <span className="font-semibold text-gray-900">{viewingProfile.location}</span>
                   </div>
                 </div>
