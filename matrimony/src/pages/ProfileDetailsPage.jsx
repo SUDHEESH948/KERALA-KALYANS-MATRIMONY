@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { API_BASE } from "../config/api";
 import ScreenshotPrivacyShield from "../components/ScreenshotPrivacyShield";
+import PhotoAccessController from "../components/PhotoAccessController";
 
 export default function ProfileDetailsPage({
   profileId,
@@ -224,14 +225,14 @@ export default function ProfileDetailsPage({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 w-full">
         <div className="bg-white rounded-3xl border border-[#eadfce] overflow-hidden shadow-md">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-            {/* Left Column: Full-Height Portrait Photo */}
+            {/* Left Column: Full-Height Portrait Photo with Photo Privacy Controller */}
             <div className="md:col-span-5 relative h-96 sm:h-[480px] bg-gray-900 overflow-hidden">
-              <img
-                src={profile.photo}
-                alt={profile.name}
-                className="h-full w-full object-cover object-center"
+              <PhotoAccessController
+                targetProfile={profile}
+                currentMember={currentMember}
+                className="h-full w-full"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
 
               {/* Status Tags */}
               <div className="absolute top-4 left-4 flex items-center gap-2">

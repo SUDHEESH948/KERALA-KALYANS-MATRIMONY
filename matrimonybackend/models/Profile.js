@@ -124,6 +124,33 @@ const profileSchema = new mongoose.Schema(
       type: String,
       default: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600'
     },
+    photoPrivacy: {
+      type: String,
+      enum: ['public', 'blurred_until_approved', 'private'],
+      default: 'blurred_until_approved'
+    },
+    photoBlurredPlaceholder: {
+      type: String,
+      default: ''
+    },
+    photoHighResUrl: {
+      type: String,
+      select: false
+    },
+    photoAccessRequests: [
+      {
+        requesterId: { type: String, required: true },
+        requesterName: String,
+        requesterPhone: String,
+        status: {
+          type: String,
+          enum: ['pending', 'approved', 'rejected'],
+          default: 'pending'
+        },
+        requestedAt: { type: Date, default: Date.now },
+        decidedAt: Date
+      }
+    ],
     email: {
       type: String,
       required: true,

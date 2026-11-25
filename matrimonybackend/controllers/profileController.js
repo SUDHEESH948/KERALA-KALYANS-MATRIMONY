@@ -23,7 +23,7 @@ const membershipExpiry = {
   }
 }
 const openedProfileCount = { $size: { $ifNull: ['$openedProfileIds', []] } }
-const PROFILE_PREVIEW_FIELDS = 'id name gender age height marriageType maritalStatus religion caste star nakshatra motherTongue education profession location district photo isApproved verified'
+const PROFILE_PREVIEW_FIELDS = 'id name gender age height marriageType maritalStatus religion caste star nakshatra motherTongue education profession location district photo photoPrivacy photoBlurredPlaceholder photoAccessRequests isApproved verified'
 const PROFILE_DETAIL_FIELDS = `${PROFILE_PREVIEW_FIELDS} email phone secondaryPhone houseName landmark postOffice pincode state country informerName informerRelation bookNo`
 
 /**

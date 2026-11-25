@@ -1991,6 +1991,24 @@ export default function AdminPage({ onExit }) {
                 />
               </div>
 
+              <div>
+                <label className="block mb-1">Photo Privacy Level</label>
+                <select
+                  value={editingProfile.photoPrivacy || 'public'}
+                  onChange={(e) =>
+                    setEditingProfile({
+                      ...editingProfile,
+                      photoPrivacy: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded border border-[var(--admin-border)] bg-white text-xs sm:text-sm"
+                >
+                  <option value="public">Public (Visible with dynamic watermark)</option>
+                  <option value="blurred_until_approved">Blurred Until Approved (Privacy Shield)</option>
+                  <option value="private">Private (Request required)</option>
+                </select>
+              </div>
+
               <div className="flex items-center gap-2 pt-2">
                 <input
                   type="checkbox"

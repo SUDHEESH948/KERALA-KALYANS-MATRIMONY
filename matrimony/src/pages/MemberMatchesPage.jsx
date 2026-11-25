@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { API_BASE } from '../config/api'
 import ScreenshotPrivacyShield from '../components/ScreenshotPrivacyShield'
+import PhotoAccessController from '../components/PhotoAccessController'
 
 export default function MemberMatchesPage({ currentMember, onLogout, onNavigateHome, onViewProfile }) {
   const [profiles, setProfiles] = useState([])
@@ -575,12 +576,12 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     className="relative h-64 sm:h-72 w-full overflow-hidden bg-gray-100 cursor-pointer"
                     title="Click to view full separate profile page"
                   >
-                    <img
-                      src={p.photo}
-                      alt={p.name}
-                      className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    <PhotoAccessController
+                      targetProfile={p}
+                      currentMember={currentMember}
+                      className="h-full w-full"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20 pointer-events-none" />
 
                     {/* Hover "View Profile" Pill Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
