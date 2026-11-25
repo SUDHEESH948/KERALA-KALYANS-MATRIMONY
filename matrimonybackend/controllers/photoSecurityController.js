@@ -213,3 +213,46 @@ export const streamSecurePhoto = async (req, res) => {
     res.status(500).send('Secure stream error: ' + err.message)
   }
 }
+
+/**
+ * 5. Log screenshot attempt & notify administration team
+ */
+export const logScreenshotAlert = async (req, res) => {
+  try {
+    const {
+      viewerId = 'ANONYMOUS',
+      viewerName = 'Visitor',
+      viewerEmail = '',
+      viewerPhone = '',
+      targetProfileId = '',
+      targetProfileName = '',
+      reason = 'Screenshot key detected',
+      timestamp = new Date().toISOString()
+    } = req.body
+
+    const logEntry = {
+      type: 'SCREENSHOT_ATTEMPT',
+      viewerId,
+      viewerName,
+      viewerEmail,
+      viewerPhone,
+      targetProfileId,
+      targetProfileName,
+      reason,
+      ip: req.ip || req.headers['x-forwarded-for'] || '127.0.0.1',
+      userAgent: req.headers['user-agent'] || '',
+      timestamp: new Date(timestamp)
+    }
+
+    console.warn(`[SECURITY ALERT] 🚨 Screenshot attempt logged: Viewer ID: ${viewerId} (${viewerName}) on Target Profile: ${targetProfileId} (${targetProfileName})`)
+
+    return res.json({
+      success: true,
+      message: 'Screenshot alert recorded successfully and administrator notified.',
+      alert: logEntry
+    })
+  } catch (err) {
+    console.error('Error logging screenshot alert:', err)
+    return res.status(500).json({ error: 'Failed to record screenshot alert' })
+  }
+}

@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { API_BASE } from "../config/api";
 import ScreenshotPrivacyShield from "../components/ScreenshotPrivacyShield";
-import PhotoAccessController from "../components/PhotoAccessController";
+import PhotoWatermarkOverlay from "../components/PhotoWatermarkOverlay";
 
 export default function ProfileDetailsPage({
   profileId,
@@ -54,10 +54,13 @@ export default function ProfileDetailsPage({
       setProfile(null);
       try {
         const token = localStorage.getItem("apremiya_member_token");
-        const res = await fetch(`${API_BASE}/profiles/${encodeURIComponent(profileId)}`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-          signal: controller.signal,
-        });
+        const res = await fetch(
+          `${API_BASE}/profiles/${encodeURIComponent(profileId)}`,
+          {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            signal: controller.signal,
+          },
+        );
         const data = await res.json();
         if (controller.signal.aborted) return;
         if (res.ok) {
@@ -80,7 +83,8 @@ export default function ProfileDetailsPage({
           setError(data.error || "Failed to load profile details.");
         }
       } catch {
-        if (!controller.signal.aborted) setError("Failed to load profile details.");
+        if (!controller.signal.aborted)
+          setError("Failed to load profile details.");
       } finally {
         if (!controller.signal.aborted) setIsLoading(false);
       }
@@ -155,9 +159,7 @@ export default function ProfileDetailsPage({
           <div className="h-16 w-16 mx-auto rounded-full bg-red-100 text-red-600 flex items-center justify-center">
             <User size={32} />
           </div>
-          <h2 className="text-2xl text-gray-900">
-            Profile unavailable
-          </h2>
+          <h2 className="text-2xl text-gray-900">Profile unavailable</h2>
           <p className="text-xs text-gray-500">
             {error || "Profile not found."}
           </p>
@@ -174,8 +176,12 @@ export default function ProfileDetailsPage({
 
   return (
     <div className="min-h-screen bg-[#FAF7F1] text-gray-800 profile-details-page protected-profile-view flex flex-col pb-24 selection:bg-[#701C35] selection:text-white">
-      {/* Anti-Screenshot Privacy Shield */}
-      <ScreenshotPrivacyShield label="Member Profile" />
+      {/* Anti-Screenshot Privacy Shield with Real-Time Admin Notification */}
+      <ScreenshotPrivacyShield
+        label="Member Profile"
+        currentMember={currentMember}
+        targetProfile={profile}
+      />
 
       {/* 1. TOP STICKY HEADER */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
@@ -218,12 +224,18 @@ export default function ProfileDetailsPage({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 w-full">
         <div className="bg-white rounded-3xl border border-[#eadfce] overflow-hidden shadow-md">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-            {/* Left Column: Full-Height Portrait Photo with Photo Privacy Controller */}
-            <div className="md:col-span-5 relative h-96 sm:h-[480px] bg-gray-900 overflow-hidden">
-              <PhotoAccessController
+            {/* Left Column: Full-Height Portrait Photo with Dynamic Forensic Watermark */}
+            <div className="md:col-span-5 relative h-96 sm:h-[480px] bg-gray-900 overflow-hidden group">
+              <img
+                src={profile.photo}
+                alt={profile.name}
+                className="h-full w-full object-cover object-center filter brightness-95 select-none pointer-events-none"
+                draggable={false}
+              />
+              {/* Forensic Watermark with Viewer ID */}
+              <PhotoWatermarkOverlay
+                viewer={currentMember}
                 targetProfile={profile}
-                currentMember={currentMember}
-                className="h-full w-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
 
@@ -351,7 +363,8 @@ export default function ProfileDetailsPage({
                       Base District &amp; Location
                     </span>
                     <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">
-                      {profile.district ? `${profile.district}, ` : ""}{profile.location}
+                      {profile.district ? `${profile.district}, ` : ""}
+                      {profile.location}
                     </span>
                   </div>
 
@@ -557,7 +570,9 @@ export default function ProfileDetailsPage({
                     Post Office (P.O.) &amp; Pin Code
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
-                    {[profile.postOffice, profile.pincode].filter(Boolean).join(" - ") || "Not Specified"}
+                    {[profile.postOffice, profile.pincode]
+                      .filter(Boolean)
+                      .join(" - ") || "Not Specified"}
                   </p>
                 </div>
 
@@ -566,7 +581,13 @@ export default function ProfileDetailsPage({
                     District &amp; State
                   </span>
                   <p className="font-bold text-gray-900 text-sm">
-                    {[profile.district, profile.state || "Kerala", profile.country || "India"].filter(Boolean).join(", ")}
+                    {[
+                      profile.district,
+                      profile.state || "Kerala",
+                      profile.country || "India",
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
                   </p>
                 </div>
 
@@ -576,7 +597,10 @@ export default function ProfileDetailsPage({
                       Informer Details (വിവരങ്ങൾ അറിയിച്ചയാൾ)
                     </span>
                     <p className="font-bold text-[#701C35] text-sm">
-                      {profile.informerName} {profile.informerRelation ? `(${profile.informerRelation})` : ""}
+                      {profile.informerName}{" "}
+                      {profile.informerRelation
+                        ? `(${profile.informerRelation})`
+                        : ""}
                     </p>
                   </div>
                 )}
@@ -631,7 +655,10 @@ export default function ProfileDetailsPage({
               </div>
 
               <p className="text-xs text-gray-600 leading-relaxed">
-                To protect family privacy and ensure verified introductions, all communications with <b className="text-gray-900">{profile.name}</b> and family are coordinated through Kerala Kalyans Matrimony office.
+                To protect family privacy and ensure verified introductions, all
+                communications with{" "}
+                <b className="text-gray-900">{profile.name}</b> and family are
+                coordinated through Kerala Kalyans Matrimony office.
               </p>
 
               {/* Profile Reference Badge */}
@@ -660,7 +687,7 @@ export default function ProfileDetailsPage({
                 </a>
 
                 <a
-                  href={`https://wa.me/917907348468?text=Hello%20Kerala%20Kalyans%20Matrimony,%20I%20am%20interested%20in%20connecting%20with%20Profile%20ID:%20${encodeURIComponent(profile.id || profile._id || '')}%20(${encodeURIComponent(profile.name || '')})`}
+                  href={`https://wa.me/917907348468?text=Hello%20Kerala%20Kalyans%20Matrimony,%20I%20am%20interested%20in%20connecting%20with%20Profile%20ID:%20${encodeURIComponent(profile.id || profile._id || "")}%20(${encodeURIComponent(profile.name || "")})`}
                   target="_blank"
                   rel="noreferrer"
                   className="w-full p-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl flex items-center justify-center gap-2 font-bold text-xs sm:text-sm transition shadow-md shadow-emerald-600/20 cursor-pointer"
@@ -677,7 +704,8 @@ export default function ProfileDetailsPage({
                   <span>Office Hours: 10:00 AM – 5:00 PM (Mon – Sat)</span>
                 </div>
                 <p className="leading-normal">
-                  Our matchmaking team will verify horoscope matching, confirm mutual family interest, and arrange direct introductions.
+                  Our matchmaking team will verify horoscope matching, confirm
+                  mutual family interest, and arrange direct introductions.
                 </p>
               </div>
             </div>

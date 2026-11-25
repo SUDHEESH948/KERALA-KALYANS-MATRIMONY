@@ -25,7 +25,7 @@ import {
 } from 'lucide-react'
 import { API_BASE } from '../config/api'
 import ScreenshotPrivacyShield from '../components/ScreenshotPrivacyShield'
-import PhotoAccessController from '../components/PhotoAccessController'
+import PhotoWatermarkOverlay from '../components/PhotoWatermarkOverlay'
 
 export default function MemberMatchesPage({ currentMember, onLogout, onNavigateHome, onViewProfile }) {
   const [profiles, setProfiles] = useState([])
@@ -238,8 +238,11 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
   return (
     <div className="min-h-screen bg-[#FAF7F1] text-gray-800 flex flex-col selection:bg-[#701C35] selection:text-white protected-profile-view">
-      {/* Anti-Screenshot Privacy Shield */}
-      <ScreenshotPrivacyShield label="Member Matches" />
+      {/* Anti-Screenshot Privacy Shield with Instant Admin Notification */}
+      <ScreenshotPrivacyShield
+        label="Member Matches"
+        currentMember={currentMember}
+      />
 
       {/* 1. TOP NAVIGATION BAR */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
@@ -576,10 +579,17 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     className="relative h-64 sm:h-72 w-full overflow-hidden bg-gray-100 cursor-pointer"
                     title="Click to view full separate profile page"
                   >
-                    <PhotoAccessController
+                    <img
+                      src={p.photo}
+                      alt={p.name}
+                      className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none"
+                      loading="lazy"
+                      draggable={false}
+                    />
+                    <PhotoWatermarkOverlay
+                      viewer={currentMember}
                       targetProfile={p}
-                      currentMember={currentMember}
-                      className="h-full w-full"
+                      compact={true}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20 pointer-events-none" />
 
@@ -721,9 +731,14 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               <img
                 src={viewingProfile.photo}
                 alt={viewingProfile.name}
-                className="h-full w-full object-cover object-center filter brightness-90"
+                className="h-full w-full object-cover object-center filter brightness-90 select-none pointer-events-none"
+                draggable={false}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <PhotoWatermarkOverlay
+                viewer={currentMember}
+                targetProfile={viewingProfile}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
 
               <button
                 type="button"

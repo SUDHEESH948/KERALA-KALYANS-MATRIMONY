@@ -29,6 +29,7 @@ import {
   X,
   Copy,
   Key,
+  ShieldAlert,
 } from "lucide-react";
 
 import { API_BASE } from "../config/api";
@@ -1436,14 +1437,22 @@ export default function AdminPage({ onExit }) {
                       key={notif.id}
                       onClick={() => markNotificationAsRead(notif.id)}
                       className={`flex items-start justify-between flex-wrap gap-3 p-3 sm:flex-nowrap sm:gap-4 sm:p-4 rounded-xl border transition cursor-pointer ${
-                        !notif.isRead
-                          ? "bg-white border-[var(--admin-gold)] shadow-sm ring-1 ring-[var(--admin-gold)]/30"
-                          : "bg-white/70 border-[var(--admin-border)] hover:bg-white"
+                        notif.type === "security_alert"
+                          ? "bg-red-50/80 border-red-300 shadow-sm ring-1 ring-red-400/40"
+                          : !notif.isRead
+                            ? "bg-white border-[var(--admin-gold)] shadow-sm ring-1 ring-[var(--admin-gold)]/30"
+                            : "bg-white/70 border-[var(--admin-border)] hover:bg-white"
                       }`}
                     >
                       <div className="flex min-w-0 flex-1 basis-full items-start gap-3 sm:basis-auto">
-                        <div className="p-2.5 rounded-xl flex-shrink-0 bg-[var(--admin-gold-strong)] text-white">
-                          {notif.type === "registration" ? (
+                        <div className={`p-2.5 rounded-xl flex-shrink-0 ${
+                          notif.type === "security_alert"
+                            ? "bg-red-600 text-white"
+                            : "bg-[var(--admin-gold-strong)] text-white"
+                        }`}>
+                          {notif.type === "security_alert" ? (
+                            <ShieldAlert size={18} />
+                          ) : notif.type === "registration" ? (
                             <UserPlus size={18} />
                           ) : notif.type === "inquiry" ? (
                             <MessageSquare size={18} />

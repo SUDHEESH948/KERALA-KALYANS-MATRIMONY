@@ -24,7 +24,7 @@ export function NotificationProvider({ children }) {
           // Filter out dummy messages: deletions, inquiries, internal logs, anonymous / test entries
           return parsed.filter(
             (n) =>
-              n.type === "registration" &&
+              (n.type === "registration" || n.type === "security_alert") &&
               !n.title?.includes("Deleted") &&
               !n.title?.includes("Inquiry") &&
               !n.title?.includes("Platform Connected") &&
@@ -43,17 +43,17 @@ export function NotificationProvider({ children }) {
   // Modal / Drawer toggle state (accessible from Admin portal)
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
-  // Add a new registration notification record
+  // Add a new registration or security alert notification record
   const addNotification = (title, message, type = "registration", action = null, targetId = null) => {
-    // Only accept real registration notifications, ignore dummy internal logs
-    if (type !== "registration" && !title.startsWith("New Registration")) {
+    // Only accept real registration or security alerts, ignore dummy internal logs
+    if (type !== "registration" && type !== "security_alert" && !title.startsWith("New Registration")) {
       return;
     }
 
-    const notifId = targetId ? `notif-profile-${targetId}` : `notif-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const notifId = targetId ? `notif-${type}-${targetId}` : `notif-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
 
     setNotifications((prev) => {
-      const existingIdx = prev.findIndex(n => (targetId && n.targetId === targetId) || n.id === notifId);
+      const existingIdx = prev.findIndex(n => (targetId && n.targetId === targetId && n.type === type) || n.id === notifId);
       if (existingIdx !== -1) {
         return prev;
       }
@@ -63,7 +63,7 @@ export function NotificationProvider({ children }) {
         targetId,
         title,
         message,
-        type: "registration",
+        type,
         timestamp: new Date().toISOString(),
         isRead: false,
         action,

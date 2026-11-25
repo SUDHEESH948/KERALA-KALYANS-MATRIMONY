@@ -60,11 +60,6 @@ export default function RegisterModal({
   const [bookNo, setBookNo] = useState("");
   const [email, setEmail] = useState("");
 
-  // Profile Photo State (Direct Device Upload)
-  const [photo, setPhoto] = useState("");
-  const [photoPreview, setPhotoPreview] = useState("");
-  const fileInputRef = useRef(null);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -94,39 +89,6 @@ export default function RegisterModal({
   }, [isOpen, initialPreferences]);
 
   if (!isOpen) return null;
-
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setErrorMessage(
-        "Please select a valid image file (PNG, JPG, JPEG, WEBP)",
-      );
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage("Image size should be less than 5MB");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPhoto(reader.result);
-      setPhotoPreview(reader.result);
-      setErrorMessage("");
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemovePhoto = () => {
-    setPhoto("");
-    setPhotoPreview("");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -162,10 +124,9 @@ export default function RegisterModal({
         secondaryPhone: secondaryPhone.trim(),
         bookNo: bookNo.trim(),
         photo:
-          photo.trim() ||
-          (gender === "Bride"
+          gender === "Bride"
             ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600"
-            : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600"),
+            : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600",
         verified: false,
         status: "Under Review",
       };
@@ -360,80 +321,6 @@ export default function RegisterModal({
                       </button>
                     ))}
                   </div>
-                </div>
-
-                {/* Profile Photo Section (Direct Device Upload) */}
-                <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1]/80 p-3 sm:p-4">
-                  <div className="mb-2.5">
-                    <label className="block text-gray-800 text-xs sm:text-sm">
-                      Add Profile Photo
-                    </label>
-                    <p className="text-[12px] sm:text-[13px] text-[#9C8158] font-medium">
-                      Profiles with photos receive 8x more verified partner
-                      requests
-                    </p>
-                  </div>
-
-                  {/* Hidden File Input */}
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept="image/png, image/jpeg, image/jpg, image/webp"
-                    className="hidden"
-                  />
-
-                  {photoPreview ? (
-                    <div className="flex items-center gap-4 bg-white p-3 rounded-lg border border-[#eadfce]">
-                      <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-xl overflow-hidden border-2 border-[#C8A96B] shadow-sm flex-shrink-0 bg-gray-100">
-                        <img
-                          src={photoPreview}
-                          alt="Profile Preview"
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-800 truncate">
-                          Photo Attached Successfully
-                        </p>
-                        <p className="text-[12px] text-gray-400 mt-0.5">
-                          Ready for your matrimonial profile
-                        </p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="px-3 py-1 rounded-md text-[13px] font-medium bg-[#e2b82f] text-[#332500] hover:bg-[#d4aa25] transition cursor-pointer"
-                          >
-                            Change Photo
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleRemovePhoto}
-                            className="px-2.5 py-1 rounded-md text-[13px] font-medium text-red-600 hover:bg-red-50 border border-red-200 transition cursor-pointer flex items-center gap-1"
-                          >
-                            <Trash2 size={12} />
-                            <span>Remove</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center p-4 sm:p-5 border-2 border-dashed border-[#d8c7b3] hover:border-[#b58a20] bg-white rounded-xl cursor-pointer transition text-center group"
-                    >
-                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FAF7F1] text-[#795705] group-hover:bg-[#e2b82f] group-hover:text-[#332500] transition mb-2 shadow-xs">
-                        <Camera size={20} />
-                      </div>
-                      <p className="text-xs font-semibold text-gray-800 group-hover:text-[#795705] transition">
-                        Click to upload your portrait photo
-                      </p>
-                      <p className="text-[12px] text-gray-400 mt-0.5">
-                        Supports JPG, PNG, WEBP (Max 5MB)
-                      </p>
-                    </div>
-                  )}
                 </div>
 
                 {/* Name & Gender */}
