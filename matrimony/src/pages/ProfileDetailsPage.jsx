@@ -20,6 +20,7 @@ import {
   Globe,
   Home as HomeIcon,
   Users,
+  ShoppingCart
 } from "lucide-react";
 import { API_BASE } from "../config/api";
 import ScreenshotPrivacyShield from "../components/ScreenshotPrivacyShield";
@@ -35,6 +36,7 @@ export default function ProfileDetailsPage({
   const [isCopied, setIsCopied] = useState(false);
   const [interestSent, setInterestSent] = useState(false);
   const [isShortlisted, setIsShortlisted] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -77,6 +79,11 @@ export default function ProfileDetailsPage({
                 "[]",
             );
             setIsShortlisted(savedShortlist.includes(data.id));
+            const savedCart = JSON.parse(
+              localStorage.getItem(`apremiya_cart_${currentMember?.id}`) ||
+                "[]",
+            );
+            setIsInCart(savedCart.includes(data.id));
           } catch {}
         } else {
           setError(data.error || "Failed to load profile details.");
@@ -128,6 +135,25 @@ export default function ProfileDetailsPage({
         updated = [...saved, profile.id];
         setIsShortlisted(true);
         showToast(`⭐ Added ${profile.name} to your shortlist!`);
+      }
+      localStorage.setItem(memberKey, JSON.stringify(updated));
+    } catch {}
+  };
+
+  const handleToggleCart = () => {
+    if (!profile) return;
+    const memberKey = `apremiya_cart_${currentMember?.id || "guest"}`;
+    try {
+      const saved = JSON.parse(localStorage.getItem(memberKey) || "[]");
+      let updated;
+      if (isInCart) {
+        updated = saved.filter((id) => id !== profile.id);
+        setIsInCart(false);
+        showToast(`Removed from your Cart`);
+      } else {
+        updated = [...saved, profile.id];
+        setIsInCart(true);
+        showToast(`🛒 Added ${profile.name} to your Cart!`);
       }
       localStorage.setItem(memberKey, JSON.stringify(updated));
     } catch {}
@@ -698,6 +724,20 @@ export default function ProfileDetailsPage({
           </div>
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto">
+            {/* Cart Button */}
+            <button
+              onClick={handleToggleCart}
+              className={`px-4 py-2.5 rounded-xl border text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-2xs ${
+                isInCart
+                  ? "bg-[#701C35] border-[#701C35] text-white"
+                  : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+              }`}
+              title={isInCart ? "In Cart" : "Add to Cart"}
+            >
+              <ShoppingCart size={14} />
+              <span>{isInCart ? "In Cart ✓" : "Add to Cart"}</span>
+            </button>
+
             <button
               onClick={handleToggleShortlist}
               className={`px-4 py-2.5 rounded-xl border text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${

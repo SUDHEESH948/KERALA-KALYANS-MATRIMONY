@@ -21,10 +21,14 @@ import {
   ChevronDown,
   Eye,
   Send,
-  MessageCircle
+  MessageCircle,
+  ShoppingCart,
+  Square,
+  CheckSquare
 } from 'lucide-react'
 import { API_BASE } from '../config/api'
 import ScreenshotPrivacyShield from '../components/ScreenshotPrivacyShield'
+import MemberCartDrawer from '../components/MemberCartDrawer'
 
 export default function MemberMatchesPage({ currentMember, onLogout, onNavigateHome, onViewProfile }) {
   const [profiles, setProfiles] = useState([])
@@ -33,6 +37,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
   // Filter state
   const [searchQuery, setSearchQuery] = useState('')
+  const [genderFilter, setGenderFilter] = useState('all') // 'all' | 'Bride' | 'Groom'
   const [strictSameReligion, setStrictSameReligion] = useState(true)
   const [strictSameCaste, setStrictSameCaste] = useState(false)
   const [selectedCaste, setSelectedCaste] = useState('all')
@@ -58,6 +63,18 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
       return []
     }
   })
+
+  // Cart state: Selected profiles moved into Cart
+  const [cartProfileIds, setCartProfileIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`apremiya_cart_${currentMember?.id}`)
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState([])
+  const [isCartOpen, setIsCartOpen] = useState(false)
 
   const [viewingProfile, setViewingProfile] = useState(null)
   const [toastMessage, setToastMessage] = useState(null)
@@ -109,14 +126,18 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
         return false
       }
 
-      // 2. OPPOSITE GENDER MATCHING
+      // 2. GENDER MATCHING (Support Male, Female, and All)
       const pGender = (p.gender || '').toLowerCase()
-      const isTargetMale = !isMemberMale
-      const matchesTargetGender = isTargetMale
-        ? (pGender === 'groom' || pGender === 'man' || pGender === 'male')
-        : (pGender === 'bride' || pGender === 'woman' || pGender === 'female')
+      const isPGroom = pGender === 'groom' || pGender === 'man' || pGender === 'male'
+      const isPBride = pGender === 'bride' || pGender === 'woman' || pGender === 'female'
 
-      if (!matchesTargetGender) return false
+      if (genderFilter === 'Bride' && !isPBride) return false
+      if (genderFilter === 'Groom' && !isPGroom) return false
+      if (genderFilter === 'opposite') {
+        const isTargetMale = !isMemberMale
+        const matchesTargetGender = isTargetMale ? isPGroom : isPBride
+        if (!matchesTargetGender) return false
+      }
 
       // 3. SAME RELIGION MATCHING
       if (strictSameReligion) {
@@ -235,6 +256,50 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
     localStorage.setItem(`apremiya_shortlist_${currentMember?.id}`, JSON.stringify(updated))
   }
 
+  // Cart Handlers: Add to Cart, Select Checkboxes, Batch Move to Cart
+  const handleToggleCart = (p) => {
+    const isAlready = cartProfileIds.includes(p.id)
+    let updated
+    if (isAlready) {
+      updated = cartProfileIds.filter((id) => id !== p.id)
+      showToast(`Removed ${p.name} from Cart`)
+    } else {
+      updated = [...cartProfileIds, p.id]
+      showToast(`🛒 Added ${p.name} to Cart!`)
+    }
+    setCartProfileIds(updated)
+    localStorage.setItem(`apremiya_cart_${currentMember?.id}`, JSON.stringify(updated))
+  }
+
+  const handleToggleSelectCheckbox = (pId) => {
+    setSelectedCheckboxIds((prev) =>
+      prev.includes(pId) ? prev.filter((id) => id !== pId) : [...prev, pId]
+    )
+  }
+
+  const handleBatchMoveToCart = () => {
+    if (selectedCheckboxIds.length === 0) return
+    const combined = Array.from(new Set([...cartProfileIds, ...selectedCheckboxIds]))
+    setCartProfileIds(combined)
+    localStorage.setItem(`apremiya_cart_${currentMember?.id}`, JSON.stringify(combined))
+    showToast(`🛒 Moved ${selectedCheckboxIds.length} profiles to Cart!`)
+    setSelectedCheckboxIds([])
+    setIsCartOpen(true)
+  }
+
+  const handleRemoveFromCart = (pId) => {
+    const updated = cartProfileIds.filter((id) => id !== pId)
+    setCartProfileIds(updated)
+    localStorage.setItem(`apremiya_cart_${currentMember?.id}`, JSON.stringify(updated))
+    showToast('Removed profile from Cart')
+  }
+
+  const handleClearCart = () => {
+    setCartProfileIds([])
+    localStorage.setItem(`apremiya_cart_${currentMember?.id}`, JSON.stringify([]))
+    showToast('Cart cleared')
+  }
+
   return (
     <div className="min-h-screen bg-[#FAF7F1] text-gray-800 flex flex-col selection:bg-[#701C35] selection:text-white protected-profile-view">
       {/* Anti-Screenshot Privacy Shield with Instant Admin Notification */}
@@ -284,8 +349,24 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
             </div>
           </nav>
 
-          {/* Logged in Member Profile & View My Profile */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          {/* Cart, Logged in Member Profile & Actions */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Selected Profiles Cart Button */}
+            <button
+              type="button"
+              onClick={() => setIsCartOpen(true)}
+              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#eadfce] bg-white text-gray-750 hover:text-[#701C35] hover:border-[#701C35] transition shadow-xs text-xs font-bold cursor-pointer group"
+              title="View Selected Profiles Cart"
+            >
+              <ShoppingCart size={15} className="group-hover:scale-110 transition text-[#701C35]" />
+              <span className="hidden sm:inline">Cart</span>
+              {cartProfileIds.length > 0 && (
+                <span className="h-5 min-w-5 px-1 rounded-full bg-[#701C35] text-white text-[10px] font-bold flex items-center justify-center animate-in zoom-in-50">
+                  {cartProfileIds.length}
+                </span>
+              )}
+            </button>
+
             <button
               type="button"
               onClick={() => {
@@ -394,6 +475,43 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
             {/* Same Religion & Same Category Toggles & Quick Filters */}
             <div className="flex flex-wrap items-center gap-2.5 text-xs">
+              {/* Gender Selector: Male and Female Profiles */}
+              <div className="flex items-center gap-1 bg-[#FAF7F1] p-1 rounded-xl border border-[#eadfce] text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setGenderFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
+                    genderFilter === 'all'
+                      ? 'bg-[#701C35] text-white shadow-xs'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  All Matches
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGenderFilter('Bride')}
+                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
+                    genderFilter === 'Bride'
+                      ? 'bg-pink-700 text-white shadow-xs'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Brides (Women)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGenderFilter('Groom')}
+                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
+                    genderFilter === 'Groom'
+                      ? 'bg-blue-700 text-white shadow-xs'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Grooms (Men)
+                </button>
+              </div>
+
               {/* Strict Religion Toggle Button */}
               <button
                 type="button"
@@ -599,7 +717,31 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     {/* Top Badges */}
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[12px] font-bold text-white tracking-wide border border-white/20">
+                        {/* Checkbox to select profile for moving to Cart */}
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleToggleSelectCheckbox(p.id)
+                          }}
+                          className="pointer-events-auto cursor-pointer"
+                          title="Select profile to move to Cart"
+                        >
+                          {selectedCheckboxIds.includes(p.id) ? (
+                            <div className="h-6 w-6 rounded-md bg-[#701C35] text-white flex items-center justify-center shadow-md">
+                              <Check size={14} />
+                            </div>
+                          ) : (
+                            <div className="h-6 w-6 rounded-md bg-black/50 backdrop-blur-md text-white/80 hover:text-white flex items-center justify-center border border-white/40">
+                              <Square size={14} />
+                            </div>
+                          )}
+                        </div>
+
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full backdrop-blur-md text-[12px] font-bold text-white tracking-wide border border-white/20 ${
+                            p.gender === 'Groom' ? 'bg-blue-900/80' : 'bg-pink-900/80'
+                          }`}
+                        >
                           {p.gender}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[12px] font-bold text-[#701C35] shadow-xs border border-[#eadfce]">
@@ -607,21 +749,40 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                         </span>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleToggleShortlist(p)
-                        }}
-                        className={`p-2 rounded-full backdrop-blur-md transition cursor-pointer pointer-events-auto ${
-                          isSaved
-                            ? 'bg-amber-400 text-white shadow-md'
-                            : 'bg-black/40 text-white hover:bg-black/60'
-                        }`}
-                        title={isSaved ? 'Shortlisted' : 'Shortlist Profile'}
-                      >
-                        <Star size={14} fill={isSaved ? 'white' : 'none'} />
-                      </button>
+                      <div className="flex items-center gap-1.5 pointer-events-auto">
+                        {/* Quick Add to Cart button */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleToggleCart(p)
+                          }}
+                          className={`p-2 rounded-full backdrop-blur-md transition cursor-pointer ${
+                            cartProfileIds.includes(p.id)
+                              ? 'bg-[#701C35] text-white shadow-md'
+                              : 'bg-black/40 text-white hover:bg-black/60'
+                          }`}
+                          title={cartProfileIds.includes(p.id) ? 'In Cart' : 'Add to Cart'}
+                        >
+                          <ShoppingCart size={14} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleToggleShortlist(p)
+                          }}
+                          className={`p-2 rounded-full backdrop-blur-md transition cursor-pointer ${
+                            isSaved
+                              ? 'bg-amber-400 text-white shadow-md'
+                              : 'bg-black/40 text-white hover:bg-black/60'
+                          }`}
+                          title={isSaved ? 'Shortlisted' : 'Shortlist Profile'}
+                        >
+                          <Star size={14} fill={isSaved ? 'white' : 'none'} />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Bottom overlay inside photo */}
@@ -857,7 +1018,53 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
         </div>
       )}
 
-      {/* 6. TOAST NOTIFICATION POPUP */}
+      {/* 5. FLOATING BATCH SELECTION BAR (MOVE TO CART) */}
+      {selectedCheckboxIds.length > 0 && (
+        <div className="fixed bottom-6 inset-x-0 z-40 flex justify-center px-4 animate-in slide-in-from-bottom-5">
+          <div className="bg-[#701C35] text-white px-5 py-3 rounded-2xl shadow-2xl border border-[#E8CA91]/40 flex items-center gap-4 text-xs font-semibold backdrop-blur-md">
+            <span className="flex items-center gap-2">
+              <span className="h-6 w-6 rounded-full bg-white text-[#701C35] flex items-center justify-center font-bold text-xs">
+                {selectedCheckboxIds.length}
+              </span>
+              <span>Profiles Selected</span>
+            </span>
+
+            <button
+              type="button"
+              onClick={handleBatchMoveToCart}
+              className="px-4 py-2 rounded-xl bg-[#E8CA91] text-[#701C35] font-bold hover:bg-[#d4b06f] transition cursor-pointer shadow-xs flex items-center gap-1.5"
+            >
+              <ShoppingCart size={14} />
+              <span>Move to Cart</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedCheckboxIds([])}
+              className="text-gray-300 hover:text-white underline cursor-pointer"
+            >
+              Deselect All
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 6. MEMBER CART DRAWER */}
+      <MemberCartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartProfileIds={cartProfileIds}
+        allProfiles={profiles}
+        onRemoveFromCart={handleRemoveFromCart}
+        onClearCart={handleClearCart}
+        onViewProfile={(id) => {
+          if (onViewProfile) onViewProfile(id)
+          else window.location.hash = `#profile/${id}`
+        }}
+        currentMember={currentMember}
+      />
+
+      {/* 7. TOAST NOTIFICATION POPUP */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#701C35] text-white px-5 py-3 rounded-xl shadow-xl border border-[#E8CA91]/40 flex items-center gap-2 text-xs font-semibold animate-in fade-in slide-in-from-bottom-3 duration-200">
           <Sparkles size={16} className="text-[#E8CA91]" />
