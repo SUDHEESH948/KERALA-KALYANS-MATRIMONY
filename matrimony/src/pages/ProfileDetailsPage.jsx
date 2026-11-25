@@ -180,13 +180,6 @@ export default function ProfileDetailsPage({
       {/* 1. TOP STICKY HEADER */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#eadfce] bg-white text-gray-700 hover:text-[#701C35] hover:border-[#701C35] text-xs font-semibold transition cursor-pointer shadow-xs"
-          >
-            <ArrowLeft size={15} />
-            <span>Back to Matches</span>
-          </button>
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
