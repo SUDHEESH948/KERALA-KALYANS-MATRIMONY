@@ -10,7 +10,6 @@ import {
   Loader2,
   Trash2,
   Users,
-  Eye,
   Check
 } from "lucide-react";
 import { API_BASE } from "../config/api";
@@ -26,22 +25,11 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
   const [importSummary, setImportSummary] = useState(null);
 
   // PDF specific state
+  const [pdfFile, setPdfFile] = useState(null);
   const [pdfFileName, setPdfFileName] = useState("");
+  const [pdfFileSize, setPdfFileSize] = useState("");
   const [pdfBase64, setPdfBase64] = useState("");
-  const [pdfForm, setPdfForm] = useState({
-    name: "",
-    gender: "Bride",
-    age: "24",
-    height: "5'5\"",
-    religion: "Hindu",
-    caste: "",
-    star: "",
-    education: "",
-    profession: "",
-    location: "Kerala, India",
-    phone: "",
-    email: ""
-  });
+  const [pdfGender, setPdfGender] = useState("Bride");
 
   const fileInputRef = useRef(null);
   const pdfInputRef = useRef(null);
@@ -55,7 +43,6 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
       throw new Error("CSV file must contain a header row and at least one data row.");
     }
 
-    // Split CSV line respecting double quotes
     const splitLine = (line) => {
       const result = [];
       let current = "";
@@ -76,11 +63,6 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
     };
 
     const rawHeaders = splitLine(lines[0]);
-    // Standardize header names
-    const headers = rawHeaders.map((h) =>
-      h.toLowerCase().replace(/[^a-z0-9]/g, "")
-    );
-
     const rows = [];
     for (let i = 1; i < lines.length; i++) {
       const values = splitLine(lines[i]);
@@ -91,7 +73,6 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
         rowObj[rawHeader] = values[idx] || "";
       });
 
-      // Normalize key aliases
       const name =
         rowObj.name ||
         rowObj["Full Name"] ||
@@ -246,7 +227,7 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
   };
 
   // ==========================================
-  // PDF PARSING & UPLOAD
+  // PDF UPLOAD (DIRECT - NO MANUAL FORM REQUIRED)
   // ==========================================
   const handlePDFFile = (file) => {
     if (!file) return;
@@ -255,21 +236,15 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
       return;
     }
 
+    setPdfFile(file);
     setPdfFileName(file.name);
+    setPdfFileSize(
+      file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+        : `${Math.round(file.size / 1024)} KB`
+    );
     setParseError("");
     setImportSummary(null);
-
-    // Derive name from filename (e.g. "Ananya_Menon_Biodata.pdf" -> "Ananya Menon")
-    const cleanName = file.name
-      .replace(/\.pdf$/i, "")
-      .replace(/[_-]/g, " ")
-      .replace(/\b(biodata|resume|profile|cv|matrimony)\b/gi, "")
-      .trim();
-
-    setPdfForm((prev) => ({
-      ...prev,
-      name: cleanName || prev.name
-    }));
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -278,15 +253,20 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
     reader.readAsDataURL(file);
   };
 
-  const handleConfirmPDFUpload = async (e) => {
-    e.preventDefault();
-    if (!pdfForm.name.trim()) {
-      setParseError("Candidate full name is required.");
+  const handleConfirmPDFUpload = async () => {
+    if (!pdfFileName) {
+      setParseError("Please select a PDF file first.");
       return;
     }
 
     setIsSubmitting(true);
     setParseError("");
+
+    const candidateName = pdfFileName
+      .replace(/\.pdf$/i, "")
+      .replace(/[_-]/g, " ")
+      .replace(/\b(biodata|resume|profile|cv|matrimony)\b/gi, "")
+      .trim() || "Candidate";
 
     try {
       const res = await fetch(`${API_BASE}/profiles/upload-pdf`, {
@@ -298,7 +278,11 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
         body: JSON.stringify({
           pdfBase64,
           fileName: pdfFileName,
-          candidateData: pdfForm
+          candidateData: {
+            name: candidateName,
+            gender: pdfGender,
+            status: defaultStatus
+          }
         })
       });
 
@@ -307,11 +291,11 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
         setImportSummary({
           success: true,
           count: 1,
-          message: `Candidate profile for "${data.profile?.name || pdfForm.name}" created and verified.`
+          message: `PDF Biodata "${pdfFileName}" uploaded and profile created for "${data.profile?.name || candidateName}".`
         });
         if (onImportSuccess) onImportSuccess();
       } else {
-        setParseError(data.error || "Failed to create profile from PDF.");
+        setParseError(data.error || "Failed to upload PDF biodata.");
       }
     } catch {
       setParseError("Network error while submitting PDF biodata.");
@@ -327,7 +311,7 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white w-full max-w-3xl rounded-2xl border border-[var(--admin-border)] shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
+      <div className="bg-white w-full max-w-2xl rounded-2xl border border-[var(--admin-border)] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 border-b border-[var(--admin-border)] flex items-center justify-between bg-[var(--admin-surface)]/60">
           <div className="flex items-center gap-2.5">
@@ -336,10 +320,10 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-bold text-[var(--admin-gold-ink)]">
-                Upload &amp; Bulk Import Profiles
+                Upload Candidates
               </h2>
               <p className="text-xs text-[var(--admin-gold-text)]">
-                Import candidates in bulk via CSV spreadsheet or single PDF biodata
+                Upload CSV spreadsheet or PDF biodata directly
               </p>
             </div>
           </div>
@@ -366,7 +350,7 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
             }`}
           >
             <FileSpreadsheet size={15} />
-            <span>CSV Spreadsheet (Bulk Import)</span>
+            <span>CSV Spreadsheet</span>
           </button>
 
           <button
@@ -403,16 +387,16 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
                 <CheckCircle size={18} className="text-emerald-600 shrink-0" />
                 <div>
                   <p className="font-bold text-emerald-950">
-                    Import Successful!
+                    Upload Completed Successfully!
                   </p>
                   <p className="text-[12px]">{importSummary.message}</p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs cursor-pointer shadow-xs"
               >
-                Done
+                Close
               </button>
             </div>
           )}
@@ -422,7 +406,6 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
           {/* ============================================================ */}
           {activeTab === "csv" && !importSummary && (
             <div className="space-y-4">
-              {/* Dropzone */}
               <div
                 onDragOver={(e) => {
                   e.preventDefault();
@@ -465,18 +448,13 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
                 <p className="text-xs text-gray-500 mt-1">
                   or <span className="text-[var(--admin-gold-strong)] font-semibold underline">browse computer</span> to select .csv file
                 </p>
-                <div className="mt-4 flex items-center justify-center gap-3">
-                  <span className="text-[11px] text-gray-400">
-                    Supports columns: Name, Gender, Age, Height, Religion, Caste, Education, Phone...
-                  </span>
-                </div>
               </div>
 
               {/* Sample Template Download Pill */}
               <div className="flex items-center justify-between p-3 bg-amber-50/60 border border-amber-200/80 rounded-xl text-xs">
                 <div className="flex items-center gap-2 text-amber-900">
                   <FileSpreadsheet size={15} />
-                  <span>Need the standard CSV template format?</span>
+                  <span>Standard CSV format template:</span>
                 </div>
                 <button
                   type="button"
@@ -490,16 +468,15 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
 
               {/* Preview Table if rows parsed */}
               {parsedRows.length > 0 && (
-                <div className="space-y-3 pt-2">
+                <div className="space-y-3 pt-1">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-gray-900 flex items-center gap-1.5">
                       <Users size={15} className="text-[var(--admin-gold-strong)]" />
                       <span>{parsedRows.length} Candidate Profiles Detected</span>
                     </span>
 
-                    {/* Status configuration */}
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-500">Import Status:</span>
+                      <span className="text-gray-500">Status:</span>
                       <select
                         value={defaultStatus}
                         onChange={(e) => setDefaultStatus(e.target.value)}
@@ -511,7 +488,7 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
+                  <div className="border border-gray-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-gray-100 text-gray-700 sticky top-0 border-b border-gray-200 text-[11px]">
                         <tr>
@@ -522,11 +499,10 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
                           <th className="px-3 py-2">Community</th>
                           <th className="px-3 py-2">Profession</th>
                           <th className="px-3 py-2">Location</th>
-                          <th className="px-3 py-2">Phone</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100 text-gray-700">
-                        {parsedRows.slice(0, 10).map((r, i) => (
+                        {parsedRows.slice(0, 8).map((r, i) => (
                           <tr key={i} className="hover:bg-gray-50/70">
                             <td className="px-3 py-1.5 text-gray-400 font-mono text-[10px]">
                               {i + 1}
@@ -555,34 +531,41 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
                             <td className="px-3 py-1.5 truncate max-w-[100px]">
                               {r.location}
                             </td>
-                            <td className="px-3 py-1.5 font-mono text-[11px] whitespace-nowrap">
-                              {r.phone || "—"}
-                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-
-                  {parsedRows.length > 10 && (
-                    <p className="text-[11px] text-gray-400 text-right">
-                      ...and {parsedRows.length - 10} more rows
-                    </p>
-                  )}
                 </div>
               )}
             </div>
           )}
 
           {/* ============================================================ */}
-          {/* TAB 2: PDF BIODATA UPLOAD */}
+          {/* TAB 2: PDF BIODATA UPLOAD (DIRECT - NO FORM) */}
           {/* ============================================================ */}
           {activeTab === "pdf" && !importSummary && (
             <div className="space-y-4">
               {/* PDF Dropzone */}
               <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handlePDFFile(e.dataTransfer.files[0]);
+                  }
+                }}
                 onClick={() => pdfInputRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 hover:border-[var(--admin-gold)] rounded-2xl p-6 text-center cursor-pointer transition bg-gray-50/40"
+                className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition ${
+                  isDragging
+                    ? "border-[var(--admin-gold-strong)] bg-red-50/50"
+                    : "border-gray-300 hover:border-[var(--admin-gold)] bg-gray-50/40"
+                }`}
               >
                 <input
                   ref={pdfInputRef}
@@ -595,188 +578,78 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
                     }
                   }}
                 />
-                <div className="mx-auto w-12 h-12 rounded-full bg-red-100 text-red-700 flex items-center justify-center mb-2">
+                <div className="mx-auto w-12 h-12 rounded-full bg-red-100 text-red-700 flex items-center justify-center mb-3">
                   <FileText size={24} />
                 </div>
                 <h3 className="text-sm font-bold text-gray-900">
-                  {pdfFileName ? pdfFileName : "Select or drag Biodata PDF file"}
+                  {pdfFileName ? pdfFileName : "Drag and drop your PDF Biodata here"}
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  Upload customer biodata sheet, horoscope or matrimonial profile PDF
+                  or <span className="text-[var(--admin-gold-strong)] font-semibold underline">browse computer</span> to select .pdf file
                 </p>
+                <span className="inline-block mt-3 text-[11px] text-gray-400">
+                  Upload candidate biodata sheet, horoscope, or profile PDF directly
+                </span>
               </div>
 
-              {/* Pre-fill / Verification Form */}
-              <form onSubmit={handleConfirmPDFUpload} className="space-y-3 pt-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
-                      Candidate Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={pdfForm.name}
-                      onChange={(e) =>
-                        setPdfForm({ ...pdfForm, name: e.target.value })
-                      }
-                      placeholder="e.g. Anjali Nair"
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[var(--admin-gold-strong)] text-xs"
-                    />
+              {/* Selected PDF File Card */}
+              {pdfFileName && (
+                <div className="p-4 rounded-xl bg-red-50/70 border border-red-200 flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="h-10 w-10 rounded-lg bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <FileText size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-gray-900 truncate">
+                        {pdfFileName}
+                      </p>
+                      <p className="text-[11px] text-gray-500">
+                        {pdfFileSize} · Ready to upload
+                      </p>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
-                      Gender *
-                    </label>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {/* Quick Gender selection */}
                     <select
-                      value={pdfForm.gender}
-                      onChange={(e) =>
-                        setPdfForm({ ...pdfForm, gender: e.target.value })
-                      }
-                      className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white focus:outline-none text-xs"
+                      value={pdfGender}
+                      onChange={(e) => setPdfGender(e.target.value)}
+                      className="px-2.5 py-1.5 rounded-lg border border-red-300 bg-white font-semibold text-xs text-gray-700 focus:outline-none"
                     >
-                      <option value="Bride">Bride (Female)</option>
-                      <option value="Groom">Groom (Male)</option>
+                      <option value="Bride">Bride</option>
+                      <option value="Groom">Groom</option>
                     </select>
-                  </div>
 
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
-                      Age &amp; Height
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="number"
-                        value={pdfForm.age}
-                        onChange={(e) =>
-                          setPdfForm({ ...pdfForm, age: e.target.value })
-                        }
-                        placeholder="Age"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"
-                      />
-                      <input
-                        type="text"
-                        value={pdfForm.height}
-                        onChange={(e) =>
-                          setPdfForm({ ...pdfForm, height: e.target.value })
-                        }
-                        placeholder="Height"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
-                      Religion &amp; Caste
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="text"
-                        value={pdfForm.religion}
-                        onChange={(e) =>
-                          setPdfForm({ ...pdfForm, religion: e.target.value })
-                        }
-                        placeholder="Religion"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"
-                      />
-                      <input
-                        type="text"
-                        value={pdfForm.caste}
-                        onChange={(e) =>
-                          setPdfForm({ ...pdfForm, caste: e.target.value })
-                        }
-                        placeholder="Caste"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
-                      Education &amp; Profession
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="text"
-                        value={pdfForm.education}
-                        onChange={(e) =>
-                          setPdfForm({ ...pdfForm, education: e.target.value })
-                        }
-                        placeholder="Degree / Qualification"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"
-                      />
-                      <input
-                        type="text"
-                        value={pdfForm.profession}
-                        onChange={(e) =>
-                          setPdfForm({ ...pdfForm, profession: e.target.value })
-                        }
-                        placeholder="Occupation"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-1">
-                      Phone &amp; Location
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="text"
-                        value={pdfForm.phone}
-                        onChange={(e) =>
-                          setPdfForm({ ...pdfForm, phone: e.target.value })
-                        }
-                        placeholder="Phone Number"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"
-                      />
-                      <input
-                        type="text"
-                        value={pdfForm.location}
-                        onChange={(e) =>
-                          setPdfForm({ ...pdfForm, location: e.target.value })
-                        }
-                        placeholder="District / City"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"
-                      />
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPdfFile(null);
+                        setPdfFileName("");
+                        setPdfBase64("");
+                      }}
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-100 transition cursor-pointer"
+                      title="Remove file"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
-
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting || !pdfForm.name.trim()}
-                    className="w-full py-2.5 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 size={15} className="animate-spin" />
-                        <span>Creating Profile from PDF...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Check size={15} />
-                        <span>Save Candidate Profile from PDF</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
+              )}
             </div>
           )}
         </div>
 
-        {/* Footer Actions for CSV */}
-        {activeTab === "csv" && !importSummary && (
+        {/* Footer Actions */}
+        {!importSummary && (
           <div className="px-5 py-3.5 border-t border-[var(--admin-border)] bg-gray-50 flex items-center justify-between gap-3 text-xs">
             <span className="text-gray-500">
-              {parsedRows.length > 0
-                ? `${parsedRows.length} candidates ready to import`
-                : "Select a CSV file to begin"}
+              {activeTab === "csv"
+                ? parsedRows.length > 0
+                  ? `${parsedRows.length} candidates ready to import`
+                  : "Select a CSV file to begin"
+                : pdfFileName
+                  ? "PDF ready for direct upload"
+                  : "Select a PDF biodata file"}
             </span>
 
             <div className="flex items-center gap-2">
@@ -788,24 +661,45 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
                 Cancel
               </button>
 
-              <button
-                type="button"
-                onClick={handleConfirmCSVImport}
-                disabled={isSubmitting || parsedRows.length === 0}
-                className="px-5 py-2 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-bold flex items-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 size={15} className="animate-spin" />
-                    <span>Importing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Upload size={14} />
-                    <span>Confirm &amp; Import {parsedRows.length > 0 ? `(${parsedRows.length})` : ""}</span>
-                  </>
-                )}
-              </button>
+              {activeTab === "csv" ? (
+                <button
+                  type="button"
+                  onClick={handleConfirmCSVImport}
+                  disabled={isSubmitting || parsedRows.length === 0}
+                  className="px-5 py-2 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-bold flex items-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Importing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={14} />
+                      <span>Confirm &amp; Import {parsedRows.length > 0 ? `(${parsedRows.length})` : ""}</span>
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleConfirmPDFUpload}
+                  disabled={isSubmitting || !pdfFileName}
+                  className="px-5 py-2 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-bold flex items-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Uploading PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={14} />
+                      <span>Upload PDF Biodata</span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         )}
