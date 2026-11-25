@@ -374,51 +374,6 @@ export default function ProfileDetailsPage({
                   )}
                 </div>
               </div>
-
-              {/* Fast Connect CTA box */}
-              <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 text-xs text-emerald-900">
-                  <div className="h-8 w-8 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
-                    <Heart size={16} fill="white" />
-                  </div>
-                  <div>
-                    <span className="font-bold block">
-                      Interested in this profile?
-                    </span>
-                    <span className="text-[13px] text-emerald-700">
-                      Express your interest directly to start communication.
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <button
-                    onClick={handleToggleInterest}
-                    className={`flex-1 sm:flex-initial px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-sm ${
-                      interestSent
-                        ? "bg-emerald-600 text-white"
-                        : "bg-[#701C35] hover:bg-[#8B2342] text-white"
-                    }`}
-                  >
-                    <Heart size={14} fill={interestSent ? "white" : "none"} />
-                    <span>
-                      {interestSent ? "Interest Sent ✓" : "Send Interest"}
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={handleToggleShortlist}
-                    className={`p-2.5 rounded-xl border transition cursor-pointer ${
-                      isShortlisted
-                        ? "bg-amber-100 border-amber-300 text-amber-800"
-                        : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
-                    }`}
-                    title={isShortlisted ? "Shortlisted" : "Shortlist"}
-                  >
-                    <Star size={16} fill={isShortlisted ? "#D97706" : "none"} />
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
