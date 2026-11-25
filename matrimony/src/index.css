@@ -226,13 +226,22 @@ body.privacy-blackout-active {
   overflow: hidden !important;
 }
 
-html.privacy-blackout-active #root,
-html.privacy-blackout-active .profile-details-page,
-html.privacy-blackout-active .protected-profile-view {
+html.privacy-blackout-active #root {
   filter: brightness(0) !important;
   opacity: 0 !important;
-  visibility: hidden !important;
   pointer-events: none !important;
+}
+
+#kerala-kalyans-blackout-shield {
+  display: none;
+}
+
+html.privacy-blackout-active #kerala-kalyans-blackout-shield,
+body.privacy-blackout-active #kerala-kalyans-blackout-shield {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 2147483647 !important;
 }
 
 @media print {

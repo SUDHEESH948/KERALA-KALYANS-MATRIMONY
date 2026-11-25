@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { ShieldAlert, EyeOff, AlertTriangle, ArrowLeft } from 'lucide-react'
 import { API_BASE } from '../config/api'
 
@@ -29,23 +30,40 @@ export default function ScreenshotPrivacyShield({
     return { id, name, email, phone }
   }, [currentMember])
 
+  const viewerRef = useRef(viewer)
+  viewerRef.current = viewer
+
+  const targetProfileRef = useRef(targetProfile)
+  targetProfileRef.current = targetProfile
+
+  const labelRef = useRef(label)
+  labelRef.current = label
+
   const dismissBlackout = () => {
     if (restoreTimerRef.current) clearTimeout(restoreTimerRef.current)
     document.documentElement.classList.remove('privacy-blackout-active')
     document.body.classList.remove('privacy-blackout-active')
+    const shieldEl = document.getElementById('kerala-kalyans-blackout-shield')
+    if (shieldEl) {
+      shieldEl.style.display = 'none'
+    }
     setIsBlackout(false)
   }
 
   useEffect(() => {
     if (!enabled) return
 
-    const targetId = targetProfile?.id || targetProfile?._id || label
-    const targetName = targetProfile?.name || label
-
-    const reportAndBlackout = (reason, minLockDuration = 4500) => {
+    const reportAndBlackout = (reason, minLockDuration = 5000) => {
       // 1. Immediately apply synchronous CSS blackout to root DOM (0ms response time)
       document.documentElement.classList.add('privacy-blackout-active')
       document.body.classList.add('privacy-blackout-active')
+
+      const shieldEl = document.getElementById('kerala-kalyans-blackout-shield')
+      if (shieldEl) {
+        shieldEl.style.display = 'flex'
+        shieldEl.style.visibility = 'visible'
+        shieldEl.style.opacity = '1'
+      }
 
       blackoutStartRef.current = Date.now()
       const nowStr = new Date().toLocaleString()
@@ -61,12 +79,17 @@ export default function ScreenshotPrivacyShield({
       } catch {}
 
       // 3. Dispatch real-time security alert to Backend API
+      const currentViewer = viewerRef.current
+      const currentTarget = targetProfileRef.current
+      const targetId = currentTarget?.id || currentTarget?._id || labelRef.current
+      const targetName = currentTarget?.name || labelRef.current
+
       const timestamp = new Date().toISOString()
       const alertPayload = {
-        viewerId: viewer.id,
-        viewerName: viewer.name,
-        viewerEmail: viewer.email,
-        viewerPhone: viewer.phone,
+        viewerId: currentViewer.id,
+        viewerName: currentViewer.name,
+        viewerEmail: currentViewer.email,
+        viewerPhone: currentViewer.phone,
         targetProfileId: targetId,
         targetProfileName: targetName,
         reason,
@@ -87,8 +110,8 @@ export default function ScreenshotPrivacyShield({
         const newNotif = {
           id: notifId,
           targetId: targetId,
-          title: `🚨 Screenshot Attempt Blocked (ID: ${viewer.id})`,
-          message: `Viewer ${viewer.name} (ID: ${viewer.id}${viewer.phone ? `, Phone: ${viewer.phone}` : ''}) attempted to take a screenshot of ${targetName}'s photo at ${new Date().toLocaleTimeString()}. Blackout triggered.`,
+          title: `🚨 Screenshot Attempt Blocked (ID: ${currentViewer.id})`,
+          message: `Viewer ${currentViewer.name} (ID: ${currentViewer.id}${currentViewer.phone ? `, Phone: ${currentViewer.phone}` : ''}) attempted to take a screenshot of ${targetName}'s photo at ${new Date().toLocaleTimeString()}. Blackout triggered.`,
           type: 'security_alert',
           timestamp,
           isRead: false,
@@ -105,7 +128,6 @@ export default function ScreenshotPrivacyShield({
       // 5. Maintain locked blackout for minLockDuration before allowing auto-dismiss
       if (restoreTimerRef.current) clearTimeout(restoreTimerRef.current)
       restoreTimerRef.current = setTimeout(() => {
-        // Auto unlock after minLockDuration if page is currently visible and active
         if (!document.hidden && document.visibilityState === 'visible') {
           dismissBlackout()
         }
@@ -151,26 +173,33 @@ export default function ScreenshotPrivacyShield({
 
     // 2. Window Blur / Loss of focus (triggers when Windows Snipping Tool, Mac Screen Grab, or recording overlay opens)
     const handleWindowBlur = () => {
-      reportAndBlackout('Screen capture tool or window focus lost. Screen blacked out.', 4500)
+      reportAndBlackout('Screen capture tool or window focus lost. Screen blacked out.', 5000)
     }
 
     const handleWindowFocus = () => {
       const elapsed = Date.now() - blackoutStartRef.current
-      if (elapsed < 4000) {
+      if (elapsed < 4500) {
         // Snipping tool may steal and jitter focus during rectangle drag: Keep blacked out!
         return
       }
       if (restoreTimerRef.current) clearTimeout(restoreTimerRef.current)
       restoreTimerRef.current = setTimeout(() => {
         dismissBlackout()
-      }, 1200)
+      }, 1500)
     }
 
     const handleVisibilityChange = () => {
       if (document.hidden || document.visibilityState === 'hidden') {
-        reportAndBlackout('Window hidden / background screen capture attempt. Screen blacked out.', 4500)
+        reportAndBlackout('Window hidden / background screen capture attempt. Screen blacked out.', 5000)
       } else {
         handleWindowFocus()
+      }
+    }
+
+    // 3. Mouse Leave window (e.g. moving cursor to Snipping Tool bar or outside browser)
+    const handleMouseLeave = (e) => {
+      if (!e.relatedTarget && !e.toElement) {
+        reportAndBlackout('Cursor left browser window during protected profile view.', 4000)
       }
     }
 
@@ -194,6 +223,7 @@ export default function ScreenshotPrivacyShield({
     window.addEventListener('blur', handleWindowBlur)
     window.addEventListener('focus', handleWindowFocus)
     document.addEventListener('visibilitychange', handleVisibilityChange)
+    document.documentElement.addEventListener('mouseleave', handleMouseLeave)
     window.addEventListener('contextmenu', handleContextMenu)
     document.addEventListener('copy', handleCopy)
 
@@ -206,20 +236,37 @@ export default function ScreenshotPrivacyShield({
       window.removeEventListener('blur', handleWindowBlur)
       window.removeEventListener('focus', handleWindowFocus)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
+      document.documentElement.removeEventListener('mouseleave', handleMouseLeave)
       window.removeEventListener('contextmenu', handleContextMenu)
       document.removeEventListener('copy', handleCopy)
     }
-  }, [enabled, viewer, targetProfile, label])
+  }, [enabled])
 
-  if (!enabled || !isBlackout) return null
+  if (!enabled || typeof document === 'undefined') return null
 
-  const targetId = targetProfile?.id || targetProfile?._id || label
-  const targetName = targetProfile?.name || label
+  const currentViewer = viewerRef.current || viewer
+  const currentTarget = targetProfileRef.current || targetProfile
+  const targetId = currentTarget?.id || currentTarget?._id || label
+  const targetName = currentTarget?.name || label
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[99999999] bg-black flex flex-col items-center justify-center text-center p-6 select-none pointer-events-auto overflow-hidden"
-      style={{ backgroundColor: '#000000', opacity: 1 }}
+      id="kerala-kalyans-blackout-shield"
+      className={`fixed inset-0 bg-black flex-col items-center justify-center text-center p-6 select-none pointer-events-auto overflow-hidden ${
+        isBlackout ? 'flex' : 'hidden'
+      }`}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: '#000000',
+        zIndex: 2147483647,
+        display: isBlackout ? 'flex' : 'none',
+        visibility: isBlackout ? 'visible' : 'hidden',
+        opacity: isBlackout ? 1 : 0
+      }}
       aria-live="assertive"
     >
       {/* Repeating Diagonal Watermark Grid across the Blackout screen */}
@@ -229,8 +276,8 @@ export default function ScreenshotPrivacyShield({
             key={rIdx}
             className="flex justify-around whitespace-nowrap text-xs sm:text-sm font-black tracking-widest text-red-500/80 drop-shadow"
           >
-            <span>KERALA KALYANS · VIEWER ID: {viewer.id} · {viewer.name}</span>
-            <span className="hidden sm:inline">KERALA KALYANS · VIEWER ID: {viewer.id} · {viewer.name}</span>
+            <span>KERALA KALYANS · VIEWER ID: {currentViewer.id} · {currentViewer.name}</span>
+            <span className="hidden sm:inline">KERALA KALYANS · VIEWER ID: {currentViewer.id} · {currentViewer.name}</span>
           </div>
         ))}
       </div>
@@ -258,11 +305,11 @@ export default function ScreenshotPrivacyShield({
           </div>
           <div className="flex justify-between py-0.5">
             <span className="text-gray-400">Viewer Member ID:</span>
-            <span className="font-bold text-white tracking-wider text-sm">{viewer.id}</span>
+            <span className="font-bold text-white tracking-wider text-sm">{currentViewer.id}</span>
           </div>
           <div className="flex justify-between py-0.5">
             <span className="text-gray-400">Viewer Name:</span>
-            <span className="font-semibold text-white">{viewer.name}</span>
+            <span className="font-semibold text-white">{currentViewer.name}</span>
           </div>
           <div className="flex justify-between py-0.5">
             <span className="text-gray-400">Target Candidate:</span>
@@ -295,6 +342,7 @@ export default function ScreenshotPrivacyShield({
           </span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
