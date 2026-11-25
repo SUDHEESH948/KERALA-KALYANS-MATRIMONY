@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: "Gotham";
-  src: local("Gotham Book"), local("Gotham-Book");
+  src: local("Gotham Book"), local("Gotham-Book"), local("Gotham");
   font-weight: 400;
   font-display: swap;
 }
@@ -21,6 +21,11 @@
   font-display: swap;
 }
 
+:root {
+  --font-gotham: "Gotham", "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-playfair: "Playfair Display", Georgia, serif;
+}
+
 @theme {
   --text-xs: calc(0.75rem + 2px);
   --text-sm: calc(0.875rem + 2px);
@@ -34,7 +39,7 @@
   --text-6xl: calc(3.75rem + 2px);
   --text-7xl: calc(4.5rem + 2px);
   --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Gotham", "DM Sans", system-ui, sans-serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
   --font-weight-semibold: 500;
   --font-weight-extrabold: 700;
 }
@@ -107,8 +112,45 @@ footer a:not(.cta) {
   font-weight: 400;
 }
 
+/* =========================================================================
+   SCOPED TYPOGRAPHY: PLAYFAIR DISPLAY + GOTHAM
+   Exclusively applied to: Profile Details, Profile View Modals, Registration Modal, and Admin Page
+   (Home Page remains completely untouched with its original styling)
+   ========================================================================= */
+
+.profile-details-page,
+.profile-view-modal,
+.register-modal,
 .admin-page {
-  --font-sans: "Admin Gotham", "Gotham", "DM Sans", system-ui, sans-serif;
+  font-family: var(--font-gotham);
+}
+
+/* Headings in Profile, Registration & Admin use Playfair Display */
+.profile-details-page :where(h1, h2, h3, h4, .font-playfair, .profile-name, .profile-title),
+.profile-view-modal :where(h1, h2, h3, h4, .font-playfair, .profile-name, .card-title),
+.register-modal :where(h1, h2, h3, h4, .font-playfair, .modal-title),
+.admin-page :where(h1, h2, h3, h4, .font-playfair, .admin-heading, .stat-value) {
+  font-family: var(--font-playfair) !important;
+}
+
+/* Body text, labels, inputs, selects, table cells, buttons in Profile, Registration & Admin use Gotham */
+.profile-details-page :where(p, span, label, input, button, select, textarea, div, a, li):not(:where(h1, h2, h3, h4, .font-playfair) *),
+.profile-view-modal :where(p, span, label, input, button, select, textarea, div, a, li):not(:where(h1, h2, h3, h4, .font-playfair) *),
+.register-modal :where(p, span, label, input, button, select, textarea, div, a, li, option):not(:where(h1, h2, h3, h4, .font-playfair) *),
+.admin-page :where(p, span, label, input, button, select, textarea, div, a, li, td, th, .admin-tab, option):not(:where(h1, h2, h3, h4, .font-playfair) *) {
+  font-family: var(--font-gotham);
+}
+
+.font-gotham {
+  font-family: var(--font-gotham) !important;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair) !important;
+}
+
+.admin-page {
+  --font-sans: var(--font-gotham);
   --admin-gold-ink: #573b0b;
   --admin-gold-strong: #795705;
   --admin-gold-strong-hover: #654804;
@@ -120,11 +162,11 @@ footer a:not(.cta) {
   --admin-gold-light: #fff0bf;
   --admin-gold-text: #795705;
   color: var(--admin-gold-ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-gotham);
 }
 
 .admin-page :where(h1, h2, h3):not(.card-title) {
-  font-family: var(--font-serif);
+  font-family: var(--font-playfair) !important;
 }
 
 .admin-page :where(h1, h2, h3):not(.card-title, .truncate) {
@@ -133,6 +175,7 @@ footer a:not(.cta) {
 
 .admin-page .admin-tab {
   font-weight: 500;
+  font-family: var(--font-gotham);
 }
 
 @media (width < 64rem) {
