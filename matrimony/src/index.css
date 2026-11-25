@@ -172,3 +172,47 @@ footer a:not(.cta) {
   font-family: var(--font-sans);
   font-weight: 700;
 }
+
+/* =========================================================================
+   SCREENSHOT & PRINT PRIVACY PROTECTION
+   ========================================================================= */
+@media print {
+  html, body {
+    background: #000000 !important;
+    background-color: #000000 !important;
+    color: #000000 !important;
+  }
+  body * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  body::before {
+    content: "SCREENSHOT AND PRINTING PROHIBITED — KERALA KALYANS MATRIMONY PRIVACY PROTECTION";
+    display: flex !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 3rem !important;
+    z-index: 99999999 !important;
+    visibility: visible !important;
+  }
+}
+
+.protected-profile-view {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+.protected-profile-view img {
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+  pointer-events: none;
+}

@@ -24,6 +24,7 @@ import {
   MessageCircle
 } from 'lucide-react'
 import { API_BASE } from '../config/api'
+import ScreenshotPrivacyShield from '../components/ScreenshotPrivacyShield'
 
 export default function MemberMatchesPage({ currentMember, onLogout, onNavigateHome, onViewProfile }) {
   const [profiles, setProfiles] = useState([])
@@ -235,7 +236,10 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F1] text-gray-800 flex flex-col selection:bg-[#701C35] selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F1] text-gray-800 flex flex-col selection:bg-[#701C35] selection:text-white protected-profile-view">
+      {/* Anti-Screenshot Privacy Shield */}
+      <ScreenshotPrivacyShield label="Member Matches" />
+
       {/* 1. TOP NAVIGATION BAR */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">

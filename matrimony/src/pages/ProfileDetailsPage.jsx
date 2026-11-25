@@ -22,6 +22,7 @@ import {
   Users,
 } from "lucide-react";
 import { API_BASE } from "../config/api";
+import ScreenshotPrivacyShield from "../components/ScreenshotPrivacyShield";
 
 export default function ProfileDetailsPage({
   profileId,
@@ -171,7 +172,10 @@ export default function ProfileDetailsPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F1] text-gray-800 profile-details-page flex flex-col pb-24 selection:bg-[#701C35] selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F1] text-gray-800 profile-details-page protected-profile-view flex flex-col pb-24 selection:bg-[#701C35] selection:text-white">
+      {/* Anti-Screenshot Privacy Shield */}
+      <ScreenshotPrivacyShield label="Member Profile" />
+
       {/* 1. TOP STICKY HEADER */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
