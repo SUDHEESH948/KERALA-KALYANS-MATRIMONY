@@ -792,21 +792,37 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 </div>
               </div>
 
-              {/* Verified Contact Card */}
-              <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-xl space-y-1.5 text-emerald-950">
-                <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-900">
-                  <ShieldCheck size={16} className="text-emerald-700" />
-                  <span>Verified Contact Information</span>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-1 text-xs">
-                  <span className="flex items-center gap-1 font-medium">
-                    <Mail size={13} className="text-emerald-700" /> {viewingProfile.email || 'Contact through Kerala Kalyans Support'}
+              {/* Mediated Contact Card via Kerala Kalyans */}
+              <div className="p-4 bg-[#FAF7F1] border border-[#eadfce] rounded-xl space-y-2 text-gray-800">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-[#701C35]">
+                    <ShieldCheck size={16} className="text-[#701C35]" />
+                    <span>Contact via Kerala Kalyans Matrimony</span>
+                  </div>
+                  <span className="text-[11px] font-semibold text-gray-500 bg-white px-2 py-0.5 rounded border border-[#eadfce]">
+                    ID: {viewingProfile.id}
                   </span>
-                  {viewingProfile.phone && (
-                    <span className="flex items-center gap-1 font-medium">
-                      <Phone size={13} className="text-emerald-700" /> +91 {viewingProfile.phone}
-                    </span>
-                  )}
+                </div>
+                <p className="text-[11px] text-gray-600 leading-relaxed">
+                  To protect member privacy, contact <b className="text-gray-900">{viewingProfile.name}</b> through Kerala Kalyans office.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 pt-1 text-xs">
+                  <a
+                    href="tel:+918075588406"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#701C35] hover:bg-[#511327] text-white font-semibold transition"
+                  >
+                    <Phone size={13} />
+                    <span>Call: (+91) 80755 88406</span>
+                  </a>
+                  <a
+                    href={`https://wa.me/917907348468?text=Hello%20Kerala%20Kalyans,%20I%20am%20interested%20in%20Profile%20ID:%20${encodeURIComponent(viewingProfile.id || '')}%20(${encodeURIComponent(viewingProfile.name || '')})`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold transition"
+                  >
+                    <MessageCircle size={13} />
+                    <span>WhatsApp: (+91) 79073 48468</span>
+                  </a>
                 </div>
               </div>
             </div>

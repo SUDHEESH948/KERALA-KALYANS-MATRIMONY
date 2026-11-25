@@ -625,87 +625,67 @@ export default function ProfileDetailsPage({
 
           {/* Right 1 column: Contact & Trust Card */}
           <div className="space-y-6">
-            {/* Verified Contact Card */}
-            <div className="bg-white rounded-3xl p-6 border border-emerald-200 bg-gradient-to-br from-white to-emerald-50/30 shadow-xs space-y-4">
-              <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm border-b border-emerald-200 pb-3">
-                <ShieldCheck size={18} className="text-emerald-600" />
-                <span>Verified Direct Contact</span>
+            {/* Contact with Kerala Kalyans Matrimony Card */}
+            <div className="bg-white rounded-3xl p-6 border border-[#eadfce] bg-gradient-to-br from-white to-[#FAF7F1] shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-[#eadfce] pb-3">
+                <div className="flex items-center gap-2 text-[#701C35] font-bold text-sm">
+                  <ShieldCheck size={18} className="text-[#701C35]" />
+                  <span>Contact with Kerala Kalyans</span>
+                </div>
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#701C35]/10 text-[#701C35]">
+                  Mediated Contact
+                </span>
               </div>
 
-              <p className="text-xs text-gray-500 leading-relaxed">
-                Connect directly with {profile.name} or their family through
-                verified contact channels:
+              <p className="text-xs text-gray-600 leading-relaxed">
+                To protect family privacy and ensure verified introductions, all communications with <b className="text-gray-900">{profile.name}</b> and family are coordinated through Kerala Kalyans Matrimony office.
               </p>
 
-              <div className="space-y-3 text-xs pt-1">
-                {profile.email && (
-                  <a
-                    href={`mailto:${profile.email}`}
-                    className="p-3 bg-white rounded-xl border border-emerald-200 flex items-center gap-3 text-gray-800 hover:border-emerald-500 transition block"
-                  >
-                    <div className="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0">
-                      <Mail size={15} />
-                    </div>
-                    <div className="min-w-0">
-                      <span className="text-[12px] text-gray-400 uppercase font-semibold block">
-                        Email Address
-                      </span>
-                      <span className="font-bold text-gray-900 truncate block">
-                        {profile.email}
-                      </span>
-                    </div>
-                  </a>
-                )}
+              {/* Profile Reference Badge */}
+              <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce] flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-[11px] text-gray-500 uppercase font-semibold block">
+                    Quote Reference ID
+                  </span>
+                  <span className="font-bold text-[#701C35] text-sm">
+                    {profile.id || profile._id}
+                  </span>
+                </div>
+                <span className="text-[11px] text-gray-500 bg-white px-2 py-1 rounded border border-[#eadfce]">
+                  {profile.name}
+                </span>
+              </div>
 
-                {profile.phone && (
-                  <a
-                    href={`tel:${profile.phone}`}
-                    className="p-3 bg-white rounded-xl border border-emerald-200 flex items-center gap-3 text-gray-800 hover:border-emerald-500 transition block"
-                  >
-                    <div className="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0">
-                      <Phone size={15} />
-                    </div>
-                    <div className="min-w-0">
-                      <span className="text-[12px] text-gray-400 uppercase font-semibold block">
-                        Verified Mobile Number
-                      </span>
-                      <span className="font-bold text-gray-900 block">
-                        +91 {profile.phone}
-                      </span>
-                    </div>
-                  </a>
-                )}
+              {/* Action Buttons to Call & WhatsApp Kerala Kalyans Office */}
+              <div className="space-y-2.5 text-xs pt-1">
+                <a
+                  href="tel:+918075588406"
+                  className="w-full p-3 rounded-xl bg-[#701C35] hover:bg-[#511327] text-white flex items-center justify-center gap-2 font-bold text-xs sm:text-sm transition shadow-md shadow-[#701C35]/20 cursor-pointer"
+                >
+                  <Phone size={15} />
+                  <span>Call Office: (+91) 80755 88406</span>
+                </a>
 
-                {profile.secondaryPhone && (
-                  <a
-                    href={`tel:${profile.secondaryPhone}`}
-                    className="p-3 bg-white rounded-xl border border-emerald-200 flex items-center gap-3 text-gray-800 hover:border-emerald-500 transition block"
-                  >
-                    <div className="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0">
-                      <Phone size={15} />
-                    </div>
-                    <div className="min-w-0">
-                      <span className="text-[12px] text-gray-400 uppercase font-semibold block">
-                        Alternate / WhatsApp Mobile
-                      </span>
-                      <span className="font-bold text-gray-900 block">
-                        +91 {profile.secondaryPhone}
-                      </span>
-                    </div>
-                  </a>
-                )}
+                <a
+                  href={`https://wa.me/917907348468?text=Hello%20Kerala%20Kalyans%20Matrimony,%20I%20am%20interested%20in%20connecting%20with%20Profile%20ID:%20${encodeURIComponent(profile.id || profile._id || '')}%20(${encodeURIComponent(profile.name || '')})`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full p-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl flex items-center justify-center gap-2 font-bold text-xs sm:text-sm transition shadow-md shadow-emerald-600/20 cursor-pointer"
+                >
+                  <MessageCircle size={16} />
+                  <span>WhatsApp: (+91) 79073 48468</span>
+                </a>
+              </div>
 
-                {profile.phone && (
-                  <a
-                    href={`https://wa.me/91${profile.phone.replace(/[^0-9]/g, "")}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl flex items-center justify-center gap-2 font-bold text-xs transition shadow-sm"
-                  >
-                    <MessageCircle size={15} />
-                    <span>Chat on WhatsApp</span>
-                  </a>
-                )}
+              {/* Working Hours & Mediation Note */}
+              <div className="pt-2 border-t border-[#eadfce] text-[11px] text-gray-500 space-y-1">
+                <div className="flex items-center gap-1.5 font-medium text-gray-700">
+                  <Clock size={12} className="text-[#701C35]" />
+                  <span>Office Hours: 10:00 AM – 5:00 PM (Mon – Sat)</span>
+                </div>
+                <p className="leading-normal">
+                  Our matchmaking team will verify horoscope matching, confirm mutual family interest, and arrange direct introductions.
+                </p>
               </div>
             </div>
 
