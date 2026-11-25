@@ -21,6 +21,12 @@ import {
 import { API_BASE } from "../config/api";
 import { useNotification } from "../context/NotificationContext";
 import TermsPolicyDialog from "./TermsPolicyDialog";
+import {
+  KERALA_NAKSHATRAS,
+  KERALA_DISTRICTS,
+  HEIGHT_OPTIONS,
+  INFORMER_RELATIONS
+} from "../config/keralaMatrimonyData";
 
 export default function RegisterModal({
   isOpen,
@@ -33,15 +39,25 @@ export default function RegisterModal({
   const [name, setName] = useState("");
   const [gender, setGender] = useState("Bride");
   const [age, setAge] = useState(25);
-  const [height, setHeight] = useState("5'5\"");
+  const [height, setHeight] = useState("165 cm (5'5\")");
   const [marriageType, setMarriageType] = useState("Never Married");
   const [religion, setReligion] = useState("Hindu");
   const [caste, setCaste] = useState("");
+  const [star, setStar] = useState("");
   const [motherTongue, setMotherTongue] = useState("Malayalam");
   const [education, setEducation] = useState("");
   const [profession, setProfession] = useState("");
   const [location, setLocation] = useState("");
+  const [district, setDistrict] = useState("Kottayam");
+  const [houseName, setHouseName] = useState("");
+  const [landmark, setLandmark] = useState("");
+  const [postOffice, setPostOffice] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [informerName, setInformerName] = useState("");
+  const [informerRelation, setInformerRelation] = useState("Parent (Father / Mother)");
   const [phone, setPhone] = useState("");
+  const [secondaryPhone, setSecondaryPhone] = useState("");
+  const [bookNo, setBookNo] = useState("");
   const [email, setEmail] = useState("");
 
   // Profile Photo State (Direct Device Upload)
@@ -128,12 +144,23 @@ export default function RegisterModal({
         maritalStatus: marriageType,
         religion,
         caste: caste.trim(),
+        star: star.trim(),
+        nakshatra: star.trim(),
         motherTongue,
         education: education.trim() || "Graduate",
         profession: profession.trim() || "Professional",
-        location: location.trim() || "Kerala, India",
+        location: location.trim() || (district ? `${district}, Kerala` : "Kerala, India"),
+        district: district.trim(),
+        houseName: houseName.trim(),
+        landmark: landmark.trim(),
+        postOffice: postOffice.trim(),
+        pincode: pincode.trim(),
+        informerName: informerName.trim(),
+        informerRelation: informerRelation.trim(),
         email: email.trim().toLowerCase(),
         phone: phone.trim(),
+        secondaryPhone: secondaryPhone.trim(),
+        bookNo: bookNo.trim(),
         photo:
           photo.trim() ||
           (gender === "Bride"
@@ -179,6 +206,14 @@ export default function RegisterModal({
     setEducation("");
     setProfession("");
     setLocation("");
+    setStar("");
+    setHouseName("");
+    setLandmark("");
+    setPostOffice("");
+    setPincode("");
+    setInformerName("");
+    setSecondaryPhone("");
+    setBookNo("");
     setPhone("");
     setEmail("");
     setPhoto("");
@@ -491,23 +526,7 @@ export default function RegisterModal({
                       onChange={(e) => setHeight(e.target.value)}
                       className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
                     >
-                      {[
-                        "4'10\"",
-                        "5'0\"",
-                        "5'2\"",
-                        "5'4\"",
-                        "5'5\"",
-                        "5'6\"",
-                        "5'7\"",
-                        "5'8\"",
-                        "5'9\"",
-                        "5'10\"",
-                        "5'11\"",
-                        "6'0\"",
-                        "6'1\"",
-                        "6'2\"",
-                        "6'4\"",
-                      ].map((h) => (
+                      {HEIGHT_OPTIONS.map((h) => (
                         <option key={h} value={h}>
                           {h}
                         </option>
@@ -534,8 +553,8 @@ export default function RegisterModal({
                   </div>
                 </div>
 
-                {/* Religion & Caste */}
-                <div className="grid grid-cols-2 gap-3">
+                {/* Religion, Caste & Star / Nakshatram */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-gray-700 mb-1">
                       Religion *
@@ -563,58 +582,32 @@ export default function RegisterModal({
                       type="text"
                       value={caste}
                       onChange={(e) => setCaste(e.target.value)}
-                      placeholder="e.g. Nair, Syrian Catholic"
+                      placeholder="e.g. Ezhava, Nair, Catholic"
                       className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                     />
                   </div>
-                </div>
 
-                {/* Mother Tongue & Location */}
-                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-gray-700 mb-1">
-                      Mother Tongue *
+                      Star / Nakshatram (നക്ഷത്രം)
                     </label>
                     <select
-                      value={motherTongue}
-                      onChange={(e) => setMotherTongue(e.target.value)}
+                      value={star}
+                      onChange={(e) => setStar(e.target.value)}
                       className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
                     >
-                      <option value="Malayalam">Malayalam</option>
-                      <option value="Tamil">Tamil</option>
-                      <option value="Telugu">Telugu</option>
-                      <option value="Kannada">Kannada</option>
-                      <option value="Hindi">Hindi</option>
-                      <option value="Marathi">Marathi</option>
-                      <option value="Bengali">Bengali</option>
-                      <option value="Gujarati">Gujarati</option>
-                      <option value="English">English</option>
+                      <option value="">Select Nakshatram</option>
+                      {KERALA_NAKSHATRAS.map((n) => (
+                        <option key={n} value={n.split(' ')[0]}>
+                          {n}
+                        </option>
+                      ))}
                     </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-1">
-                      City / Location *
-                    </label>
-                    <div className="relative">
-                      <MapPin
-                        size={14}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      />
-                      <input
-                        type="text"
-                        required
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        placeholder="e.g. Kochi, Kerala"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
-                      />
-                    </div>
                   </div>
                 </div>
 
-                {/* Education & Profession */}
-                <div className="grid grid-cols-2 gap-3">
+                {/* Education, Profession & Mother Tongue */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-gray-700 mb-1">
                       Highest Education
@@ -628,7 +621,7 @@ export default function RegisterModal({
                         type="text"
                         value={education}
                         onChange={(e) => setEducation(e.target.value)}
-                        placeholder="e.g. B.Tech, MBBS, MBA"
+                        placeholder="e.g. M.Sc, B.Tech, MBA"
                         className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
@@ -647,31 +640,218 @@ export default function RegisterModal({
                         type="text"
                         value={profession}
                         onChange={(e) => setProfession(e.target.value)}
-                        placeholder="e.g. Software Engineer"
+                        placeholder="e.g. Office Staff, Engineer"
                         className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-1">
+                      Mother Tongue *
+                    </label>
+                    <select
+                      value={motherTongue}
+                      onChange={(e) => setMotherTongue(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                    >
+                      <option value="Malayalam">Malayalam</option>
+                      <option value="Tamil">Tamil</option>
+                      <option value="Telugu">Telugu</option>
+                      <option value="Kannada">Kannada</option>
+                      <option value="Hindi">Hindi</option>
+                      <option value="English">English</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Native & Residential Address Section */}
+                <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce] space-y-3">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#795705] border-b border-[#eadfce] pb-1.5">
+                    <MapPin size={14} />
+                    <span>Native &amp; Residential Address</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        District (ജില്ല) *
+                      </label>
+                      <select
+                        value={district}
+                        onChange={(e) => setDistrict(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                      >
+                        {KERALA_DISTRICTS.map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        City / Town / Native Place *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        placeholder="e.g. Kottayam, Kerala"
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        House / Tharavadu Name (വീട്ടുപേര്)
+                      </label>
+                      <input
+                        type="text"
+                        value={houseName}
+                        onChange={(e) => setHouseName(e.target.value)}
+                        placeholder="e.g. Twins, Pulikkattil"
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        Street / Landmark (ലാൻഡ്മാർക്ക്)
+                      </label>
+                      <input
+                        type="text"
+                        value={landmark}
+                        onChange={(e) => setLandmark(e.target.value)}
+                        placeholder="e.g. Near Police Parade Ground"
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        Post Office (P.O.)
+                      </label>
+                      <input
+                        type="text"
+                        value={postOffice}
+                        onChange={(e) => setPostOffice(e.target.value)}
+                        placeholder="e.g. (P O) Arpookara"
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        Pin Code
+                      </label>
+                      <input
+                        type="text"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value)}
+                        placeholder="e.g. 686008"
+                        maxLength={6}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Phone & Email */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-gray-700 mb-1">
-                      Mobile / WhatsApp Number *
-                    </label>
-                    <div className="relative">
-                      <Phone
-                        size={14}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      />
+                {/* Informer & Contact Details */}
+                <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce] space-y-3">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#795705] border-b border-[#eadfce] pb-1.5">
+                    <User size={14} />
+                    <span>Informer (അറിയിച്ചയാൾ) &amp; Contact Details</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-2">
+                      <label className="block text-gray-700 mb-1">
+                        Informer Name (വിവരങ്ങൾ അറിയിച്ചയാൾ)
+                      </label>
                       <input
-                        type="tel"
-                        required
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="e.g. +91 98471 22334"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        type="text"
+                        value={informerName}
+                        onChange={(e) => setInformerName(e.target.value)}
+                        placeholder="e.g. Ajithkumar"
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        Informer Relation
+                      </label>
+                      <select
+                        value={informerRelation}
+                        onChange={(e) => setInformerRelation(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                      >
+                        {INFORMER_RELATIONS.map((r) => (
+                          <option key={r} value={r}>
+                            {r}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        Primary Mobile *
+                      </label>
+                      <div className="relative">
+                        <Phone
+                          size={14}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
+                        <input
+                          type="tel"
+                          required
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="e.g. 9495182073"
+                          className="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        Secondary / WhatsApp Mobile
+                      </label>
+                      <div className="relative">
+                        <Phone
+                          size={14}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
+                        <input
+                          type="tel"
+                          value={secondaryPhone}
+                          onChange={(e) => setSecondaryPhone(e.target.value)}
+                          placeholder="e.g. 9446057238"
+                          className="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 mb-1">
+                        Book / Reg Serial No.
+                      </label>
+                      <input
+                        type="text"
+                        value={bookNo}
+                        onChange={(e) => setBookNo(e.target.value)}
+                        placeholder="e.g. 21"
+                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
                   </div>
@@ -690,8 +870,8 @@ export default function RegisterModal({
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="e.g. user@example.com"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        placeholder="e.g. swathy@example.com"
+                        className="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
                       />
                     </div>
                   </div>

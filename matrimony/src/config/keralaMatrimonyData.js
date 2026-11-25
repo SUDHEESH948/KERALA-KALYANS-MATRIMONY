@@ -1,0 +1,80 @@
+export const KERALA_NAKSHATRAS = [
+  'Ashwathi (അശ്വതി)',
+  'Bharani (ഭരണി)',
+  'Karthika (കാർത്തിക)',
+  'Rohini (രോഹിണി)',
+  'Makayiram (മകയിരം)',
+  'Thiruvathira (തിരുവാതിര)',
+  'Punartham (പുണർതം)',
+  'Pooyam (പൂയം)',
+  'Ayilyam (ആയില്യം)',
+  'Makam (മകം)',
+  'Pooram (പൂരം)',
+  'Uthram (ഉത്രം)',
+  'Atham (അത്തം)',
+  'Chithira (ചിത്തിര)',
+  'Chothi (ചോതി)',
+  'Vishakham (വിശാഖം)',
+  'Anizham (അനിഴം)',
+  'Thrikketta (തൃക്കേട്ട)',
+  'Moolam (മൂലം)',
+  'Pooradam (പൂരാടം)',
+  'Uthradam (ഉത്രാടം)',
+  'Thiruvonam (തിരുവോണം)',
+  'Avittam (അവിട്ടം)',
+  'Chathayam (ചതയം)',
+  'Poororuttathi (പൂരുരുട്ടാതി)',
+  'Uthrattathi (ഉത്രട്ടാതി)',
+  'Revathi (രേവതി)'
+]
+
+export const KERALA_DISTRICTS = [
+  'Alappuzha',
+  'Ernakulam',
+  'Idukki',
+  'Kannur',
+  'Kasaragod',
+  'Kollam',
+  'Kottayam',
+  'Kozhikode',
+  'Malappuram',
+  'Palakkad',
+  'Pathanamthitta',
+  'Thiruvananthapuram',
+  'Thrissur',
+  'Wayanad',
+  'Outside Kerala',
+  'Abroad / NRI'
+]
+
+export const HEIGHT_OPTIONS = [
+  "147 cm (4'10\")",
+  "150 cm (4'11\")",
+  "152 cm (5'0\")",
+  "155 cm (5'1\")",
+  "157 cm (5'2\")",
+  "160 cm (5'3\")",
+  "162 cm (5'4\")",
+  "165 cm (5'5\")",
+  "168 cm (5'6\")",
+  "170 cm (5'7\")",
+  "172 cm (5'8\")",
+  "175 cm (5'9\")",
+  "178 cm (5'10\")",
+  "180 cm (5'11\")",
+  "183 cm (6'0\")",
+  "185 cm (6'1\")",
+  "188 cm (6'2\")",
+  "191 cm (6'3\")",
+  "193 cm (6'4\")"
+]
+
+export const INFORMER_RELATIONS = [
+  'Parent (Father / Mother)',
+  'Guardian / Informer',
+  'Self',
+  'Brother / Sister',
+  'Relative',
+  'Family Friend',
+  'Marriage Broker / Mediator'
+]

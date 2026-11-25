@@ -345,12 +345,32 @@ export default function ProfileDetailsPage({
 
                   <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
                     <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
-                      Base Location
+                      Star (നക്ഷത്രം)
                     </span>
-                    <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">
-                      {profile.location}
+                    <span className="font-bold text-[#701C35] text-sm mt-0.5 block truncate">
+                      ⭐ {profile.star || profile.nakshatra || "Not Specified"}
                     </span>
                   </div>
+
+                  <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce]">
+                    <span className="text-[12px] text-gray-400 font-bold uppercase tracking-wider block">
+                      Base District &amp; Location
+                    </span>
+                    <span className="font-bold text-gray-900 text-sm mt-0.5 block truncate">
+                      {profile.district ? `${profile.district}, ` : ""}{profile.location}
+                    </span>
+                  </div>
+
+                  {profile.bookNo && (
+                    <div className="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                      <span className="text-[12px] text-amber-800 font-bold uppercase tracking-wider block">
+                        Record Reference
+                      </span>
+                      <span className="font-bold text-amber-950 text-sm mt-0.5 block">
+                        Book #{profile.bookNo}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -499,12 +519,73 @@ export default function ProfileDetailsPage({
 
                 <div className="space-y-1">
                   <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
-                    Values &amp; Lifestyle
+                    Star / Nakshatram (നക്ഷത്രം)
                   </span>
-                  <p className="font-bold text-gray-900 text-sm">
-                    Traditional &amp; Progressive
+                  <p className="font-bold text-[#701C35] text-sm">
+                    ⭐ {profile.star || profile.nakshatra || "Not Specified"}
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Native Place & Family Address Section */}
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#eadfce] shadow-xs space-y-4">
+              <div className="flex items-center gap-2.5 border-b border-[#eadfce] pb-3">
+                <div className="h-8 w-8 rounded-lg bg-[#FAF7F1] border border-[#eadfce] text-[#701C35] flex items-center justify-center">
+                  <HomeIcon size={18} />
+                </div>
+                <h3 className="text-xl text-[#701C35]">
+                  Native Place &amp; Family Address (മേൽവിലാസം)
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div className="space-y-1">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    House / Tharavadu Name (വീട്ടുപേര്)
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {profile.houseName || "Not Specified"}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Street / Landmark (ലാൻഡ്മാർക്ക്)
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {profile.landmark || "Not Specified"}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    Post Office (P.O.) &amp; Pin Code
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {[profile.postOffice, profile.pincode].filter(Boolean).join(" - ") || "Not Specified"}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
+                    District &amp; State
+                  </span>
+                  <p className="font-bold text-gray-900 text-sm">
+                    {[profile.district, profile.state || "Kerala", profile.country || "India"].filter(Boolean).join(", ")}
+                  </p>
+                </div>
+
+                {profile.informerName && (
+                  <div className="space-y-1 sm:col-span-2 pt-2 border-t border-[#eadfce]">
+                    <span className="text-[13px] font-semibold text-gray-400 uppercase tracking-wider block">
+                      Informer Details (വിവരങ്ങൾ അറിയിച്ചയാൾ)
+                    </span>
+                    <p className="font-bold text-[#701C35] text-sm">
+                      {profile.informerName} {profile.informerRelation ? `(${profile.informerRelation})` : ""}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -589,6 +670,25 @@ export default function ProfileDetailsPage({
                       </span>
                       <span className="font-bold text-gray-900 block">
                         +91 {profile.phone}
+                      </span>
+                    </div>
+                  </a>
+                )}
+
+                {profile.secondaryPhone && (
+                  <a
+                    href={`tel:${profile.secondaryPhone}`}
+                    className="p-3 bg-white rounded-xl border border-emerald-200 flex items-center gap-3 text-gray-800 hover:border-emerald-500 transition block"
+                  >
+                    <div className="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center flex-shrink-0">
+                      <Phone size={15} />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[12px] text-gray-400 uppercase font-semibold block">
+                        Alternate / WhatsApp Mobile
+                      </span>
+                      <span className="font-bold text-gray-900 block">
+                        +91 {profile.secondaryPhone}
                       </span>
                     </div>
                   </a>

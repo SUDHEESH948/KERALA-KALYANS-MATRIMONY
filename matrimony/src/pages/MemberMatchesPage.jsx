@@ -645,6 +645,11 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                         <span className="text-gray-600 truncate">
                           {p.caste ? `${p.caste}` : p.motherTongue}
                         </span>
+                        {(p.star || p.nakshatra) && (
+                          <span className="font-bold text-[#701C35] bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[11px]">
+                            ⭐ {p.star || p.nakshatra}
+                          </span>
+                        )}
                         <span className="text-gray-300">·</span>
                         <span className="text-gray-500 font-medium">
                           {p.marriageType || p.maritalStatus || 'Never Married'}
@@ -666,7 +671,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                       {/* Location */}
                       <div className="flex items-start gap-2 text-gray-600">
                         <MapPin size={14} className="text-gray-400 flex-shrink-0 mt-0.5" />
-                        <span className="truncate">{p.location}</span>
+                        <span className="truncate">{p.district ? `${p.district}, ` : ''}{p.location}</span>
                       </div>
                     </div>
 

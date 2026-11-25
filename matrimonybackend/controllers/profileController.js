@@ -23,8 +23,8 @@ const membershipExpiry = {
   }
 }
 const openedProfileCount = { $size: { $ifNull: ['$openedProfileIds', []] } }
-const PROFILE_PREVIEW_FIELDS = 'id name gender age height marriageType maritalStatus religion caste motherTongue education profession location photo isApproved verified'
-const PROFILE_DETAIL_FIELDS = `${PROFILE_PREVIEW_FIELDS} email phone`
+const PROFILE_PREVIEW_FIELDS = 'id name gender age height marriageType maritalStatus religion caste star nakshatra motherTongue education profession location district photo isApproved verified'
+const PROFILE_DETAIL_FIELDS = `${PROFILE_PREVIEW_FIELDS} email phone secondaryPhone houseName landmark postOffice pincode state country informerName informerRelation bookNo`
 
 /**
  * Generate cryptographically secure random temporary password
@@ -235,12 +235,25 @@ export const createProfile = async (req, res) => {
       maritalStatus,
       religion,
       caste,
+      star,
+      nakshatra,
       motherTongue,
       education,
       profession,
       location,
+      district,
+      houseName,
+      landmark,
+      postOffice,
+      pincode,
+      state,
+      country,
+      informerName,
+      informerRelation,
       email,
       phone,
+      secondaryPhone,
+      bookNo,
       password,
       photo
     } = req.body
@@ -286,12 +299,25 @@ export const createProfile = async (req, res) => {
       maritalStatus: (maritalStatus || marriageType || 'Never Married').trim(),
       religion: religion || 'Hindu',
       caste: caste ? caste.trim() : '',
+      star: (star || nakshatra || '').trim(),
+      nakshatra: (nakshatra || star || '').trim(),
       motherTongue: motherTongue || 'Malayalam',
       education: education ? education.trim() : 'Graduate',
       profession: profession ? profession.trim() : 'Professional',
       location: location ? location.trim() : 'Kerala, India',
+      district: district ? district.trim() : '',
+      houseName: houseName ? houseName.trim() : '',
+      landmark: landmark ? landmark.trim() : '',
+      postOffice: postOffice ? postOffice.trim() : '',
+      pincode: pincode ? pincode.trim() : '',
+      state: state || 'Kerala',
+      country: country || 'India',
+      informerName: informerName ? informerName.trim() : '',
+      informerRelation: informerRelation ? informerRelation.trim() : '',
+      bookNo: bookNo ? bookNo.trim() : '',
       email: cleanEmail,
       phone: phone ? phone.trim() : '',
+      secondaryPhone: secondaryPhone ? secondaryPhone.trim() : '',
       password: hashedPassword,
       photo: photo || (gender === 'Groom'
         ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'

@@ -44,6 +44,16 @@ const profileSchema = new mongoose.Schema(
       type: String,
       default: ''
     },
+    star: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    nakshatra: {
+      type: String,
+      default: '',
+      trim: true
+    },
     motherTongue: {
       type: String,
       default: 'Malayalam'
@@ -60,6 +70,56 @@ const profileSchema = new mongoose.Schema(
       type: String,
       default: 'Kerala, India'
     },
+    district: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    houseName: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    landmark: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    postOffice: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    pincode: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    state: {
+      type: String,
+      default: 'Kerala',
+      trim: true
+    },
+    country: {
+      type: String,
+      default: 'India',
+      trim: true
+    },
+    informerName: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    informerRelation: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    bookNo: {
+      type: String,
+      default: '',
+      trim: true
+    },
     photo: {
       type: String,
       default: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600'
@@ -72,6 +132,11 @@ const profileSchema = new mongoose.Schema(
       index: true
     },
     phone: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    secondaryPhone: {
       type: String,
       trim: true,
       default: ''

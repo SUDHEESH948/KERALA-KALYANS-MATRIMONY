@@ -35,6 +35,12 @@ import { API_BASE } from "../config/api";
 import AdminContactDialog from "../components/AdminContactDialog";
 import { useNotification } from "../context/NotificationContext";
 import AdminWhatsAppFollowUps from "../components/AdminWhatsAppFollowUps";
+import {
+  KERALA_NAKSHATRAS,
+  KERALA_DISTRICTS,
+  HEIGHT_OPTIONS,
+  INFORMER_RELATIONS
+} from "../config/keralaMatrimonyData";
 
 const gothamStylesheet = import.meta.env.VITE_ADMIN_GOTHAM_STYLESHEET?.trim();
 
@@ -1064,7 +1070,17 @@ export default function AdminPage({ onExit }) {
                                       p.maritalStatus ||
                                       "Never Married"}
                                   </span>
+                                  {p.bookNo && (
+                                    <span className="ml-1.5 px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-[11px]">
+                                      Book #{p.bookNo}
+                                    </span>
+                                  )}
                                 </span>
+                                {p.informerName && (
+                                  <div className="text-[11px] text-[var(--admin-gold-text)]">
+                                    Informer: <b>{p.informerName}</b> {p.informerRelation ? `(${p.informerRelation})` : ""}
+                                  </div>
+                                )}
                                 <div className="mt-1 text-[13px] font-medium text-[var(--admin-gold-ink)]">
                                   Profiles opened {p.profileOpenCount} / {p.profileOpenLimit}
                                 </div>
@@ -1082,12 +1098,14 @@ export default function AdminPage({ onExit }) {
                           </td>
                           <td role="cell" className="px-4 py-3 text-[var(--admin-gold-ink)]">
                             <span aria-hidden="true" className="mb-1 block font-semibold lg:hidden">
-                              Community
+                              Community &amp; Star
                             </span>
-                            <div>{p.religion}</div>
-                            <div className="text-[12px] text-[var(--admin-gold-text)]">
-                              {p.caste || p.motherTongue}
-                            </div>
+                            <div>{p.religion} · {p.caste || p.motherTongue}</div>
+                            {(p.star || p.nakshatra) && (
+                              <div className="text-[12px] font-bold text-[#701C35]">
+                                ⭐ {p.star || p.nakshatra}
+                              </div>
+                            )}
                           </td>
                           <td role="cell" className="px-4 py-3 text-[var(--admin-gold-ink)]">
                             <span aria-hidden="true" className="mb-1 block font-semibold lg:hidden">
@@ -1102,9 +1120,14 @@ export default function AdminPage({ onExit }) {
                           </td>
                           <td role="cell" className="px-4 py-3 text-[var(--admin-gold-ink)]">
                             <span aria-hidden="true" className="mb-1 block font-semibold lg:hidden">
-                              Location
+                              Location &amp; Address
                             </span>
-                            {p.location}
+                            <div className="font-medium">{p.district ? `${p.district}, ` : ''}{p.location}</div>
+                            {(p.houseName || p.postOffice) && (
+                              <div className="text-[11px] text-[var(--admin-gold-text)]">
+                                {[p.houseName, p.postOffice, p.pincode].filter(Boolean).join(", ")}
+                              </div>
+                            )}
                           </td>
                           <td role="cell" className="px-4 py-3 text-left lg:text-center">
                             {p.status === "rejected" ? (
@@ -1720,13 +1743,188 @@ export default function AdminPage({ onExit }) {
                   <label className="block mb-1">Caste</label>
                   <input
                     type="text"
-                    value={editingProfile.caste}
+                    value={editingProfile.caste || ""}
                     onChange={(e) =>
                       setEditingProfile({
                         ...editingProfile,
                         caste: e.target.value,
                       })
                     }
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block mb-1">Star / Nakshatram (നക്ഷത്രം)</label>
+                  <select
+                    value={editingProfile.star || editingProfile.nakshatra || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        star: e.target.value,
+                        nakshatra: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)] bg-white"
+                  >
+                    <option value="">Select Nakshatram</option>
+                    {KERALA_NAKSHATRAS.map((n) => (
+                      <option key={n} value={n.split(' ')[0]}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block mb-1">District (ജില്ല)</label>
+                  <select
+                    value={editingProfile.district || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        district: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)] bg-white"
+                  >
+                    <option value="">Select District</option>
+                    {KERALA_DISTRICTS.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block mb-1">House Name (വീട്ടുപേര്)</label>
+                  <input
+                    type="text"
+                    value={editingProfile.houseName || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        houseName: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. Twins"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1">Street / Landmark</label>
+                  <input
+                    type="text"
+                    value={editingProfile.landmark || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        landmark: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. Near Police Parade Ground"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block mb-1">Post Office (P.O.)</label>
+                  <input
+                    type="text"
+                    value={editingProfile.postOffice || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        postOffice: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. (P O) Arpookara"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1">Pin Code</label>
+                  <input
+                    type="text"
+                    value={editingProfile.pincode || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        pincode: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. 686008"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block mb-1">Informer Name</label>
+                  <input
+                    type="text"
+                    value={editingProfile.informerName || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        informerName: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. Ajithkumar"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1">Book / Serial No.</label>
+                  <input
+                    type="text"
+                    value={editingProfile.bookNo || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        bookNo: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. 21"
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block mb-1">Primary Phone</label>
+                  <input
+                    type="text"
+                    value={editingProfile.phone || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        phone: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1">Secondary / WhatsApp Phone</label>
+                  <input
+                    type="text"
+                    value={editingProfile.secondaryPhone || ""}
+                    onChange={(e) =>
+                      setEditingProfile({
+                        ...editingProfile,
+                        secondaryPhone: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. 9446057238"
                     className="w-full px-3 py-2 rounded border border-[var(--admin-border)]"
                   />
                 </div>
