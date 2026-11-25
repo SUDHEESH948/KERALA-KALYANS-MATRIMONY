@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { KeyRound, Lock, Eye, EyeOff, CheckCircle2, XCircle, AlertCircle, ShieldAlert } from 'lucide-react'
+import { KeyRound, Lock, Eye, EyeOff, CheckCircle2, XCircle, AlertCircle, ShieldAlert, PhoneCall, MessageCircle, X } from 'lucide-react'
 import { API_BASE } from '../config/api'
 
 export default function ChangePasswordModal({
@@ -8,6 +8,7 @@ export default function ChangePasswordModal({
   userEmail,
   token,
   onPasswordChanged,
+  onClose,
   isMandatory = true
 }) {
   const [currentPassword, setCurrentPassword] = useState('')
@@ -33,6 +34,18 @@ export default function ChangePasswordModal({
   ], [newPassword, confirmPassword])
 
   const allRulesMet = rules.every(r => r.met)
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose()
+    } else {
+      localStorage.removeItem('apremiya_member_user')
+      localStorage.removeItem('apremiya_member_token')
+      window.location.hash = ''
+      window.location.pathname = '/'
+      window.location.reload()
+    }
+  }
 
   if (!isOpen) return null
 
@@ -123,6 +136,17 @@ export default function ChangePasswordModal({
                 </p>
               </div>
             </div>
+
+            {/* Closing Button (X) */}
+            <button
+              type="button"
+              onClick={handleClose}
+              className="p-2 -mr-2 rounded-full hover:bg-white/15 text-white/80 hover:text-white transition cursor-pointer"
+              title="Close and return to home"
+              aria-label="Close"
+            >
+              <X size={22} />
+            </button>
           </div>
 
           <div className="p-6 sm:p-8 space-y-5">
@@ -265,6 +289,49 @@ export default function ChangePasswordModal({
                 <span>{isLoading ? 'Updating Security Credentials...' : 'Save New Password & Continue'}</span>
               </button>
             </form>
+
+            {/* Direct Calling & Helpline Section */}
+            <div className="pt-3 border-t border-gray-200 space-y-2.5">
+              <div className="text-center">
+                <p className="text-[13px] font-semibold text-gray-800">
+                  Need help with your login or temporary password?
+                </p>
+                <p className="text-[11px] text-gray-500">
+                  Contact our support team directly (10:00 AM – 5:00 PM)
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <a
+                  href="tel:+918075588406"
+                  className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs sm:text-sm transition shadow-sm hover:shadow active:scale-98 cursor-pointer"
+                >
+                  <PhoneCall size={16} />
+                  <span>Call: (+91) 80755 88406</span>
+                </a>
+                <a
+                  href="https://wa.me/917907348468?text=Hello%20Kerala%20Kalyans%20Support,%20I%20need%20help%20with%20my%20password"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-medium text-xs sm:text-sm transition shadow-sm hover:shadow active:scale-98 cursor-pointer"
+                >
+                  <MessageCircle size={16} />
+                  <span>WhatsApp: (+91) 79073 48468</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Secondary Closing / Back Button */}
+            <div className="flex items-center justify-center pt-1">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="text-xs text-gray-500 hover:text-[#701C35] font-medium transition cursor-pointer flex items-center gap-1.5 py-1 px-3 rounded-lg hover:bg-gray-100"
+              >
+                <X size={14} />
+                <span>Close and return to Home</span>
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>
