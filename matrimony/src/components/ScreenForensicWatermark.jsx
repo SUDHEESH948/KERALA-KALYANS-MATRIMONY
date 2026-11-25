@@ -1,19 +1,17 @@
-import { useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 /**
  * ScreenForensicWatermark
  *
- * Provides full-screen, tamper-resistant forensic watermarking covering EVERY portion of the screen.
- * Whichever PC, monitor, or device is used, and whichever portion/crop is photographed
- * (even with an external phone camera), the viewer's ID, Name, and timestamp are captured.
- *
- * - Semi-transparent repeating SVG pattern across the full viewport
- * - High-density repetition so even a small crop contains the Viewer ID
- * - MutationObserver to prevent tampering / removal via DevTools
- * - pointer-events-none so it never interferes with clicks or scrolling
+ * Ensures zero disturbance to genuine customers during normal browsing:
+ * - In normal browsing state: Completely hidden / NOT rendered (0% disturbance).
+ * - The moment a screenshot or screen capture is initiated (PrintScreen, Win+Shift+S,
+ *   Cmd+Shift+3/4/5, Ctrl+P): Instantly triggers and blankets the entire screen with the
+ *   forensic watermark grid showing the Viewer's Member ID and timestamp.
+ * - Automatically disappears after the capture event.
  */
 export default function ScreenForensicWatermark({ currentMember }) {
-  const containerRef = useRef(null)
+  const [isCapturing, setIsCapturing] = useState(false)
 
   // Resolve viewer identity
   const viewerInfo = useMemo(() => {
@@ -28,41 +26,97 @@ export default function ScreenForensicWatermark({ currentMember }) {
     const viewerName = user?.name || user?.email?.split('@')[0] || 'Verified Member'
     const now = new Date()
     const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    const timeStr = now.toLocaleTimeString('en-IN')
 
     return {
       viewerId,
       viewerName,
       dateStr,
-      stampText: `KERALA KALYANS · ID: ${viewerId} · ${viewerName} · ${dateStr}`
+      timeStr,
+      stampText: `KERALA KALYANS · VIEWER ID: ${viewerId} · ${viewerName} · ${dateStr} ${timeStr}`
     }
   }, [currentMember])
 
-  // Generate SVG Data URI for crisp, infinite background pattern across any screen resolution
+  // Listen for screenshot capture keys and snipping shortcuts
+  useEffect(() => {
+    let restoreTimer = null
+
+    const activateWatermark = () => {
+      setIsCapturing(true)
+      if (restoreTimer) clearTimeout(restoreTimer)
+      restoreTimer = setTimeout(() => {
+        setIsCapturing(false)
+      }, 2600)
+    }
+
+    const handleKeyDown = (e) => {
+      // 1. PrintScreen key (any code / keycode)
+      if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
+        activateWatermark()
+        return
+      }
+
+      // 2. Windows Snipping (Win+Shift+S) or Mac Screenshot (Cmd+Shift+3/4/5)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['s', 'S', '3', '4', '5'].includes(e.key)) {
+        activateWatermark()
+        return
+      }
+
+      // 3. Ctrl+P (Print / PDF)
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+        activateWatermark()
+        return
+      }
+
+      // 4. Ctrl+S (Save Page)
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+        activateWatermark()
+        return
+      }
+    }
+
+    const handleKeyUp = (e) => {
+      if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
+        activateWatermark()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown, true)
+    window.addEventListener('keyup', handleKeyUp, true)
+
+    return () => {
+      if (restoreTimer) clearTimeout(restoreTimer)
+      window.removeEventListener('keydown', handleKeyDown, true)
+      window.removeEventListener('keyup', handleKeyUp, true)
+    }
+  }, [])
+
+  // Generate high-visibility SVG pattern when screenshot is triggered
   const watermarkSvgUri = useMemo(() => {
     const text = viewerInfo.stampText
     const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="380" height="200" viewBox="0 0 380 200">
+      <svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 360 180">
         <style>
-          .wm-text {
-            font-family: system-ui, -apple-system, sans-serif;
-            font-weight: 700;
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            fill: #701C35;
-            fill-opacity: 0.085;
-          }
-          .wm-id {
+          .wm-bold {
             font-family: system-ui, -apple-system, sans-serif;
             font-weight: 800;
-            font-size: 11.5px;
+            font-size: 13px;
             letter-spacing: 1px;
-            fill: #000000;
-            fill-opacity: 0.095;
+            fill: #701C35;
+            fill-opacity: 0.35;
+          }
+          .wm-id-bold {
+            font-family: system-ui, -apple-system, sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 1.5px;
+            fill: #b91c1c;
+            fill-opacity: 0.45;
           }
         </style>
-        <g transform="rotate(-22 190 100)">
-          <text x="10" y="55" class="wm-text">${text}</text>
-          <text x="10" y="155" class="wm-id">VIEWER ID: ${viewerInfo.viewerId} · CONFIDENTIAL</text>
+        <g transform="rotate(-22 180 90)">
+          <text x="10" y="45" class="wm-bold">${text}</text>
+          <text x="10" y="135" class="wm-id-bold">CONFIDENTIAL · VIEWER ID: ${viewerInfo.viewerId}</text>
         </g>
       </svg>
     `.trim()
@@ -70,44 +124,21 @@ export default function ScreenForensicWatermark({ currentMember }) {
     return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`
   }, [viewerInfo])
 
-  // Anti-tamper MutationObserver: If user tries to delete, hide, or alter opacity via DevTools, re-enforce it
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el || typeof MutationObserver === 'undefined') return
+  // Normal browsing: 100% clean and undisturbed
+  if (!isCapturing) return null
 
-    const enforceStyles = () => {
-      if (!el) return
-      if (el.style.display === 'none') el.style.display = 'block'
-      if (parseFloat(el.style.opacity || '1') < 0.5) el.style.opacity = '1'
-      if (el.style.visibility === 'hidden') el.style.visibility = 'visible'
-      if (el.style.position !== 'fixed') el.style.position = 'fixed'
-      if (el.style.zIndex !== '99999') el.style.zIndex = '99999'
-    }
-
-    const observer = new MutationObserver(() => {
-      enforceStyles()
-    })
-
-    observer.observe(el, {
-      attributes: true,
-      attributeFilter: ['style', 'class', 'hidden']
-    })
-
-    return () => observer.disconnect()
-  }, [])
-
+  // Capture mode: Watermark blankets full viewport
   return (
     <div
-      ref={containerRef}
-      id="forensic-screen-watermark"
+      id="forensic-screen-watermark-overlay"
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none select-none z-[99999]"
+      className="fixed inset-0 pointer-events-none select-none z-[999999] animate-in fade-in duration-75"
       style={{
         backgroundImage: watermarkSvgUri,
         backgroundRepeat: 'repeat',
         backgroundPosition: '0 0',
-        backgroundSize: '380px 200px',
-        opacity: 1
+        backgroundSize: '360px 180px',
+        backgroundColor: 'rgba(255, 255, 255, 0.12)'
       }}
     />
   )
