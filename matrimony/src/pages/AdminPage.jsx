@@ -30,10 +30,12 @@ import {
   Copy,
   Key,
   ShieldAlert,
+  Upload,
 } from "lucide-react";
 
 import { API_BASE } from "../config/api";
 import AdminContactDialog from "../components/AdminContactDialog";
+import AdminBulkUploadModal from "../components/AdminBulkUploadModal";
 import { useNotification } from "../context/NotificationContext";
 import AdminWhatsAppFollowUps from "../components/AdminWhatsAppFollowUps";
 import {
@@ -119,6 +121,7 @@ export default function AdminPage({ onExit }) {
 
   // Modals state
   const [editingProfile, setEditingProfile] = useState(null);
+  const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
 
   // Platform stats edit state
   const [editStats, setEditStats] = useState({
@@ -987,6 +990,17 @@ export default function AdminPage({ onExit }) {
                   </select>
                 </div>
               </div>
+
+              {/* Upload CSV / PDF Profiles Button */}
+              <button
+                type="button"
+                onClick={() => setBulkUploadOpen(true)}
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-bold transition cursor-pointer shadow-xs whitespace-nowrap text-xs w-full sm:w-auto"
+                title="Bulk upload profiles from CSV spreadsheet or PDF document"
+              >
+                <Upload size={14} />
+                <span>Upload CSV / PDF</span>
+              </button>
             </div>
 
             <div className="bg-white rounded-xl border border-[var(--admin-border)] shadow-sm overflow-hidden">
@@ -1614,6 +1628,18 @@ export default function AdminPage({ onExit }) {
           </div>
         )}
       </div>
+
+      {/* BULK UPLOAD MODAL (CSV / PDF) */}
+      {bulkUploadOpen && (
+        <AdminBulkUploadModal
+          token={token}
+          onClose={() => setBulkUploadOpen(false)}
+          onImportSuccess={() => {
+            fetchProfiles();
+            showToast("Profiles uploaded and imported successfully!");
+          }}
+        />
+      )}
 
       {/* EDIT PROFILE MODAL */}
       {editingProfile && (

@@ -10,7 +10,9 @@ import {
   rejectProfile,
   resendApprovalEmail,
   deleteProfile,
-  seedSampleMatches
+  seedSampleMatches,
+  bulkImportProfiles,
+  uploadBiodataPdf
 } from '../controllers/profileController.js'
 import { requireSignedAdmin, requireSignedSession } from '../middleware/auth.js'
 
@@ -22,6 +24,8 @@ router.get('/membership-status', requireSignedSession, getMembershipStatus)
 router.get('/:id', requireSignedSession, getProfileById)
 router.post('/', createProfile)
 router.post('/seed-sample-matches', requireSignedAdmin, seedSampleMatches)
+router.post('/bulk-import', requireSignedAdmin, bulkImportProfiles)
+router.post('/upload-pdf', requireSignedAdmin, uploadBiodataPdf)
 
 // Admin managed routes (with role-based access control)
 router.put('/:id', requireSignedAdmin, updateProfile)

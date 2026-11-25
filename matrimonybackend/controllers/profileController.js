@@ -811,3 +811,184 @@ export const seedSampleMatches = async (req, res) => {
     res.status(500).json({ error: err.message })
   }
 }
+
+/**
+ * 13. Bulk Import Profiles from CSV / Spreadsheet
+ */
+export const bulkImportProfiles = async (req, res) => {
+  try {
+    const { profiles = [], defaultStatus = 'approved' } = req.body
+
+    if (!Array.isArray(profiles) || profiles.length === 0) {
+      return res.status(400).json({ error: 'No profiles provided for import' })
+    }
+
+    const salt = await bcrypt.genSalt(10)
+    const defaultHashedPassword = await bcrypt.hash('KeralaKalyans@2026', salt)
+
+    const imported = []
+    const errors = []
+
+    for (let i = 0; i < profiles.length; i++) {
+      const raw = profiles[i]
+      try {
+        const name = (raw.name || raw['Full Name'] || raw['Name'] || raw.candidateName || '').trim()
+        if (!name) {
+          errors.push({ row: i + 1, error: 'Name is required' })
+          continue
+        }
+
+        const gender = (raw.gender || raw.Gender || raw.Sex || 'Bride').trim()
+        const isGroom = /^groom$|^male$|^man$/i.test(gender)
+        const normalizedGender = isGroom ? 'Groom' : 'Bride'
+
+        const uniqueNum = Math.floor(100000 + Math.random() * 900000)
+        let email = (raw.email || raw['Email Address'] || raw['Email'] || '').trim().toLowerCase()
+        if (!email || !email.includes('@')) {
+          email = `candidate.${uniqueNum}@keralakalyans.internal`
+        }
+
+        // Ensure email uniqueness
+        const existing = await Profile.findOne({ email })
+        if (existing) {
+          email = `candidate.${uniqueNum}.${Date.now().toString().slice(-4)}@keralakalyans.internal`
+        }
+
+        const ageVal = Number(raw.age || raw.Age) || 25
+        const heightVal = (raw.height || raw.Height || "5'5\"").trim()
+        const marriageTypeVal = (raw.marriageType || raw.maritalStatus || raw['Marital Status'] || 'Never Married').trim()
+        const religionVal = (raw.religion || raw.Religion || 'Hindu').trim()
+        const casteVal = (raw.caste || raw.Caste || raw.Community || '').trim()
+        const starVal = (raw.star || raw.Star || raw.nakshatra || raw['Nakshatra'] || '').trim()
+        const motherTongueVal = (raw.motherTongue || raw['Mother Tongue'] || 'Malayalam').trim()
+        const educationVal = (raw.education || raw.Education || raw.Qualification || 'Graduate').trim()
+        const professionVal = (raw.profession || raw.Profession || raw.Occupation || 'Professional').trim()
+        const locationVal = (raw.location || raw.Location || raw.City || raw.Place || 'Kerala, India').trim()
+        const districtVal = (raw.district || raw.District || locationVal.split(',')[0] || '').trim()
+        const phoneVal = (raw.phone || raw.Phone || raw.mobile || raw.Mobile || raw['Phone Number'] || '').trim()
+
+        const defaultPhoto = normalizedGender === 'Groom'
+          ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'
+          : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600'
+
+        const photoVal = (raw.photo || raw.Photo || raw.photoUrl || defaultPhoto).trim()
+
+        const profileId = (raw.id && !String(raw.id).startsWith('PRF-TEMP'))
+          ? String(raw.id).trim()
+          : `PRF-${normalizedGender.toUpperCase()}-${uniqueNum.toString().slice(-4)}`
+
+        const newProfile = new Profile({
+          id: profileId,
+          name,
+          gender: normalizedGender,
+          age: ageVal,
+          height: heightVal,
+          marriageType: marriageTypeVal,
+          maritalStatus: marriageTypeVal,
+          religion: religionVal,
+          caste: casteVal,
+          star: starVal,
+          nakshatra: starVal,
+          motherTongue: motherTongueVal,
+          education: educationVal,
+          profession: professionVal,
+          location: locationVal,
+          district: districtVal,
+          email,
+          phone: phoneVal,
+          photo: photoVal,
+          status: defaultStatus === 'approved' ? 'approved' : 'pending',
+          isApproved: defaultStatus === 'approved',
+          verified: defaultStatus === 'approved',
+          password: defaultHashedPassword,
+          role: 'member'
+        })
+
+        await newProfile.save()
+        imported.push({ id: newProfile.id, name: newProfile.name, email: newProfile.email })
+      } catch (rowErr) {
+        errors.push({ row: i + 1, error: rowErr.message })
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Successfully imported ${imported.length} profiles.`,
+      importedCount: imported.length,
+      failedCount: errors.length,
+      imported,
+      errors
+    })
+  } catch (err) {
+    res.status(500).json({ error: 'Bulk import failed: ' + err.message })
+  }
+}
+
+/**
+ * 14. Upload Biodata PDF and Register Profile
+ */
+export const uploadBiodataPdf = async (req, res) => {
+  try {
+    const { pdfBase64, fileName, candidateData = {} } = req.body
+
+    if (!candidateData.name && !fileName) {
+      return res.status(400).json({ error: 'Candidate information or PDF document required' })
+    }
+
+    const uniqueNum = Math.floor(100000 + Math.random() * 900000)
+    const name = (candidateData.name || fileName?.replace(/\.pdf$/i, '') || 'New Candidate').trim()
+    const gender = (candidateData.gender || 'Bride').trim()
+    const isGroom = /^groom$|^male$|^man$/i.test(gender)
+    const normalizedGender = isGroom ? 'Groom' : 'Bride'
+
+    let email = (candidateData.email || '').trim().toLowerCase()
+    if (!email || !email.includes('@')) {
+      email = `candidate.${uniqueNum}@keralakalyans.internal`
+    }
+
+    const defaultPhoto = normalizedGender === 'Groom'
+      ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'
+      : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600'
+
+    const salt = await bcrypt.genSalt(10)
+    const defaultHashedPassword = await bcrypt.hash('KeralaKalyans@2026', salt)
+
+    const newProfile = new Profile({
+      id: `PRF-${normalizedGender.toUpperCase()}-${uniqueNum.toString().slice(-4)}`,
+      name,
+      gender: normalizedGender,
+      age: Number(candidateData.age) || 25,
+      height: candidateData.height || "5'5\"",
+      marriageType: candidateData.marriageType || 'Never Married',
+      maritalStatus: candidateData.marriageType || 'Never Married',
+      religion: candidateData.religion || 'Hindu',
+      caste: candidateData.caste || '',
+      star: candidateData.star || '',
+      motherTongue: candidateData.motherTongue || 'Malayalam',
+      education: candidateData.education || 'Graduate',
+      profession: candidateData.profession || 'Professional',
+      location: candidateData.location || 'Kerala, India',
+      district: candidateData.district || '',
+      email,
+      phone: candidateData.phone || '',
+      photo: candidateData.photo || defaultPhoto,
+      status: 'approved',
+      isApproved: true,
+      verified: true,
+      password: defaultHashedPassword,
+      role: 'member',
+      biodataPdfName: fileName || 'biodata.pdf',
+      biodataPdfData: pdfBase64 ? pdfBase64.slice(0, 500000) : ''
+    })
+
+    await newProfile.save()
+
+    res.status(201).json({
+      success: true,
+      message: `Profile created successfully from PDF biodata: ${newProfile.name}`,
+      profile: newProfile
+    })
+  } catch (err) {
+    res.status(500).json({ error: 'PDF biodata upload failed: ' + err.message })
+  }
+}
