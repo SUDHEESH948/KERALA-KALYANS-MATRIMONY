@@ -134,6 +134,27 @@ export default function ScreenshotPrivacyShield({
       }
     }
 
+    // 2. Window Blur / Loss of focus (triggers when Windows Snipping Tool, Mac Screen Grab, or recording tool opens)
+    const handleWindowBlur = () => {
+      reportAndBlackout('Screen capture tool or window blur detected. Screen blacked out.', 3000)
+    }
+
+    const handleWindowFocus = () => {
+      if (restoreTimer) clearTimeout(restoreTimer)
+      restoreTimer = setTimeout(() => {
+        setIsBlackout(false)
+        setAlertDispatched(false)
+      }, 400)
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden || document.visibilityState === 'hidden') {
+        reportAndBlackout('Window hidden / background screen capture attempt. Screen blacked out.', 3000)
+      } else {
+        handleWindowFocus()
+      }
+    }
+
     // Disable right-click context menu on images
     const handleContextMenu = (e) => {
       if (e.target && (e.target.tagName === 'IMG' || e.target.closest('.protected-profile-view'))) {
@@ -143,12 +164,18 @@ export default function ScreenshotPrivacyShield({
 
     window.addEventListener('keydown', handleKeyDown, true)
     window.addEventListener('keyup', handleKeyUp, true)
+    window.addEventListener('blur', handleWindowBlur)
+    window.addEventListener('focus', handleWindowFocus)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('contextmenu', handleContextMenu)
 
     return () => {
       if (restoreTimer) clearTimeout(restoreTimer)
       window.removeEventListener('keydown', handleKeyDown, true)
       window.removeEventListener('keyup', handleKeyUp, true)
+      window.removeEventListener('blur', handleWindowBlur)
+      window.removeEventListener('focus', handleWindowFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('contextmenu', handleContextMenu)
     }
   }, [enabled, viewer, targetProfile, label])
@@ -157,11 +184,24 @@ export default function ScreenshotPrivacyShield({
 
   return (
     <div
-      className="fixed inset-0 z-[9999999] bg-black flex flex-col items-center justify-center text-center p-6 select-none cursor-none pointer-events-auto"
+      className="fixed inset-0 z-[9999999] bg-black flex flex-col items-center justify-center text-center p-6 select-none cursor-none pointer-events-auto overflow-hidden"
       style={{ backgroundColor: '#000000', opacity: 1 }}
       aria-live="assertive"
     >
-      <div className="max-w-lg mx-auto space-y-4">
+      {/* Repeating Diagonal Watermark Grid across the Blackout screen */}
+      <div className="absolute inset-0 flex flex-col justify-around opacity-30 rotate-[-22deg] scale-125 pointer-events-none select-none">
+        {[...Array(8)].map((_, rIdx) => (
+          <div
+            key={rIdx}
+            className="flex justify-around whitespace-nowrap text-xs sm:text-sm font-black tracking-widest text-red-500/80 drop-shadow"
+          >
+            <span>KERALA KALYANS · VIEWER ID: {viewer.id} · {viewer.name}</span>
+            <span className="hidden sm:inline">KERALA KALYANS · VIEWER ID: {viewer.id} · {viewer.name}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="max-w-lg mx-auto space-y-4 relative z-10">
         <div className="flex justify-center">
           <div className="h-20 w-20 rounded-full bg-red-950/70 border border-red-500/40 flex items-center justify-center text-red-500 shadow-2xl shadow-red-900/50 animate-pulse">
             <ShieldAlert size={42} />

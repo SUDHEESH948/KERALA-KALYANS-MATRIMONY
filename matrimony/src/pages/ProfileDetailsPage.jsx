@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { API_BASE } from "../config/api";
 import ScreenshotPrivacyShield from "../components/ScreenshotPrivacyShield";
-import ScreenForensicWatermark from "../components/ScreenForensicWatermark";
 
 export default function ProfileDetailsPage({
   profileId,
@@ -182,9 +181,6 @@ export default function ProfileDetailsPage({
         currentMember={currentMember}
         targetProfile={profile}
       />
-
-      {/* Full-Screen Forensic Watermark covering EVERY portion of the screen on any PC */}
-      <ScreenForensicWatermark currentMember={currentMember} />
 
       {/* 1. TOP STICKY HEADER */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">

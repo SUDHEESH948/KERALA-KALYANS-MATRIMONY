@@ -25,7 +25,6 @@ import {
 } from 'lucide-react'
 import { API_BASE } from '../config/api'
 import ScreenshotPrivacyShield from '../components/ScreenshotPrivacyShield'
-import ScreenForensicWatermark from '../components/ScreenForensicWatermark'
 
 export default function MemberMatchesPage({ currentMember, onLogout, onNavigateHome, onViewProfile }) {
   const [profiles, setProfiles] = useState([])
@@ -244,9 +243,6 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
         currentMember={currentMember}
         targetProfile={viewingProfile}
       />
-
-      {/* Full-Screen Forensic Watermark covering EVERY portion of the screen on any PC */}
-      <ScreenForensicWatermark currentMember={currentMember} />
 
       {/* 1. TOP NAVIGATION BAR */}
       <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
