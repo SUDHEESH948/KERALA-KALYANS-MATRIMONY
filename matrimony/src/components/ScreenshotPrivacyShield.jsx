@@ -134,7 +134,7 @@ export default function ScreenshotPrivacyShield({
       }, minLockDuration)
     }
 
-    // 1. Keyboard event listeners (PrintScreen, Win+Shift+S, Cmd+Shift+3/4/5, Ctrl+P, Ctrl+S)
+    // Keyboard event listeners (PrintScreen, Win+Shift+S, Cmd+Shift+3/4/5, Ctrl+P, Ctrl+S)
     const handleKeyDown = (e) => {
       // PrintScreen key
       if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
@@ -171,38 +171,6 @@ export default function ScreenshotPrivacyShield({
       }
     }
 
-    // 2. Window Blur / Loss of focus (triggers when Windows Snipping Tool, Mac Screen Grab, or recording overlay opens)
-    const handleWindowBlur = () => {
-      reportAndBlackout('Screen capture tool or window focus lost. Screen blacked out.', 5000)
-    }
-
-    const handleWindowFocus = () => {
-      const elapsed = Date.now() - blackoutStartRef.current
-      if (elapsed < 4500) {
-        // Snipping tool may steal and jitter focus during rectangle drag: Keep blacked out!
-        return
-      }
-      if (restoreTimerRef.current) clearTimeout(restoreTimerRef.current)
-      restoreTimerRef.current = setTimeout(() => {
-        dismissBlackout()
-      }, 1500)
-    }
-
-    const handleVisibilityChange = () => {
-      if (document.hidden || document.visibilityState === 'hidden') {
-        reportAndBlackout('Window hidden / background screen capture attempt. Screen blacked out.', 5000)
-      } else {
-        handleWindowFocus()
-      }
-    }
-
-    // 3. Mouse Leave window (e.g. moving cursor to Snipping Tool bar or outside browser)
-    const handleMouseLeave = (e) => {
-      if (!e.relatedTarget && !e.toElement) {
-        reportAndBlackout('Cursor left browser window during protected profile view.', 4000)
-      }
-    }
-
     // Disable right-click context menu on images
     const handleContextMenu = (e) => {
       if (e.target && (e.target.tagName === 'IMG' || e.target.closest('.protected-profile-view'))) {
@@ -220,10 +188,6 @@ export default function ScreenshotPrivacyShield({
 
     window.addEventListener('keydown', handleKeyDown, true)
     window.addEventListener('keyup', handleKeyUp, true)
-    window.addEventListener('blur', handleWindowBlur)
-    window.addEventListener('focus', handleWindowFocus)
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    document.documentElement.addEventListener('mouseleave', handleMouseLeave)
     window.addEventListener('contextmenu', handleContextMenu)
     document.addEventListener('copy', handleCopy)
 
@@ -233,10 +197,6 @@ export default function ScreenshotPrivacyShield({
       document.body.classList.remove('privacy-blackout-active')
       window.removeEventListener('keydown', handleKeyDown, true)
       window.removeEventListener('keyup', handleKeyUp, true)
-      window.removeEventListener('blur', handleWindowBlur)
-      window.removeEventListener('focus', handleWindowFocus)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-      document.documentElement.removeEventListener('mouseleave', handleMouseLeave)
       window.removeEventListener('contextmenu', handleContextMenu)
       document.removeEventListener('copy', handleCopy)
     }
