@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
-import { ShieldAlert, EyeOff, UserCheck, AlertTriangle } from 'lucide-react'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { ShieldAlert, EyeOff, AlertTriangle, ArrowLeft } from 'lucide-react'
 import { API_BASE } from '../config/api'
 
 export default function ScreenshotPrivacyShield({
@@ -10,7 +10,9 @@ export default function ScreenshotPrivacyShield({
 }) {
   const [isBlackout, setIsBlackout] = useState(false)
   const [blackoutReason, setBlackoutReason] = useState('')
-  const [alertDispatched, setAlertDispatched] = useState(false)
+  const [capturedAt, setCapturedAt] = useState('')
+  const blackoutStartRef = useRef(0)
+  const restoreTimerRef = useRef(null)
 
   // Resolve active viewer details
   const viewer = useMemo(() => {
@@ -27,28 +29,39 @@ export default function ScreenshotPrivacyShield({
     return { id, name, email, phone }
   }, [currentMember])
 
+  const dismissBlackout = () => {
+    if (restoreTimerRef.current) clearTimeout(restoreTimerRef.current)
+    document.documentElement.classList.remove('privacy-blackout-active')
+    document.body.classList.remove('privacy-blackout-active')
+    setIsBlackout(false)
+  }
+
   useEffect(() => {
     if (!enabled) return
 
-    let restoreTimer = null
+    const targetId = targetProfile?.id || targetProfile?._id || label
+    const targetName = targetProfile?.name || label
 
-    const reportAndBlackout = (reason, duration = 3000) => {
-      setIsBlackout(true)
+    const reportAndBlackout = (reason, minLockDuration = 4500) => {
+      // 1. Immediately apply synchronous CSS blackout to root DOM (0ms response time)
+      document.documentElement.classList.add('privacy-blackout-active')
+      document.body.classList.add('privacy-blackout-active')
+
+      blackoutStartRef.current = Date.now()
+      const nowStr = new Date().toLocaleString()
+      setCapturedAt(nowStr)
       setBlackoutReason(reason || 'Screenshot attempt detected. Screen blacked out.')
-      setAlertDispatched(true)
+      setIsBlackout(true)
 
-      // 1. Purge clipboard so screenshot buffer cannot hold profile data
+      // 2. Clear system clipboard
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText('')
         }
       } catch {}
 
-      // 2. Dispatch real-time security notification to Admin
+      // 3. Dispatch real-time security alert to Backend API
       const timestamp = new Date().toISOString()
-      const targetId = targetProfile?.id || targetProfile?._id || label
-      const targetName = targetProfile?.name || label
-
       const alertPayload = {
         viewerId: viewer.id,
         viewerName: viewer.name,
@@ -60,7 +73,6 @@ export default function ScreenshotPrivacyShield({
         timestamp
       }
 
-      // Backend API call to record incident
       try {
         fetch(`${API_BASE}/photos/screenshot-alert`, {
           method: 'POST',
@@ -69,7 +81,7 @@ export default function ScreenshotPrivacyShield({
         }).catch(() => {})
       } catch {}
 
-      // Real-time client storage dispatch for Admin notification dashboard
+      // 4. Dispatch instant storage notification for Admin Dashboard
       try {
         const notifId = `sec-alert-${Date.now()}`
         const newNotif = {
@@ -90,11 +102,14 @@ export default function ScreenshotPrivacyShield({
         window.dispatchEvent(new Event('storage'))
       } catch {}
 
-      if (restoreTimer) clearTimeout(restoreTimer)
-      restoreTimer = setTimeout(() => {
-        setIsBlackout(false)
-        setAlertDispatched(false)
-      }, duration)
+      // 5. Maintain locked blackout for minLockDuration before allowing auto-dismiss
+      if (restoreTimerRef.current) clearTimeout(restoreTimerRef.current)
+      restoreTimerRef.current = setTimeout(() => {
+        // Auto unlock after minLockDuration if page is currently visible and active
+        if (!document.hidden && document.visibilityState === 'visible') {
+          dismissBlackout()
+        }
+      }, minLockDuration)
     }
 
     // 1. Keyboard event listeners (PrintScreen, Win+Shift+S, Cmd+Shift+3/4/5, Ctrl+P, Ctrl+S)
@@ -102,54 +117,58 @@ export default function ScreenshotPrivacyShield({
       // PrintScreen key
       if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
         e.preventDefault()
-        reportAndBlackout('PrintScreen key detected. Screen blacked out and incident reported.')
+        reportAndBlackout('PrintScreen key pressed. Screen blacked out.', 5000)
         return
       }
 
       // Windows Snipping (Win+Shift+S) / Mac Screenshot (Cmd+Shift+3/4/5)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['s', 'S', '3', '4', '5'].includes(e.key)) {
         e.preventDefault()
-        reportAndBlackout('Screen capture shortcut detected. Screen blacked out.')
+        reportAndBlackout('Screen capture shortcut triggered. Screen blacked out.', 5000)
         return
       }
 
       // Ctrl + P (Print / Save PDF)
       if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
         e.preventDefault()
-        reportAndBlackout('Printing disabled for profile privacy protection.')
+        reportAndBlackout('Printing disabled for profile privacy protection.', 5000)
         return
       }
 
       // Ctrl + S (Save Page)
       if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
         e.preventDefault()
-        reportAndBlackout('Saving profiles is strictly disabled.')
+        reportAndBlackout('Saving profiles is strictly disabled.', 5000)
         return
       }
     }
 
     const handleKeyUp = (e) => {
       if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
-        reportAndBlackout('Screenshot captured black screen. Admin notified.')
+        reportAndBlackout('PrintScreen screenshot blocked. Screen blacked out.', 5000)
       }
     }
 
-    // 2. Window Blur / Loss of focus (triggers when Windows Snipping Tool, Mac Screen Grab, or recording tool opens)
+    // 2. Window Blur / Loss of focus (triggers when Windows Snipping Tool, Mac Screen Grab, or recording overlay opens)
     const handleWindowBlur = () => {
-      reportAndBlackout('Screen capture tool or window blur detected. Screen blacked out.', 3000)
+      reportAndBlackout('Screen capture tool or window focus lost. Screen blacked out.', 4500)
     }
 
     const handleWindowFocus = () => {
-      if (restoreTimer) clearTimeout(restoreTimer)
-      restoreTimer = setTimeout(() => {
-        setIsBlackout(false)
-        setAlertDispatched(false)
-      }, 400)
+      const elapsed = Date.now() - blackoutStartRef.current
+      if (elapsed < 4000) {
+        // Snipping tool may steal and jitter focus during rectangle drag: Keep blacked out!
+        return
+      }
+      if (restoreTimerRef.current) clearTimeout(restoreTimerRef.current)
+      restoreTimerRef.current = setTimeout(() => {
+        dismissBlackout()
+      }, 1200)
     }
 
     const handleVisibilityChange = () => {
       if (document.hidden || document.visibilityState === 'hidden') {
-        reportAndBlackout('Window hidden / background screen capture attempt. Screen blacked out.', 3000)
+        reportAndBlackout('Window hidden / background screen capture attempt. Screen blacked out.', 4500)
       } else {
         handleWindowFocus()
       }
@@ -162,35 +181,50 @@ export default function ScreenshotPrivacyShield({
       }
     }
 
+    // Prevent clipboard copying
+    const handleCopy = (e) => {
+      if (e.target && e.target.closest('.protected-profile-view')) {
+        e.preventDefault()
+        reportAndBlackout('Copying profile content is strictly prohibited.', 4000)
+      }
+    }
+
     window.addEventListener('keydown', handleKeyDown, true)
     window.addEventListener('keyup', handleKeyUp, true)
     window.addEventListener('blur', handleWindowBlur)
     window.addEventListener('focus', handleWindowFocus)
     document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('contextmenu', handleContextMenu)
+    document.addEventListener('copy', handleCopy)
 
     return () => {
-      if (restoreTimer) clearTimeout(restoreTimer)
+      if (restoreTimerRef.current) clearTimeout(restoreTimerRef.current)
+      document.documentElement.classList.remove('privacy-blackout-active')
+      document.body.classList.remove('privacy-blackout-active')
       window.removeEventListener('keydown', handleKeyDown, true)
       window.removeEventListener('keyup', handleKeyUp, true)
       window.removeEventListener('blur', handleWindowBlur)
       window.removeEventListener('focus', handleWindowFocus)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('contextmenu', handleContextMenu)
+      document.removeEventListener('copy', handleCopy)
     }
   }, [enabled, viewer, targetProfile, label])
 
   if (!enabled || !isBlackout) return null
 
+  const targetId = targetProfile?.id || targetProfile?._id || label
+  const targetName = targetProfile?.name || label
+
   return (
     <div
-      className="fixed inset-0 z-[9999999] bg-black flex flex-col items-center justify-center text-center p-6 select-none cursor-none pointer-events-auto overflow-hidden"
+      className="fixed inset-0 z-[99999999] bg-black flex flex-col items-center justify-center text-center p-6 select-none pointer-events-auto overflow-hidden"
       style={{ backgroundColor: '#000000', opacity: 1 }}
       aria-live="assertive"
     >
       {/* Repeating Diagonal Watermark Grid across the Blackout screen */}
       <div className="absolute inset-0 flex flex-col justify-around opacity-30 rotate-[-22deg] scale-125 pointer-events-none select-none">
-        {[...Array(8)].map((_, rIdx) => (
+        {[...Array(9)].map((_, rIdx) => (
           <div
             key={rIdx}
             className="flex justify-around whitespace-nowrap text-xs sm:text-sm font-black tracking-widest text-red-500/80 drop-shadow"
@@ -203,7 +237,7 @@ export default function ScreenshotPrivacyShield({
 
       <div className="max-w-lg mx-auto space-y-4 relative z-10">
         <div className="flex justify-center">
-          <div className="h-20 w-20 rounded-full bg-red-950/70 border border-red-500/40 flex items-center justify-center text-red-500 shadow-2xl shadow-red-900/50 animate-pulse">
+          <div className="h-20 w-20 rounded-full bg-red-950/80 border border-red-500/50 flex items-center justify-center text-red-500 shadow-2xl shadow-red-900/60 animate-pulse">
             <ShieldAlert size={42} />
           </div>
         </div>
@@ -217,39 +251,45 @@ export default function ScreenshotPrivacyShield({
         </p>
 
         {/* Forensic Watermark Identification Display */}
-        <div className="bg-red-950/50 border border-red-500/30 rounded-xl p-3.5 text-left text-xs space-y-1.5 text-gray-200">
-          <div className="flex items-center gap-1.5 font-bold text-red-400 text-xs uppercase tracking-wider pb-1 border-b border-red-500/20">
-            <AlertTriangle size={14} />
-            <span>Forensic Watermark &amp; Identification</span>
+        <div className="bg-red-950/60 border border-red-500/40 rounded-xl p-4 text-left text-xs space-y-1.5 text-gray-200 backdrop-blur-md">
+          <div className="flex items-center gap-1.5 font-bold text-red-400 text-xs uppercase tracking-wider pb-1.5 border-b border-red-500/30">
+            <AlertTriangle size={15} />
+            <span>Forensic Identification &amp; Viewer Tracking</span>
           </div>
           <div className="flex justify-between py-0.5">
             <span className="text-gray-400">Viewer Member ID:</span>
-            <span className="font-bold text-white tracking-wider">{viewer.id}</span>
+            <span className="font-bold text-white tracking-wider text-sm">{viewer.id}</span>
           </div>
           <div className="flex justify-between py-0.5">
             <span className="text-gray-400">Viewer Name:</span>
             <span className="font-semibold text-white">{viewer.name}</span>
           </div>
-          {targetProfile?.name && (
-            <div className="flex justify-between py-0.5">
-              <span className="text-gray-400">Target Profile:</span>
-              <span className="font-semibold text-amber-300">{targetProfile.name} ({targetProfile.id})</span>
-            </div>
-          )}
           <div className="flex justify-between py-0.5">
-            <span className="text-gray-400">Timestamp:</span>
-            <span className="text-gray-300">{new Date().toLocaleString()}</span>
+            <span className="text-gray-400">Target Candidate:</span>
+            <span className="font-semibold text-amber-300">{targetName} ({targetId})</span>
+          </div>
+          <div className="flex justify-between py-0.5">
+            <span className="text-gray-400">Incident Timestamp:</span>
+            <span className="text-gray-300">{capturedAt || new Date().toLocaleString()}</span>
           </div>
         </div>
 
         {/* Real-Time Admin Notification Badge */}
-        <div className="flex items-center justify-center gap-2 text-[11px] text-emerald-400 bg-emerald-950/50 border border-emerald-500/30 py-2 px-3.5 rounded-lg">
+        <div className="flex items-center justify-center gap-2 text-[12px] text-emerald-400 bg-emerald-950/60 border border-emerald-500/40 py-2 px-4 rounded-lg">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-          <span>Admin Alert Dispatched in Real-Time</span>
+          <span>Real-time security alert dispatched to Admin Dashboard</span>
         </div>
 
-        <div className="pt-2">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 text-[#E8CA91] text-xs font-semibold tracking-wide border border-white/10">
+        {/* Dismiss / Return Button */}
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button
+            onClick={dismissBlackout}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold cursor-pointer border border-white/20 transition backdrop-blur-sm"
+          >
+            <ArrowLeft size={14} />
+            <span>Return to Profile</span>
+          </button>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/40 text-[#E8CA91] text-[11px] font-semibold tracking-wide border border-white/10">
             <EyeOff size={13} />
             <span>KERALA KALYANS PRIVACY SHIELD</span>
           </span>

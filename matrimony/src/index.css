@@ -219,6 +219,22 @@ footer a:not(.cta) {
 /* =========================================================================
    SCREENSHOT & PRINT PRIVACY PROTECTION
    ========================================================================= */
+html.privacy-blackout-active,
+body.privacy-blackout-active {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  overflow: hidden !important;
+}
+
+html.privacy-blackout-active #root,
+html.privacy-blackout-active .profile-details-page,
+html.privacy-blackout-active .protected-profile-view {
+  filter: brightness(0) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 @media print {
   html, body {
     background: #000000 !important;
