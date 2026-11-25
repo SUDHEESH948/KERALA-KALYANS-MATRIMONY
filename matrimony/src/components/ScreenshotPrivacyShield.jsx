@@ -10,7 +10,7 @@ export default function ScreenshotPrivacyShield({ enabled = true, label = 'Membe
 
     let restoreTimer = null
 
-    const triggerBlackout = (reason, duration = 2500) => {
+    const triggerBlackout = (reason, duration = 1800) => {
       setIsBlackout(true)
       setBlackoutReason(reason || 'Screen capture blocked for member privacy')
 
@@ -64,50 +64,21 @@ export default function ScreenshotPrivacyShield({ enabled = true, label = 'Membe
       }
     }
 
-    // 2. Window Blur: Snipping Tool / Snip & Sketch takes focus away from the browser window
-    const handleBlur = () => {
-      setIsBlackout(true)
-      setBlackoutReason('Privacy Screen Active — Screen capture attempt blocked')
-    }
-
-    const handleFocus = () => {
-      if (restoreTimer) clearTimeout(restoreTimer)
-      restoreTimer = setTimeout(() => {
-        setIsBlackout(false)
-      }, 400)
-    }
-
-    // 3. Tab visibility change (background tab switching or screen recorder overlay)
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        setIsBlackout(true)
-      } else {
-        if (restoreTimer) clearTimeout(restoreTimer)
-        restoreTimer = setTimeout(() => {
-          setIsBlackout(false)
-        }, 300)
-      }
-    }
-
-    // 4. Disable right click context menu to prevent image downloading
+    // Disable right-click context menu on images to prevent direct image downloading
     const handleContextMenu = (e) => {
-      e.preventDefault()
+      if (e.target && (e.target.tagName === 'IMG' || e.target.closest('.protected-profile-view'))) {
+        e.preventDefault()
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown, true)
     window.addEventListener('keyup', handleKeyUp, true)
-    window.addEventListener('blur', handleBlur)
-    window.addEventListener('focus', handleFocus)
-    document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('contextmenu', handleContextMenu)
 
     return () => {
       if (restoreTimer) clearTimeout(restoreTimer)
       window.removeEventListener('keydown', handleKeyDown, true)
       window.removeEventListener('keyup', handleKeyUp, true)
-      window.removeEventListener('blur', handleBlur)
-      window.removeEventListener('focus', handleFocus)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('contextmenu', handleContextMenu)
     }
   }, [enabled])
