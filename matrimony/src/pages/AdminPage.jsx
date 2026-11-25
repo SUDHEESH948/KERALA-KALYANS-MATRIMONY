@@ -1632,10 +1632,10 @@ export default function AdminPage({ onExit }) {
       {/* BULK UPLOAD MODAL (CSV / PDF) */}
       {bulkUploadOpen && (
         <AdminBulkUploadModal
-          token={token}
+          token={token || localStorage.getItem("apremiya_admin_token") || ""}
           onClose={() => setBulkUploadOpen(false)}
           onImportSuccess={() => {
-            fetchProfiles();
+            fetchData(true);
             showToast("Profiles uploaded and imported successfully!");
           }}
         />

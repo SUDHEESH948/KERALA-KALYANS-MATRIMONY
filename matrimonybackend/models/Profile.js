@@ -212,6 +212,14 @@ const profileSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    biodataPdfName: {
+      type: String,
+      default: ''
+    },
+    biodataPdfData: {
+      type: String,
+      default: ''
+    },
     role: {
       type: String,
       enum: ['member', 'admin'],

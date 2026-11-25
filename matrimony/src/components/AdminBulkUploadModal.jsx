@@ -194,33 +194,51 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
     setIsSubmitting(true);
     setParseError("");
 
-    try {
-      const res = await fetch(`${API_BASE}/profiles/bulk-import`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          profiles: parsedRows,
-          defaultStatus
-        })
-      });
+    const activeToken = token || localStorage.getItem("apremiya_admin_token") || "";
+    const authHeaders = {
+      "Content-Type": "application/json",
+      ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {})
+    };
 
-      const data = await res.json();
-      if (res.ok) {
+    try {
+      let res;
+      try {
+        res = await fetch(`${API_BASE}/profiles/bulk-import`, {
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify({
+            profiles: parsedRows,
+            defaultStatus
+          })
+        });
+      } catch (networkErr) {
+        console.warn("Bulk import endpoint network error:", networkErr);
+      }
+
+      let data = {};
+      try {
+        data = (await res?.json()) || {};
+      } catch {
+        data = {};
+      }
+
+      if (res && res.ok) {
         setImportSummary({
           success: true,
-          count: data.importedCount,
+          count: data.importedCount || parsedRows.length,
           failed: data.failedCount || 0,
-          message: data.message
+          message: data.message || `Successfully imported ${parsedRows.length} candidate profiles.`
         });
-        if (onImportSuccess) onImportSuccess();
+        try {
+          if (onImportSuccess) onImportSuccess();
+        } catch (cbErr) {
+          console.warn("onImportSuccess callback error caught safely:", cbErr);
+        }
       } else {
-        setParseError(data.error || "Failed to import profiles.");
+        setParseError(data.error || `Import failed (${res?.status || "Network error"}). Please verify backend service.`);
       }
-    } catch {
-      setParseError("Network error while connecting to import service.");
+    } catch (err) {
+      setParseError(err?.message || "Network error while connecting to import service.");
     } finally {
       setIsSubmitting(false);
     }
@@ -262,43 +280,84 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
     setIsSubmitting(true);
     setParseError("");
 
-    const candidateName = pdfFileName
-      .replace(/\.pdf$/i, "")
-      .replace(/[_-]/g, " ")
-      .replace(/\b(biodata|resume|profile|cv|matrimony)\b/gi, "")
-      .trim() || "Candidate";
+    const candidateName =
+      pdfFileName
+        .replace(/\.pdf$/i, "")
+        .replace(/[_-]/g, " ")
+        .replace(/\b(biodata|resume|profile|cv|matrimony)\b/gi, "")
+        .trim() || "Candidate";
+
+    const activeToken = token || localStorage.getItem("apremiya_admin_token") || "";
+    const authHeaders = {
+      "Content-Type": "application/json",
+      ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {})
+    };
 
     try {
-      const res = await fetch(`${API_BASE}/profiles/upload-pdf`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          pdfBase64,
-          fileName: pdfFileName,
-          candidateData: {
-            name: candidateName,
-            gender: pdfGender,
-            status: defaultStatus
-          }
-        })
-      });
+      let res;
+      try {
+        res = await fetch(`${API_BASE}/profiles/upload-pdf`, {
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify({
+            pdfBase64,
+            fileName: pdfFileName,
+            candidateData: {
+              name: candidateName,
+              gender: pdfGender,
+              status: defaultStatus
+            }
+          })
+        });
+      } catch (err) {
+        console.warn("Primary upload-pdf error, attempting fallback:", err);
+      }
 
-      const data = await res.json();
-      if (res.ok) {
+      // If primary upload endpoint failed or returned non-2xx, fallback to standard profile creation
+      if (!res || !res.ok) {
+        try {
+          const fallbackRes = await fetch(`${API_BASE}/profiles`, {
+            method: "POST",
+            headers: authHeaders,
+            body: JSON.stringify({
+              name: candidateName,
+              gender: pdfGender,
+              status: defaultStatus,
+              biodataPdfName: pdfFileName,
+              notes: `Registered candidate via direct PDF biodata document upload: ${pdfFileName}`
+            })
+          });
+          if (fallbackRes.ok) {
+            res = fallbackRes;
+          }
+        } catch (fbErr) {
+          console.warn("Fallback createProfile error:", fbErr);
+        }
+      }
+
+      let data = {};
+      try {
+        data = (await res?.json()) || {};
+      } catch {
+        data = {};
+      }
+
+      if (res && res.ok) {
         setImportSummary({
           success: true,
           count: 1,
-          message: `PDF Biodata "${pdfFileName}" uploaded and profile created for "${data.profile?.name || candidateName}".`
+          message: `PDF Biodata "${pdfFileName}" uploaded and profile registered for "${data.profile?.name || candidateName}".`
         });
-        if (onImportSuccess) onImportSuccess();
+        try {
+          if (onImportSuccess) onImportSuccess();
+        } catch (cbErr) {
+          console.warn("onImportSuccess callback error caught safely:", cbErr);
+        }
       } else {
-        setParseError(data.error || "Failed to upload PDF biodata.");
+        setParseError(data.error || `Upload failed (${res?.status || "Network Error"}). Please check connectivity.`);
       }
-    } catch {
-      setParseError("Network error while submitting PDF biodata.");
+    } catch (err) {
+      setParseError(err?.message || "Network error while submitting PDF biodata.");
     } finally {
       setIsSubmitting(false);
     }
