@@ -25,7 +25,6 @@ import {
 } from 'lucide-react'
 import { API_BASE } from '../config/api'
 import ScreenshotPrivacyShield from '../components/ScreenshotPrivacyShield'
-import PhotoWatermarkOverlay from '../components/PhotoWatermarkOverlay'
 
 export default function MemberMatchesPage({ currentMember, onLogout, onNavigateHome, onViewProfile }) {
   const [profiles, setProfiles] = useState([])
@@ -242,6 +241,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
       <ScreenshotPrivacyShield
         label="Member Matches"
         currentMember={currentMember}
+        targetProfile={viewingProfile}
       />
 
       {/* 1. TOP NAVIGATION BAR */}
@@ -586,11 +586,6 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                       loading="lazy"
                       draggable={false}
                     />
-                    <PhotoWatermarkOverlay
-                      viewer={currentMember}
-                      targetProfile={p}
-                      compact={true}
-                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20 pointer-events-none" />
 
                     {/* Hover "View Profile" Pill Overlay */}
@@ -733,10 +728,6 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 alt={viewingProfile.name}
                 className="h-full w-full object-cover object-center filter brightness-90 select-none pointer-events-none"
                 draggable={false}
-              />
-              <PhotoWatermarkOverlay
-                viewer={currentMember}
-                targetProfile={viewingProfile}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
 

@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { API_BASE } from "../config/api";
 import ScreenshotPrivacyShield from "../components/ScreenshotPrivacyShield";
-import PhotoWatermarkOverlay from "../components/PhotoWatermarkOverlay";
 
 export default function ProfileDetailsPage({
   profileId,
@@ -224,18 +223,13 @@ export default function ProfileDetailsPage({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 w-full">
         <div className="bg-white rounded-3xl border border-[#eadfce] overflow-hidden shadow-md">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-            {/* Left Column: Full-Height Portrait Photo with Dynamic Forensic Watermark */}
+            {/* Left Column: Full-Height Portrait Photo */}
             <div className="md:col-span-5 relative h-96 sm:h-[480px] bg-gray-900 overflow-hidden group">
               <img
                 src={profile.photo}
                 alt={profile.name}
                 className="h-full w-full object-cover object-center filter brightness-95 select-none pointer-events-none"
                 draggable={false}
-              />
-              {/* Forensic Watermark with Viewer ID */}
-              <PhotoWatermarkOverlay
-                viewer={currentMember}
-                targetProfile={profile}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
 
