@@ -35,9 +35,15 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // Filter state
+  // Determine user's gender and the opposite gender to match
+  const memberGender = (currentMember?.gender || 'Groom').toLowerCase()
+  const isMemberMale = memberGender === 'groom' || memberGender === 'man' || memberGender === 'male'
+  const targetGender = isMemberMale ? 'Bride' : 'Groom'
+  const targetGenderLabel = isMemberMale ? 'Brides (Women)' : 'Grooms (Men)'
+
+  // Filter state (defaults to compatible target gender: Brides for Groom, Grooms for Bride)
   const [searchQuery, setSearchQuery] = useState('')
-  const [genderFilter, setGenderFilter] = useState('all') // 'all' | 'Bride' | 'Groom'
+  const [genderFilter, setGenderFilter] = useState(() => (isMemberMale ? 'Bride' : 'Groom'))
   const [strictSameReligion, setStrictSameReligion] = useState(true)
   const [strictSameCaste, setStrictSameCaste] = useState(false)
   const [selectedCaste, setSelectedCaste] = useState('all')
@@ -84,14 +90,42 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
     setTimeout(() => setToastMessage(null), 3000)
   }
 
-  // Determine user's gender and the opposite gender to match
-  const memberGender = (currentMember?.gender || 'Groom').toLowerCase()
-  const isMemberMale = memberGender === 'groom' || memberGender === 'man' || memberGender === 'male'
-  const targetGender = isMemberMale ? 'Bride' : 'Groom'
-  const targetGenderLabel = isMemberMale ? 'Brides (Women)' : 'Grooms (Men)'
-
   const memberReligion = currentMember?.religion || 'Hindu'
   const memberCaste = (currentMember?.caste || '').trim()
+
+  // Dynamic counts for gender tabs based on current religion filter
+  const countsByGender = useMemo(() => {
+    let all = 0
+    let brides = 0
+    let grooms = 0
+
+    profiles.forEach((p) => {
+      if (p.id === currentMember?.id || (currentMember?.email && p.email === currentMember.email)) return
+      if (strictSameReligion) {
+        const pRel = (p.religion || '').trim().toLowerCase()
+        const mRel = (memberReligion || 'Hindu').trim().toLowerCase()
+        if (pRel !== mRel) return
+      }
+      const pG = (p.gender || '').toLowerCase()
+      all++
+      if (pG === 'bride' || pG === 'woman' || pG === 'female') brides++
+      if (pG === 'groom' || pG === 'man' || pG === 'male') grooms++
+    })
+
+    return { all, brides, grooms }
+  }, [profiles, currentMember, strictSameReligion, memberReligion])
+
+  const activeGenderLabel = useMemo(() => {
+    if (genderFilter === 'Bride') return 'Brides (Women)'
+    if (genderFilter === 'Groom') return 'Grooms (Men)'
+    return 'All Matches (Brides & Grooms)'
+  }, [genderFilter])
+
+  const activeGenderShort = useMemo(() => {
+    if (genderFilter === 'Bride') return 'Brides'
+    if (genderFilter === 'Groom') return 'Grooms'
+    return 'Candidates'
+  }, [genderFilter])
 
   // Fetch approved active profiles
   useEffect(() => {
@@ -422,7 +456,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               Curated Matches for {currentMember?.name || 'You'}
             </h1>
             <p className="text-xs sm:text-sm text-gray-200 max-w-2xl leading-relaxed">
-              Listing verified <b>{targetGenderLabel}</b> matching your religion:{' '}
+              Listing verified <b>{activeGenderLabel}</b> matching your religion:{' '}
               <span className="text-[#E8CA91] font-bold underline decoration-[#E8CA91]/50 underline-offset-4">
                 {memberReligion}
               </span>
@@ -440,7 +474,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 Available Matches
               </span>
               <span className="text-base sm:text-lg font-bold text-white block">
-                {targetGender}s in {memberReligion}
+                {activeGenderShort} in {memberReligion}
               </span>
             </div>
           </div>
@@ -451,177 +485,187 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex-1 w-full space-y-6">
         {/* FILTER & SEARCH TOOLBAR */}
         <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#eadfce] shadow-xs space-y-4">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          {/* Top Row: Search Input & Gender Segmented Switch */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5">
             {/* Search Input */}
-            <div className="relative flex-1 min-w-0">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <div className="relative flex-1 max-w-lg min-w-[260px]">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search matches by name, caste, job, location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl border border-gray-200 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] transition"
+                className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl border border-gray-200 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] transition bg-gray-50/40 hover:bg-white focus:bg-white"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
                 >
                   <X size={14} />
                 </button>
               )}
             </div>
 
-            {/* Same Religion & Same Category Toggles & Quick Filters */}
-            <div className="flex flex-wrap items-center gap-2.5 text-xs">
-              {/* Gender Selector: Male and Female Profiles */}
-              <div className="flex items-center gap-1 bg-[#FAF7F1] p-1 rounded-xl border border-[#eadfce] text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => setGenderFilter('all')}
-                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
-                    genderFilter === 'all'
-                      ? 'bg-[#701C35] text-white shadow-xs'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  All Matches
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setGenderFilter('Bride')}
-                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
-                    genderFilter === 'Bride'
-                      ? 'bg-pink-700 text-white shadow-xs'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Brides (Women)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setGenderFilter('Groom')}
-                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer ${
-                    genderFilter === 'Groom'
-                      ? 'bg-blue-700 text-white shadow-xs'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Grooms (Men)
-                </button>
-              </div>
-
-              {/* Strict Religion Toggle Button */}
+            {/* Gender Selector: Male, Female, and All Profiles with Badge Counts */}
+            <div className="inline-flex items-center gap-1 bg-[#FAF7F1] p-1.5 rounded-xl border border-[#eadfce] text-xs font-semibold self-start md:self-auto flex-wrap">
               <button
                 type="button"
-                onClick={() => setStrictSameReligion(!strictSameReligion)}
-                className={`px-3.5 py-2.5 rounded-xl border font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
-                  strictSameReligion
+                onClick={() => setGenderFilter('Bride')}
+                className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                  genderFilter === 'Bride'
+                    ? 'bg-[#701C35] text-white shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
+                }`}
+              >
+                <span>Brides (Women)</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[11px] font-bold ${genderFilter === 'Bride' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                  {countsByGender.brides}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setGenderFilter('Groom')}
+                className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                  genderFilter === 'Groom'
+                    ? 'bg-[#701C35] text-white shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
+                }`}
+              >
+                <span>Grooms (Men)</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[11px] font-bold ${genderFilter === 'Groom' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                  {countsByGender.grooms}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setGenderFilter('all')}
+                className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                  genderFilter === 'all'
+                    ? 'bg-[#701C35] text-white shadow-xs'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
+                }`}
+              >
+                <span>All Matches</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[11px] font-bold ${genderFilter === 'all' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                  {countsByGender.all}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Row 2: Secondary Refinement Filters */}
+          <div className="flex flex-wrap items-center gap-2.5 text-xs pt-2 border-t border-gray-100">
+            {/* Strict Religion Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setStrictSameReligion(!strictSameReligion)}
+              className={`px-3.5 py-2 rounded-xl border font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
+                strictSameReligion
+                  ? 'bg-[#701C35] text-white border-[#701C35]'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-[#FAF7F1]'
+              }`}
+              title="Toggle between Same Religion and All Religions"
+            >
+              <Check size={14} className={strictSameReligion ? 'opacity-100' : 'opacity-0'} />
+              <span>Same Religion ({memberReligion})</span>
+            </button>
+
+            {/* Strict Same Category / Caste Toggle Button */}
+            {memberCaste && (
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !strictSameCaste
+                  setStrictSameCaste(next)
+                  if (next) setSelectedCaste('all')
+                }}
+                className={`px-3.5 py-2 rounded-xl border font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
+                  strictSameCaste
                     ? 'bg-[#701C35] text-white border-[#701C35]'
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-[#FAF7F1]'
                 }`}
-                title="Toggle between Same Religion and All Religions"
+                title={`Filter profiles strictly for your category (${memberCaste.toUpperCase()})`}
               >
-                <Check size={14} className={strictSameReligion ? 'opacity-100' : 'opacity-0'} />
-                <span>Same Religion ({memberReligion})</span>
+                <Check size={14} className={strictSameCaste ? 'opacity-100' : 'opacity-0'} />
+                <span>Same Category ({memberCaste.toUpperCase()})</span>
               </button>
+            )}
 
-              {/* Strict Same Category / Caste Toggle Button */}
-              {memberCaste && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const next = !strictSameCaste
-                    setStrictSameCaste(next)
-                    if (next) setSelectedCaste('all')
-                  }}
-                  className={`px-3.5 py-2.5 rounded-xl border font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
-                    strictSameCaste
-                      ? 'bg-[#701C35] text-white border-[#701C35]'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-[#FAF7F1]'
-                  }`}
-                  title={`Filter profiles strictly for your category (${memberCaste.toUpperCase()})`}
-                >
-                  <Check size={14} className={strictSameCaste ? 'opacity-100' : 'opacity-0'} />
-                  <span>Same Category ({memberCaste.toUpperCase()})</span>
-                </button>
-              )}
-
-              {/* Caste Filter Dropdown (Filtered to religion & deduplicated) */}
-              {availableCastes.length > 0 && (
-                <div className="relative">
-                  <select
-                    value={strictSameCaste ? (availableCastes.find(c => c.toLowerCase() === memberCaste.toLowerCase()) || 'all') : selectedCaste}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      setSelectedCaste(val)
-                      if (val === 'all') {
-                        setStrictSameCaste(false)
-                      } else if (memberCaste && val.toLowerCase() === memberCaste.toLowerCase()) {
-                        setStrictSameCaste(true)
-                      } else {
-                        setStrictSameCaste(false)
-                      }
-                    }}
-                    className="appearance-none bg-white border border-gray-200 px-3.5 py-2.5 pr-8 rounded-xl font-medium text-gray-700 focus:outline-none focus:border-[#701C35] text-xs cursor-pointer shadow-xs"
-                  >
-                    <option value="all">All {strictSameReligion ? `${memberReligion} ` : ''}Castes</option>
-                    {availableCastes.map((c) => {
-                      const isMyCategory = memberCaste && c.toLowerCase() === memberCaste.toLowerCase()
-                      return (
-                        <option key={c} value={c}>
-                          {c} {isMyCategory ? '★ (Same Category)' : ''}
-                        </option>
-                      )
-                    })}
-                  </select>
-                  <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                </div>
-              )}
-
-              {/* Marriage Type Filter Dropdown */}
+            {/* Caste Filter Dropdown */}
+            {availableCastes.length > 0 && (
               <div className="relative">
                 <select
-                  value={selectedMarriageType}
-                  onChange={(e) => setSelectedMarriageType(e.target.value)}
-                  className="appearance-none bg-white border border-gray-200 px-3.5 py-2.5 pr-8 rounded-xl font-medium text-gray-700 focus:outline-none focus:border-[#701C35] text-xs cursor-pointer shadow-xs"
+                  value={strictSameCaste ? (availableCastes.find(c => c.toLowerCase() === memberCaste.toLowerCase()) || 'all') : selectedCaste}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setSelectedCaste(val)
+                    if (val === 'all') {
+                      setStrictSameCaste(false)
+                    } else if (memberCaste && val.toLowerCase() === memberCaste.toLowerCase()) {
+                      setStrictSameCaste(true)
+                    } else {
+                      setStrictSameCaste(false)
+                    }
+                  }}
+                  className="appearance-none bg-white border border-gray-200 px-3.5 py-2 pr-8 rounded-xl font-medium text-gray-700 focus:outline-none focus:border-[#701C35] text-xs cursor-pointer shadow-xs"
                 >
-                  <option value="all">All Marriage Types</option>
-                  <option value="Never Married">Never Married</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Widowed">Widowed</option>
-                  <option value="Awaiting Divorce">Awaiting Divorce</option>
-                  <option value="Separated">Separated</option>
-                  <option value="Second Marriage">Second Marriage</option>
+                  <option value="all">All {strictSameReligion ? `${memberReligion} ` : ''}Castes</option>
+                  {availableCastes.map((c) => {
+                    const isMyCategory = memberCaste && c.toLowerCase() === memberCaste.toLowerCase()
+                    return (
+                      <option key={c} value={c}>
+                        {c} {isMyCategory ? '★ (Same Category)' : ''}
+                      </option>
+                    )
+                  })}
                 </select>
                 <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
               </div>
+            )}
 
-              {/* Clear all filters */}
-              {(searchQuery || !strictSameReligion || strictSameCaste || selectedCaste !== 'all' || selectedMarriageType !== 'all') && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery('')
-                    setStrictSameReligion(true)
-                    setStrictSameCaste(false)
-                    setSelectedCaste('all')
-                    setSelectedMarriageType('all')
-                  }}
-                  className="px-3 py-2 text-xs font-semibold text-[#701C35] hover:underline cursor-pointer"
-                >
-                  Reset Filters
-                </button>
-              )}
+            {/* Marriage Type Filter Dropdown */}
+            <div className="relative">
+              <select
+                value={selectedMarriageType}
+                onChange={(e) => setSelectedMarriageType(e.target.value)}
+                className="appearance-none bg-white border border-gray-200 px-3.5 py-2 pr-8 rounded-xl font-medium text-gray-700 focus:outline-none focus:border-[#701C35] text-xs cursor-pointer shadow-xs"
+              >
+                <option value="all">All Marriage Types</option>
+                <option value="Never Married">Never Married</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
+                <option value="Awaiting Divorce">Awaiting Divorce</option>
+                <option value="Separated">Separated</option>
+                <option value="Second Marriage">Second Marriage</option>
+              </select>
+              <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
             </div>
+
+            {/* Clear all filters */}
+            {(searchQuery || !strictSameReligion || strictSameCaste || selectedCaste !== 'all' || selectedMarriageType !== 'all') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('')
+                  setStrictSameReligion(true)
+                  setStrictSameCaste(false)
+                  setSelectedCaste('all')
+                  setSelectedMarriageType('all')
+                }}
+                className="px-3 py-2 text-xs font-semibold text-[#701C35] hover:underline cursor-pointer ml-auto"
+              >
+                Reset Filters
+              </button>
+            )}
           </div>
 
           {/* Active Filter Pills Bar */}
           <div className="flex items-center gap-2 text-xs text-gray-500 pt-2 border-t border-gray-100 flex-wrap">
             <span className="font-semibold text-gray-400 text-[13px] uppercase tracking-wider">Active Filters:</span>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[13px] font-semibold">
-              Looking for: {targetGenderLabel}
+              Looking for: {activeGenderLabel}
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[13px] font-semibold">
               Religion: {strictSameReligion ? `${memberReligion} Only` : 'All Religions'}
@@ -716,7 +760,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
                     {/* Top Badges */}
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                      <div className="flex items-center gap-1.5 flex-wrap">
+                      <div className="flex items-center gap-1.5">
                         {/* Checkbox to select profile for moving to Cart */}
                         <div
                           onClick={(e) => {
@@ -738,14 +782,11 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                         </div>
 
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full backdrop-blur-md text-[12px] font-bold text-white tracking-wide border border-white/20 ${
-                            p.gender === 'Groom' ? 'bg-blue-900/80' : 'bg-pink-900/80'
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full backdrop-blur-md text-[11px] font-bold text-white tracking-wide border border-white/20 shadow-xs ${
+                            p.gender === 'Groom' ? 'bg-blue-900/85' : 'bg-pink-900/85'
                           }`}
                         >
                           {p.gender}
-                        </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[12px] font-bold text-[#701C35] shadow-xs border border-[#eadfce]">
-                          {p.marriageType || p.maritalStatus || 'Never Married'}
                         </span>
                       </div>
 
