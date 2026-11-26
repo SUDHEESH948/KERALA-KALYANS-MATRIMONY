@@ -179,7 +179,7 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
 
   async function submit(event) {
     event.preventDefault();
-    if (!file || busy || adjustingPhoto) return;
+    if (!file || busy || adjustingPhoto || (details && !photo)) return;
     setBusy(true);
     setError("");
     try {
@@ -211,6 +211,15 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
     } finally {
       setBusy(false);
     }
+  }
+
+  function enterDetailsManually() {
+    setError("");
+    setDetails({
+      ...Object.fromEntries(fields.map(([key]) => [key, ""])),
+      gender: "",
+    });
+    setAdjustingPhoto(true);
   }
 
   return (
@@ -255,12 +264,12 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
             {details && (
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <img src={photo} alt="Cropped candidate portrait" className="h-28 w-24 rounded-lg border object-contain" />
+                  {photo && <img src={photo} alt="Cropped candidate portrait" className="h-28 w-24 rounded-lg border object-contain" />}
                   <div className="space-y-2">
-                    <p className="text-sm text-slate-700">Check the cropped photo and correct the extracted details before saving.</p>
+                    <p className="text-sm text-slate-700">{photo ? "Review the photo and candidate details before saving." : "Crop the candidate portrait and fill in the required details."}</p>
                     {!adjustingPhoto && (
                       <button type="button" onClick={() => setAdjustingPhoto(true)} className="rounded-lg border border-[var(--admin-border)] px-3 py-2 text-sm font-semibold text-[var(--admin-gold-text)]">
-                        Adjust photo
+                        {photo ? "Adjust photo" : "Crop photo"}
                       </button>
                     )}
                   </div>
@@ -311,11 +320,16 @@ export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }
             )}
             {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>}
           </fieldset>
-          <footer className="flex justify-end gap-2 border-t border-[var(--admin-border)] p-4">
+          <footer className="flex flex-wrap justify-end gap-2 border-t border-[var(--admin-border)] p-4">
             <button type="button" onClick={onClose} disabled={busy} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold disabled:opacity-50">
               Cancel
             </button>
-            <button type="submit" disabled={!file || busy || adjustingPhoto} className="rounded-lg bg-[var(--admin-gold-strong)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
+            {file && !details && (
+              <button type="button" onClick={enterDetailsManually} disabled={busy} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold disabled:opacity-50">
+                Enter details manually
+              </button>
+            )}
+            <button type="submit" disabled={!file || busy || adjustingPhoto || (details && !photo)} className="rounded-lg bg-[var(--admin-gold-strong)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
               {details ? (busy ? "Saving..." : "Approve & Save") : (busy ? "Extracting..." : "Extract Details")}
             </button>
           </footer>
