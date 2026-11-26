@@ -18,8 +18,13 @@ export async function extractCandidateCard(req, res) {
   const form = new FormData()
   form.append('image', new Blob([buffer], { type: mimetype }), isJpeg ? 'card.jpg' : 'card.png')
 
+  const ocrServiceUrl = process.env.OCR_SERVICE_URL?.trim()
+  if (process.env.RENDER === 'true' && !ocrServiceUrl) {
+    return res.status(503).json({ error: 'Configure OCR_SERVICE_URL on the Render backend to enable card extraction.' })
+  }
+
   try {
-    const baseUrl = process.env.OCR_SERVICE_URL || 'http://127.0.0.1:5001'
+    const baseUrl = ocrServiceUrl || 'http://127.0.0.1:5001'
     const response = await fetch(new URL('/extract', baseUrl), {
       method: 'POST',
       body: form,

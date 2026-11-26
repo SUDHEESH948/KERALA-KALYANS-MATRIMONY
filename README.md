@@ -48,6 +48,13 @@ Check `http://127.0.0.1:5001/health` before uploading a card. The first extracti
 
 The Node backend defaults to `http://127.0.0.1:5001`. When Node and Python run on separate hosts, deploy the Python app behind a private endpoint and set `OCR_SERVICE_URL` on the Node backend to that endpoint. The Python service listens on loopback by default. Use `OCR_HOST` and `OCR_PORT` to configure its bind address and port when needed.
 
+### Deploy OCR on Render
+
+1. Create a **Private Service** from this repository in the same Render workspace and region as the Node web service.
+2. Choose **Docker**, set **Root Directory** to `python`, and use `./Dockerfile`. The image bundles the EasyOCR models and listens on port `5001`.
+3. Open the OCR service's **Connect** menu and copy its internal hostname. In the **Node web service** environment, set `OCR_SERVICE_URL=http://<internal-hostname>:5001` and redeploy. If the Connect menu includes a port, use it once.
+4. Retry **Extract Details** in the deployed admin panel after both services are live.
+
 ## Membership access
 
 Full profile access ends **six calendar months after activation or immediately after the 145th distinct profile opening**, whichever comes first.
