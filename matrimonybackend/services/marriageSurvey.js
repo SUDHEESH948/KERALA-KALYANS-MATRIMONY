@@ -1,9 +1,12 @@
+import { openAsBlob } from 'node:fs'
 import Profile from '../models/Profile.js'
 
 // Asia/Kolkata is UTC+05:30 year-round. Shift before taking calendar dates.
 const IST_OFFSET = (5 * 60 + 30) * 60_000
 const DAY = 86_400_000
 const SEND_HOUR = 9
+const TEMPLATE_NAME = 'marriage_status_confirmation'
+const HEADER_IMAGE = new URL('../assets/kerala-kalyan-logo.png', import.meta.url)
 
 function istCalendarDay(instant) {
   const shifted = new Date(Number(instant) + IST_OFFSET)
@@ -24,7 +27,29 @@ export function normalizeIndianPhone(phone) {
   return match ? `91${match[1]}` : null
 }
 
-async function sendTemplate(config, to, name) {
+async function uploadHeaderImage(config) {
+  const form = new FormData()
+  form.set('messaging_product', 'whatsapp')
+  form.set('file', await openAsBlob(HEADER_IMAGE, { type: 'image/png' }), 'kerala-kalyan-logo.png')
+  const response = await fetch(`https://graph.facebook.com/v21.0/${config.phoneNumberId}/media`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${config.token}` },
+    body: form,
+    signal: AbortSignal.timeout(15_000)
+  })
+  const body = await response.json().catch(() => null)
+  if (!response.ok || !body?.id) {
+    throw new Error(`WhatsApp image upload failed (HTTP ${response.status}, Meta code ${body?.error?.code ?? 'unknown'})`)
+  }
+  return body.id
+}
+
+async function sendTemplate(config, to, name, headerImageId) {
+  const components = []
+  if (headerImageId) {
+    components.push({ type: 'header', parameters: [{ type: 'image', image: { id: headerImageId } }] })
+  }
+  components.push({ type: 'body', parameters: [{ type: 'text', text: name }] })
   const response = await fetch(`https://graph.facebook.com/v21.0/${config.phoneNumberId}/messages`, {
     method: 'POST',
     headers: {
@@ -38,7 +63,7 @@ async function sendTemplate(config, to, name) {
       template: {
         name: config.templateName,
         language: { code: config.languageCode },
-        components: [{ type: 'body', parameters: [{ type: 'text', text: name }] }]
+        components
       }
     }),
     signal: AbortSignal.timeout(15_000)
@@ -74,6 +99,7 @@ export async function runMarriageSurvey(config, now = new Date()) {
     }
   }).select('name phone createdAt').lean().cursor()
 
+  let headerImageId
   for await (const profile of candidates) {
     if (surveyDueDay(profile.createdAt) !== today) continue
 
@@ -85,6 +111,15 @@ export async function runMarriageSurvey(config, now = new Date()) {
       continue
     }
 
+    if (config.templateName === TEMPLATE_NAME && !headerImageId) {
+      try {
+        headerImageId = await uploadHeaderImage(config)
+      } catch (error) {
+        console.warn('[marriage-survey] Could not upload the template header image', error.message)
+        return
+      }
+    }
+
     try {
       const claim = await Profile.updateOne(
         { _id: profile._id, phone: profile.phone, ...eligible },
@@ -94,7 +129,7 @@ export async function runMarriageSurvey(config, now = new Date()) {
       if (claim.modifiedCount !== 1) continue
 
       // Keep ambiguous attempts reserved. Meta may have accepted them before a timeout.
-      const result = await sendTemplate(config, phone, name).catch(() => ({ status: 'uncertain' }))
+      const result = await sendTemplate(config, phone, name, headerImageId).catch(() => ({ status: 'uncertain' }))
       const update = { 'marriageSurvey.status': result.status }
       if (result.status === 'accepted') {
         update['marriageSurvey.messageId'] = result.messageId
@@ -120,7 +155,7 @@ export function startMarriageSurveyScheduler() {
   const config = {
     token: process.env.WHATSAPP_TOKEN?.trim(),
     phoneNumberId: process.env.PHONE_NUMBER_ID?.trim(),
-    templateName: (process.env.TEMPLATE_NAME || 'marriage_status_survey_ml').trim(),
+    templateName: (process.env.TEMPLATE_NAME || TEMPLATE_NAME).trim(),
     languageCode: (process.env.LANGUAGE_CODE || 'ml').trim()
   }
   if (!config.token || !/^\d+$/.test(config.phoneNumberId ?? '') ||
