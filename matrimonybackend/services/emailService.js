@@ -7,8 +7,8 @@ import nodemailer from 'nodemailer'
 const getTransporter = () => {
   const host = process.env.SMTP_HOST || 'smtp.gmail.com'
   const port = Number(process.env.SMTP_PORT) || 587
-  const user = process.env.SMTP_USER || process.env.EMAIL_USER
-  const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS
+  const user = (process.env.SMTP_USER || process.env.EMAIL_USER || '').trim()
+  const pass = (process.env.SMTP_PASS || process.env.EMAIL_PASS || '').replace(/\s+/g, '')
 
   if (user && pass) {
     if (host.includes('gmail.com') || (typeof user === 'string' && user.includes('@gmail.com'))) {
