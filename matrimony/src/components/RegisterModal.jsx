@@ -56,13 +56,19 @@ export default function RegisterModal({
   const [informerName, setInformerName] = useState("");
   const [informerRelation, setInformerRelation] = useState("Parent (Father / Mother)");
   const [phone, setPhone] = useState("");
-  const [secondaryPhone, setSecondaryPhone] = useState("");
   const [bookNo, setBookNo] = useState("");
   const [email, setEmail] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [photoPreview, setPhotoPreview] = useState("");
+  const [photoError, setPhotoError] = useState("");
+  const fileInputRef = useRef(null);
+
+  const MAX_PHOTO_SIZE_BYTES = 1 * 1024 * 1024; // 1 MB
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [mobileStep, setMobileStep] = useState(1);
 
   // Sync initial preferences from hero search bar if provided
   useEffect(() => {
@@ -88,11 +94,56 @@ export default function RegisterModal({
     }
   }, [isOpen, initialPreferences]);
 
+  const controlClass =
+    "w-full h-10 px-3 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20] focus:ring-1 focus:ring-[#b58a20]";
+  const iconControlClass =
+    "w-full h-10 pl-8 pr-3 text-sm rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20] focus:ring-1 focus:ring-[#b58a20]";
+  const fieldWrapClass = "flex flex-col justify-between h-full";
+
   if (!isOpen) return null;
+
+  const handleMobileNext = (nextStep) => {
+    setErrorMessage("");
+    if (mobileStep === 1 && !name.trim()) {
+      setErrorMessage("Please enter your Full Name before continuing.");
+      return;
+    }
+    if (mobileStep === 2 && !location.trim()) {
+      setErrorMessage("Please enter your City / Town / Native Place before continuing.");
+      return;
+    }
+    setMobileStep(nextStep);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
+    if (!name.trim()) {
+      setMobileStep(1);
+      setErrorMessage("Please enter your Full Name.");
+      return;
+    }
+    if (!location.trim()) {
+      setMobileStep(2);
+      setErrorMessage("Please enter your City / Town / Native Place.");
+      return;
+    }
+    if (!phone.trim()) {
+      setMobileStep(3);
+      setErrorMessage("Please enter your Primary Mobile number.");
+      return;
+    }
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setMobileStep(3);
+      setErrorMessage("Please enter a valid Email Address.");
+      return;
+    }
+    if (!photo) {
+      setMobileStep(3);
+      setPhotoError("Please upload a profile photo (max 1 MB).");
+      setErrorMessage("Please upload a profile photo to complete registration.");
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -121,12 +172,12 @@ export default function RegisterModal({
         informerRelation: informerRelation.trim(),
         email: email.trim().toLowerCase(),
         phone: phone.trim(),
-        secondaryPhone: secondaryPhone.trim(),
         bookNo: bookNo.trim(),
         photo:
-          gender === "Bride"
+          photo ||
+          (gender === "Bride"
             ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600"
-            : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600",
+            : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600"),
         verified: false,
         status: "Under Review",
       };
@@ -161,6 +212,43 @@ export default function RegisterModal({
     }
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setPhotoError("Please select a valid image file (JPG, PNG, or WebP).");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_PHOTO_SIZE_BYTES) {
+      setPhotoError("Image size must be 1 MB or less.");
+      e.target.value = "";
+      return;
+    }
+
+    setPhotoError("");
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      setPhoto(result);
+      setPhotoPreview(result);
+    };
+    reader.onerror = () => {
+      setPhotoError("Could not read the selected image. Please try another file.");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = () => {
+    setPhoto("");
+    setPhotoPreview("");
+    setPhotoError("");
+    setMobileStep(1);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleReset = () => {
     setIsSubmitted(false);
     setName("");
@@ -173,12 +261,13 @@ export default function RegisterModal({
     setPostOffice("");
     setPincode("");
     setInformerName("");
-    setSecondaryPhone("");
     setBookNo("");
     setPhone("");
     setEmail("");
     setPhoto("");
     setPhotoPreview("");
+    setPhotoError("");
+    setMobileStep(1);
     if (fileInputRef.current) fileInputRef.current.value = "";
     onClose();
   };
@@ -198,7 +287,7 @@ export default function RegisterModal({
               <img
                 src="/kerala-kalyan-logo.png"
                 alt="Kerala Kalyans Matrimony"
-                className="h-9 sm:h-11 w-auto object-contain bg-white rounded-lg p-1 flex-shrink-0"
+                className="h-11 sm:h-12 w-auto object-contain bg-white rounded-lg p-0 flex-shrink-0"
               />
               <div className="min-w-0">
                 <h3 className="text-base sm:text-2xl leading-tight truncate">
@@ -220,7 +309,7 @@ export default function RegisterModal({
           </div>
 
           {/* Form Content or Success Screen */}
-          <div className="p-3.5 sm:p-8 max-h-[85vh] overflow-y-auto">
+          <div className="p-3.5 pb-8 sm:p-8 sm:pb-8 max-h-[85vh] overflow-y-auto">
             {isSubmitted ? (
               <div className="text-center py-6 sm:py-8 space-y-4">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-amber-700">
@@ -280,12 +369,53 @@ export default function RegisterModal({
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+              <form onSubmit={handleSubmit} noValidate className="space-y-4 text-xs">
                 {errorMessage && (
                   <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-xs">
                     {errorMessage}
                   </div>
                 )}
+
+                {/* Mobile-only 3-Part Step Indicator (< 768px) */}
+                <div className="grid grid-cols-3 gap-1.5 md:hidden">
+                  {[
+                    { step: 1, label: "1. Personal" },
+                    { step: 2, label: "2. Address" },
+                    { step: 3, label: "3. Contact" },
+                  ].map(({ step, label }) => (
+                    <button
+                      key={step}
+                      type="button"
+                      onClick={() => {
+                        if (step > mobileStep) {
+                          handleMobileNext(step);
+                        } else {
+                          setErrorMessage("");
+                          setMobileStep(step);
+                        }
+                      }}
+                      className={`py-2 px-1.5 rounded-lg border text-[11px] font-bold text-center transition cursor-pointer ${
+                        mobileStep === step
+                          ? "bg-[#e2b82f] text-[#332500] border-[#b58a20] shadow-xs"
+                          : "bg-[#FAF7F1] text-gray-600 border-[#eadfce]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Section 1: Basic & Personal Details */}
+                <div
+                  className={`${
+                    mobileStep === 1 ? "flex" : "hidden"
+                  } min-h-[460px] flex-col justify-between rounded-xl border border-[#eadfce] bg-white p-3 space-y-4 md:block md:min-h-0 md:border-0 md:bg-transparent md:p-0`}
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#795705] border-b border-[#eadfce] pb-1.5 md:hidden">
+                      <User size={14} />
+                      <span>Part 1: Basic &amp; Personal Details</span>
+                    </div>
 
                 {/* Profile Created For */}
                 <div>
@@ -340,7 +470,7 @@ export default function RegisterModal({
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="e.g. Ananya Menon"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20] focus:ring-1 focus:ring-[#b58a20]"
+                        className={iconControlClass}
                       />
                     </div>
                   </div>
@@ -353,7 +483,7 @@ export default function RegisterModal({
                       <button
                         type="button"
                         onClick={() => setGender("Bride")}
-                        className={`py-2.5 rounded-lg border font-semibold text-center transition cursor-pointer ${
+                        className={`h-10 px-2 flex items-center justify-center whitespace-nowrap text-xs sm:text-[13px] rounded-lg border font-semibold text-center transition cursor-pointer ${
                           gender === "Bride"
                             ? "bg-[#e2b82f] text-[#332500] border-[#b58a20]"
                             : "bg-white text-gray-700 border-gray-300"
@@ -364,7 +494,7 @@ export default function RegisterModal({
                       <button
                         type="button"
                         onClick={() => setGender("Groom")}
-                        className={`py-2.5 rounded-lg border font-semibold text-center transition cursor-pointer ${
+                        className={`h-10 px-2 flex items-center justify-center whitespace-nowrap text-xs sm:text-[13px] rounded-lg border font-semibold text-center transition cursor-pointer ${
                           gender === "Groom"
                             ? "bg-[#e2b82f] text-[#332500] border-[#b58a20]"
                             : "bg-white text-gray-700 border-gray-300"
@@ -379,22 +509,22 @@ export default function RegisterModal({
                       </p>
                     ) : (
                       <p className="text-[13px] text-amber-800 font-semibold mt-1 flex items-center gap-1">
-                        <span>📋 One-Time Fee · 6 Profiles Every Saturday (3 Months)</span>
+                        <span>📋 One-Time Fee</span>
                       </p>
                     )}
                   </div>
                 </div>
 
                 {/* Age, Height & Marriage Type */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className={fieldWrapClass}>
                     <label className="block text-gray-700 mb-1">
                       Age *
                     </label>
                     <select
                       value={age}
                       onChange={(e) => setAge(Number(e.target.value))}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                      className={controlClass}
                     >
                       {Array.from({ length: 50 }, (_, i) => 18 + i).map((n) => (
                         <option key={n} value={n}>
@@ -404,14 +534,14 @@ export default function RegisterModal({
                     </select>
                   </div>
 
-                  <div>
+                  <div className={fieldWrapClass}>
                     <label className="block text-gray-700 mb-1">
                       Height
                     </label>
                     <select
                       value={height}
                       onChange={(e) => setHeight(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                      className={controlClass}
                     >
                       {HEIGHT_OPTIONS.map((h) => (
                         <option key={h} value={h}>
@@ -421,14 +551,14 @@ export default function RegisterModal({
                     </select>
                   </div>
 
-                  <div>
+                  <div className={`${fieldWrapClass} sm:col-span-2`}>
                     <label className="block text-gray-700 mb-1">
                       Marriage Type *
                     </label>
                     <select
                       value={marriageType}
                       onChange={(e) => setMarriageType(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20] font-medium"
+                      className={`${controlClass} font-medium`}
                     >
                       <option value="Never Married">Never Married</option>
                       <option value="Divorced">Divorced</option>
@@ -441,19 +571,18 @@ export default function RegisterModal({
                 </div>
 
                 {/* Religion, Caste & Star / Nakshatram */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className={fieldWrapClass}>
                     <label className="block text-gray-700 mb-1">
                       Religion *
                     </label>
                     <select
                       value={religion}
                       onChange={(e) => setReligion(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                      className={controlClass}
                     >
                       <option value="Hindu">Hindu</option>
                       <option value="Christian">Christian</option>
-                      <option value="Muslim">Muslim</option>
                       <option value="Sikh">Sikh</option>
                       <option value="Jain">Jain</option>
                       <option value="Buddhist">Buddhist</option>
@@ -461,7 +590,7 @@ export default function RegisterModal({
                     </select>
                   </div>
 
-                  <div>
+                  <div className={fieldWrapClass}>
                     <label className="block text-gray-700 mb-1">
                       Caste / Community
                     </label>
@@ -470,23 +599,23 @@ export default function RegisterModal({
                       value={caste}
                       onChange={(e) => setCaste(e.target.value)}
                       placeholder="e.g. Ezhava, Nair, Catholic"
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                      className={controlClass}
                     />
                   </div>
 
-                  <div>
+                  <div className={`${fieldWrapClass} sm:col-span-2`}>
                     <label className="block text-gray-700 mb-1">
-                      Star / Nakshatram (നക്ഷത്രം)
+                      Star / Nakshatram
                     </label>
                     <select
                       value={star}
                       onChange={(e) => setStar(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                      className={controlClass}
                     >
-                      <option value="">Select Nakshatram</option>
+                      <option value="">Select Star</option>
                       {KERALA_NAKSHATRAS.map((n) => (
                         <option key={n} value={n.split(' ')[0]}>
-                          {n}
+                          {n.split(' ')[0]}
                         </option>
                       ))}
                     </select>
@@ -494,8 +623,8 @@ export default function RegisterModal({
                 </div>
 
                 {/* Education, Profession & Mother Tongue */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className={fieldWrapClass}>
                     <label className="block text-gray-700 mb-1">
                       Highest Education
                     </label>
@@ -509,12 +638,12 @@ export default function RegisterModal({
                         value={education}
                         onChange={(e) => setEducation(e.target.value)}
                         placeholder="e.g. M.Sc, B.Tech, MBA"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={iconControlClass}
                       />
                     </div>
                   </div>
 
-                  <div>
+                  <div className={fieldWrapClass}>
                     <label className="block text-gray-700 mb-1">
                       Profession / Job
                     </label>
@@ -528,19 +657,19 @@ export default function RegisterModal({
                         value={profession}
                         onChange={(e) => setProfession(e.target.value)}
                         placeholder="e.g. Office Staff, Engineer"
-                        className="w-full pl-8 pr-3 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={iconControlClass}
                       />
                     </div>
                   </div>
 
-                  <div>
+                  <div className={`${fieldWrapClass} sm:col-span-2`}>
                     <label className="block text-gray-700 mb-1">
                       Mother Tongue *
                     </label>
                     <select
                       value={motherTongue}
                       onChange={(e) => setMotherTongue(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                      className={controlClass}
                     >
                       <option value="Malayalam">Malayalam</option>
                       <option value="Tamil">Tamil</option>
@@ -551,23 +680,40 @@ export default function RegisterModal({
                     </select>
                   </div>
                 </div>
+                  </div>
 
-                {/* Native & Residential Address Section */}
-                <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce] space-y-3">
+                  <div className="pt-2 md:hidden">
+                    <button
+                      type="button"
+                      onClick={() => handleMobileNext(2)}
+                      className="w-full py-3 rounded-xl bg-[#e2b82f] hover:bg-[#d4aa25] text-[#332500] font-semibold text-sm transition shadow-sm cursor-pointer"
+                    >
+                      Next: Address →
+                    </button>
+                  </div>
+                </div>
+
+                {/* Section 2: Native & Residential Address */}
+                <div
+                  className={`${
+                    mobileStep === 2 ? "flex" : "hidden"
+                  } min-h-[460px] flex-col justify-between rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-3 space-y-3 md:block md:min-h-0`}
+                >
+                  <div className="space-y-3">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#795705] border-b border-[#eadfce] pb-1.5">
                     <MapPin size={14} />
                     <span>Native &amp; Residential Address</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
-                        District (ജില്ല) *
+                        District *
                       </label>
                       <select
                         value={district}
                         onChange={(e) => setDistrict(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       >
                         {KERALA_DISTRICTS.map((d) => (
                           <option key={d} value={d}>
@@ -577,7 +723,7 @@ export default function RegisterModal({
                       </select>
                     </div>
 
-                    <div>
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
                         City / Town / Native Place *
                       </label>
@@ -587,41 +733,41 @@ export default function RegisterModal({
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         placeholder="e.g. Kottayam, Kerala"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
-                        House / Tharavadu Name (വീട്ടുപേര്)
+                        House / Tharavadu Name
                       </label>
                       <input
                         type="text"
                         value={houseName}
                         onChange={(e) => setHouseName(e.target.value)}
                         placeholder="e.g. Twins, Pulikkattil"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       />
                     </div>
 
-                    <div>
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
-                        Street / Landmark (ലാൻഡ്മാർക്ക്)
+                        Street / Landmark
                       </label>
                       <input
                         type="text"
                         value={landmark}
                         onChange={(e) => setLandmark(e.target.value)}
                         placeholder="e.g. Near Police Parade Ground"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
                         Post Office (P.O.)
                       </label>
@@ -630,11 +776,11 @@ export default function RegisterModal({
                         value={postOffice}
                         onChange={(e) => setPostOffice(e.target.value)}
                         placeholder="e.g. (P O) Arpookara"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       />
                     </div>
 
-                    <div>
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
                         Pin Code
                       </label>
@@ -644,41 +790,69 @@ export default function RegisterModal({
                         onChange={(e) => setPincode(e.target.value)}
                         placeholder="e.g. 686008"
                         maxLength={6}
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       />
                     </div>
                   </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-2 md:hidden">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setErrorMessage("");
+                        setMobileStep(1);
+                      }}
+                      className="py-3 rounded-xl border border-[#eadfce] bg-white text-gray-700 font-semibold text-sm transition cursor-pointer"
+                    >
+                      ← Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMobileNext(3)}
+                      className="py-3 rounded-xl bg-[#e2b82f] hover:bg-[#d4aa25] text-[#332500] font-semibold text-sm transition shadow-sm cursor-pointer"
+                    >
+                      Next: Contact →
+                    </button>
+                  </div>
                 </div>
 
+                {/* Section 3: Contact, Photo Upload & Submit */}
+                <div
+                  className={`${
+                    mobileStep === 3 ? "flex" : "hidden"
+                  } min-h-[460px] flex-col justify-between rounded-xl border border-[#eadfce] bg-white p-3 space-y-4 md:block md:min-h-0 md:border-0 md:bg-transparent md:p-0`}
+                >
+                  <div className="space-y-4">
                 {/* Informer & Contact Details */}
                 <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce] space-y-3">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#795705] border-b border-[#eadfce] pb-1.5">
                     <User size={14} />
-                    <span>Informer (അറിയിച്ചയാൾ) &amp; Contact Details</span>
+                    <span>Informer &amp; Contact Details</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="sm:col-span-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
-                        Informer Name (വിവരങ്ങൾ അറിയിച്ചയാൾ)
+                        Informer Name
                       </label>
                       <input
                         type="text"
                         value={informerName}
                         onChange={(e) => setInformerName(e.target.value)}
                         placeholder="e.g. Ajithkumar"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       />
                     </div>
 
-                    <div>
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
                         Informer Relation
                       </label>
                       <select
                         value={informerRelation}
                         onChange={(e) => setInformerRelation(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       >
                         {INFORMER_RELATIONS.map((r) => (
                           <option key={r} value={r}>
@@ -689,8 +863,8 @@ export default function RegisterModal({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
                         Primary Mobile *
                       </label>
@@ -705,31 +879,12 @@ export default function RegisterModal({
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="e.g. 9495182073"
-                          className="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                          className={iconControlClass}
                         />
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-gray-700 mb-1">
-                        Secondary / WhatsApp Mobile
-                      </label>
-                      <div className="relative">
-                        <Phone
-                          size={14}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                        />
-                        <input
-                          type="tel"
-                          value={secondaryPhone}
-                          onChange={(e) => setSecondaryPhone(e.target.value)}
-                          placeholder="e.g. 9446057238"
-                          className="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
+                    <div className={fieldWrapClass}>
                       <label className="block text-gray-700 mb-1">
                         Book / Reg Serial No.
                       </label>
@@ -738,7 +893,7 @@ export default function RegisterModal({
                         value={bookNo}
                         onChange={(e) => setBookNo(e.target.value)}
                         placeholder="e.g. 21"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={controlClass}
                       />
                     </div>
                   </div>
@@ -758,15 +913,95 @@ export default function RegisterModal({
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="e.g. swathy@example.com"
-                        className="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#b58a20]"
+                        className={iconControlClass}
                       />
                     </div>
                   </div>
                 </div>
 
+                {/* Profile Photo Upload (Mandatory · Max 1 MB) */}
+                <div className="p-3 bg-[#FAF7F1] rounded-xl border border-[#eadfce] space-y-2.5">
+                  <div className="flex items-center justify-between border-b border-[#eadfce] pb-1.5">
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-[#795705]">
+                      <Camera size={14} />
+                      <span>Profile Photo (Mandatory) *</span>
+                    </span>
+                    <span className="text-[11px] font-semibold text-gray-500">
+                      Max size: 1 MB
+                    </span>
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                  />
+
+                  {photoPreview ? (
+                    <div className="flex items-center justify-between gap-3 rounded-xl border border-[#eadfce] bg-white p-2.5">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={photoPreview}
+                          alt="Selected profile preview"
+                          className="h-16 w-16 rounded-lg object-cover border border-[#eadfce] flex-shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-gray-800 truncate">
+                            Photo attached
+                          </p>
+                          <p className="text-[11px] text-emerald-700 font-medium">
+                            Ready to submit (under 1 MB)
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="px-2.5 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-xs font-semibold text-gray-700 transition cursor-pointer"
+                        >
+                          Change
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleRemovePhoto}
+                          aria-label="Remove photo"
+                          className="p-1.5 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 transition cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#d8c7ab] hover:border-[#b58a20] bg-white px-4 py-4 text-center transition cursor-pointer"
+                    >
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FAF7F1] text-[#795705]">
+                        <Upload size={16} />
+                      </div>
+                      <span className="text-xs font-semibold text-gray-800">
+                        Click to upload profile photo
+                      </span>
+                      <span className="text-[11px] text-gray-500">
+                        JPG, PNG or WebP · Maximum size 1 MB
+                      </span>
+                    </button>
+                  )}
+
+                  {photoError && (
+                    <p className="text-xs font-semibold text-red-600">
+                      {photoError}
+                    </p>
+                  )}
+                </div>
+
                 {/* Registration & Privacy Disclaimer Box */}
-                <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-3 sm:p-3.5 space-y-2 text-[13px] text-gray-700">
-                  <div className="flex items-center justify-between">
+                <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-3 pb-4 sm:p-3.5 sm:pb-4 space-y-2 text-[13px] text-gray-700">
+                  <div className="flex items-center justify-between gap-2">
                     <span className="font-bold text-[#795705] flex items-center gap-1.5">
                       <ShieldCheck size={14} className="text-[#795705]" />
                       <span>Registration Terms &amp; Privacy Notice</span>
@@ -774,43 +1009,40 @@ export default function RegisterModal({
                     <button
                       type="button"
                       onClick={() => setShowTermsModal(true)}
-                      className="text-[#795705] font-semibold hover:underline text-[12px] cursor-pointer"
+                      className="text-[#795705] font-semibold hover:underline text-[12px] cursor-pointer flex-shrink-0"
                     >
                       View Full Policy →
                     </button>
                   </div>
-                  <ul className="space-y-1 text-gray-600 list-disc list-inside leading-relaxed">
-                    <li>
-                      <b>Fee Policy:</b> Only a one-time non-refundable fee. <b className="text-emerald-700">Free registration for girls&apos; profiles.</b>
-                    </li>
-                    <li>
-                      <b>Profile Services:</b> 6 verified profiles sent every Saturday during the 3-month period.
-                    </li>
-                    <li>
-                      <b>Zero Commission:</b> No extra payments like ₹25,000 or ₹50,000 once the marriage is fixed.
-                    </li>
-                    <li>
-                      <b>Voluntary:</b> Customers register voluntarily. No 100% guarantee that we will conduct the marriage.
-                    </li>
-                    <li className="text-red-700">
-                      <b>Privacy &amp; Legal:</b> Profiles are strictly for personal use only. Sharing or forwarding is strictly prohibited. Strict legal action will be taken against violators.
-                    </li>
-                  </ul>
-                  <p className="text-[12px] text-gray-400 pt-1 border-t border-[#eadfce]">
+                  <p className="text-[12px] text-gray-500 pt-1.5 border-t border-[#eadfce]">
                     By clicking Complete Registration, you agree to our Terms of Service, Privacy Policy &amp; Legal Disclaimer.
                   </p>
                 </div>
 
                 {/* Submit button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full mt-2 py-3.5 rounded-xl bg-[#e2b82f] hover:bg-[#d4aa25] text-[#332500] font-semibold text-sm transition shadow-lg shadow-[#b58a20]/25 cursor-pointer disabled:opacity-50"
-                >
-                  {isSubmitting
-                    ? "Creating Profile..."
-                    : "Complete Registration"}
-                </button>
+                <div className="flex flex-col gap-2 md:block">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full mt-2 py-3.5 rounded-xl bg-[#e2b82f] hover:bg-[#d4aa25] text-[#332500] font-semibold text-sm transition shadow-lg shadow-[#b58a20]/25 cursor-pointer disabled:opacity-50"
+                  >
+                    {isSubmitting
+                      ? "Creating Profile..."
+                      : "Complete Registration"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setErrorMessage("");
+                      setMobileStep(2);
+                    }}
+                    className="w-full py-2.5 rounded-xl border border-[#eadfce] bg-[#FAF7F1] text-gray-700 font-semibold text-xs transition cursor-pointer md:hidden"
+                  >
+                    ← Back to Address
+                  </button>
+                </div>
+                  </div>
+                </div>
               </form>
             )}
           </div>

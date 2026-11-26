@@ -2,7 +2,7 @@ import { Camera, ChevronDown, Clock3, FileText, Globe2, Mail, Phone, ShieldCheck
 import { useState } from 'react'
 import { emailLink, phoneLink, whatsappLink } from '../config/contact'
 
-const policies = ['One-Time Fee Policy', '6 Profiles Every Saturday', 'Voluntary Registration']
+const policies = ['One-Time Fee Policy', 'Voluntary Registration']
 
 function WhatsAppIcon({ size = 16, className = '' }) {
   return <svg aria-hidden="true" className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">

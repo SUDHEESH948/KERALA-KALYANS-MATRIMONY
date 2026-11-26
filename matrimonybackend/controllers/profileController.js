@@ -187,10 +187,23 @@ export const getProfileById = async (req, res) => {
       return res.status(403).json({ error: 'An active membership is required to open profile details.' })
     }
 
+    const isOwnProfile = !isAdmin && id === req.params.id
     const target = { id: req.params.id }
     if (!isAdmin) target.status = { $in: ACTIVE_PROFILE_STATUSES }
-    const profile = await Profile.findOne(target).select(PROFILE_DETAIL_FIELDS).lean()
+    if (isOwnProfile) target.mustChangePassword = { $ne: true }
+    const fields = isOwnProfile ? `${PROFILE_DETAIL_FIELDS} +openedProfileIds` : PROFILE_DETAIL_FIELDS
+    const profile = await Profile.findOne(target).select(fields).lean()
     if (!profile) return res.status(404).json({ error: 'Profile not found' })
+
+    res.set('Cache-Control', 'private, no-store')
+    if (isOwnProfile) {
+      const { openedProfileIds, ...details } = profile
+      return res.json({
+        ...details,
+        profileOpenCount: openedProfileIds?.length ?? 0,
+        profileOpenLimit: PROFILE_VIEW_LIMIT
+      })
+    }
 
     if (!isAdmin) {
       // MongoDB checks both limits and records the opening in one atomic update.
@@ -217,7 +230,6 @@ export const getProfileById = async (req, res) => {
       }
     }
 
-    res.set('Cache-Control', 'private, no-store')
     res.json(profile)
   } catch (err) {
     res.status(500).json({ error: err.message })

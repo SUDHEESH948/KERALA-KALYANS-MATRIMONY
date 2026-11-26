@@ -69,16 +69,13 @@ export default function TermsPolicyDialog({ isOpen, onClose }) {
               </ul>
             </div>
 
-            {/* 2. Profile Services & Zero Extra Fees */}
+            {/* 2. Zero Extra Fees */}
             <div className="rounded-xl border border-[#e6cd8d] bg-[#fff9e9] p-4 space-y-2.5">
               <div className="flex items-center gap-2 text-[#573b0b] font-bold text-sm sm:text-base">
                 <Calendar size={18} className="text-[#795705] flex-shrink-0" />
-                <span>Profile Services &amp; No Hidden Commission</span>
+                <span>No Hidden Commission</span>
               </div>
               <ul className="space-y-1.5 text-xs text-gray-700 leading-relaxed pl-1">
-                <li>
-                  <b>Profile Services:</b> During the 3-month registration period, <b>6 verified profiles will be sent every Saturday</b>.
-                </li>
                 <li>
                   <b>No Extra Fees / Zero Commission:</b> Once the marriage is fixed, you do <b>not</b> need to pay any extra payments like ₹25,000 or ₹50,000, or any hidden charges. We do not demand any success commission.
                 </li>

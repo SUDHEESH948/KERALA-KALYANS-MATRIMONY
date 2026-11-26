@@ -34,6 +34,20 @@ npm run dev
 
 Open `http://localhost:5173`. Check the backend at `http://localhost:5000/api/health`. See the [frontend README](matrimony/README.md) for deployment configuration.
 
+### Candidate card OCR
+
+From the repository root, start the Python service in a separate PowerShell terminal.
+
+```powershell
+python -m venv python/.venv
+& .\python\.venv\Scripts\python.exe -m pip install -r python/requirements.txt
+& .\python\.venv\Scripts\python.exe python/app.py
+```
+
+Check `http://127.0.0.1:5001/health` before uploading a card. The first extraction may download EasyOCR model files.
+
+The Node backend defaults to `http://127.0.0.1:5001`. When Node and Python run on separate hosts, deploy the Python app behind a private endpoint and set `OCR_SERVICE_URL` on the Node backend to that endpoint. The Python service listens on loopback by default. Use `OCR_HOST` and `OCR_PORT` to configure its bind address and port when needed.
+
 ## Membership access
 
 Full profile access ends **six calendar months after activation or immediately after the 145th distinct profile opening**, whichever comes first.

@@ -1,768 +1,326 @@
-import { useState, useRef } from "react";
-import {
-  X,
-  Upload,
-  FileSpreadsheet,
-  FileText,
-  Download,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-  Trash2,
-  Users,
-  Check
-} from "lucide-react";
+import { useEffect, useId, useRef, useState } from "react";
+import { ImageUp, X } from "lucide-react";
 import { API_BASE } from "../config/api";
 
-export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }) {
-  const [activeTab, setActiveTab] = useState("csv"); // 'csv' or 'pdf'
-  const [isDragging, setIsDragging] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [parsedRows, setParsedRows] = useState([]);
-  const [parseError, setParseError] = useState("");
-  const [defaultStatus, setDefaultStatus] = useState("approved");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [importSummary, setImportSummary] = useState(null);
+const fields = [
+  ["name", "Name", "name", true],
+  ["age", "Age", "age", true],
+  ["phone", "Mobile number", "contact", true],
+  ["height", "Height", "height"],
+  ["fatherName", "Father's name", "father_name"],
+  ["education", "Education", "education"],
+  ["religion", "Religion", "religion"],
+  ["caste", "Caste", "caste"],
+  ["star", "Birth star", "star"],
+  ["district", "District", "district"],
+];
 
-  // PDF specific state
-  const [pdfFile, setPdfFile] = useState(null);
-  const [pdfFileName, setPdfFileName] = useState("");
-  const [pdfFileSize, setPdfFileSize] = useState("");
-  const [pdfBase64, setPdfBase64] = useState("");
-  const [pdfGender, setPdfGender] = useState("Bride");
+const defaultCrop = { left: 0, top: 32, right: 30, bottom: 73 };
+const MAX_STORED_PHOTO_BYTES = 5_000;
 
-  const fileInputRef = useRef(null);
-  const pdfInputRef = useRef(null);
+async function compressPhotoForSave(photo) {
+  const image = new Image();
+  image.src = photo;
+  await image.decode();
 
-  // ==========================================
-  // CSV PARSING UTILITIES
-  // ==========================================
-  const parseCSVText = (text) => {
-    const lines = text.split(/\r\n|\n/).filter((l) => l.trim().length > 0);
-    if (lines.length < 2) {
-      throw new Error("CSV file must contain a header row and at least one data row.");
-    }
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d", { alpha: false });
+  if (!context) throw new Error("Photo compression is unavailable in this browser.");
 
-    const splitLine = (line) => {
-      const result = [];
-      let current = "";
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === "," && !inQuotes) {
-          result.push(current.trim());
-          current = "";
-        } else {
-          current += char;
-        }
-      }
-      result.push(current.trim());
-      return result.map((col) => col.replace(/^"(.*)"$/, "$1").trim());
-    };
-
-    const rawHeaders = splitLine(lines[0]);
-    const rows = [];
-    for (let i = 1; i < lines.length; i++) {
-      const values = splitLine(lines[i]);
-      if (values.every((v) => !v)) continue;
-
-      const rowObj = {};
-      rawHeaders.forEach((rawHeader, idx) => {
-        rowObj[rawHeader] = values[idx] || "";
-      });
-
-      const name =
-        rowObj.name ||
-        rowObj["Full Name"] ||
-        rowObj.Name ||
-        rowObj["Candidate Name"] ||
-        "";
-      const gender =
-        rowObj.gender || rowObj.Gender || rowObj.Sex || "Bride";
-      const age = rowObj.age || rowObj.Age || "25";
-      const height = rowObj.height || rowObj.Height || "5'5\"";
-      const marriageType =
-        rowObj.marriageType ||
-        rowObj["Marital Status"] ||
-        rowObj.maritalStatus ||
-        "Never Married";
-      const religion = rowObj.religion || rowObj.Religion || "Hindu";
-      const caste = rowObj.caste || rowObj.Caste || rowObj.Community || "";
-      const star =
-        rowObj.star || rowObj.Star || rowObj.nakshatra || rowObj.Nakshatra || "";
-      const motherTongue =
-        rowObj.motherTongue || rowObj["Mother Tongue"] || "Malayalam";
-      const education =
-        rowObj.education ||
-        rowObj.Education ||
-        rowObj.Qualification ||
-        "Graduate";
-      const profession =
-        rowObj.profession || rowObj.Profession || rowObj.Occupation || "Professional";
-      const location =
-        rowObj.location || rowObj.Location || rowObj.City || "Kerala, India";
-      const district =
-        rowObj.district || rowObj.District || location.split(",")[0] || "";
-      const phone =
-        rowObj.phone ||
-        rowObj.Phone ||
-        rowObj.Mobile ||
-        rowObj["Phone Number"] ||
-        "";
-      const email =
-        rowObj.email || rowObj.Email || rowObj["Email Address"] || "";
-      const photo = rowObj.photo || rowObj.Photo || rowObj.photoUrl || "";
-
-      if (name.trim()) {
-        rows.push({
-          name: name.trim(),
-          gender: /groom|male|man/i.test(gender) ? "Groom" : "Bride",
-          age: Number(age) || 25,
-          height: height.trim(),
-          marriageType: marriageType.trim(),
-          religion: religion.trim(),
-          caste: caste.trim(),
-          star: star.trim(),
-          motherTongue: motherTongue.trim(),
-          education: education.trim(),
-          profession: profession.trim(),
-          location: location.trim(),
-          district: district.trim(),
-          phone: phone.trim(),
-          email: email.trim(),
-          photo: photo.trim()
-        });
+  for (const edge of [320, 256, 192, 144, 96, 64, 32, 16]) {
+    const scale = Math.min(1, edge / Math.max(image.naturalWidth, image.naturalHeight));
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    for (const quality of [0.84, 0.68, 0.52, 0.36]) {
+      const jpeg = canvas.toDataURL("image/jpeg", quality);
+      // The database stores the full ASCII data URL, including Base64 overhead.
+      if (jpeg.startsWith("data:image/jpeg;base64,") && jpeg.length <= MAX_STORED_PHOTO_BYTES) {
+        return jpeg;
       }
     }
+  }
+  throw new Error("Unable to compress the photo to 5 KB.");
+}
 
-    return rows;
-  };
+function CardPhotoEditor({ file, initialCrop, onApply, onCancel }) {
+  const imageRef = useRef(null);
+  const [source, setSource] = useState("");
+  const [crop, setCrop] = useState(initialCrop);
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState("");
+  const { left, top, right, bottom } = crop;
 
-  const handleCSVFile = (file) => {
-    if (!file) return;
-    if (!file.name.endsWith(".csv") && file.type !== "text/csv") {
-      setParseError("Please select a valid .csv spreadsheet file.");
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    setSource(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  function applyCrop() {
+    const image = imageRef.current;
+    const x = Math.floor(image.naturalWidth * left / 100);
+    const y = Math.floor(image.naturalHeight * top / 100);
+    const width = Math.ceil(image.naturalWidth * right / 100) - x;
+    const height = Math.ceil(image.naturalHeight * bottom / 100) - y;
+    const scale = Math.min(1, 1200 / Math.max(width, height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(width * scale));
+    canvas.height = Math.max(1, Math.round(height * scale));
+    const context = canvas.getContext("2d", { alpha: false });
+    if (!context) {
+      setError("Photo adjustment is unavailable in this browser.");
       return;
     }
 
-    setSelectedFile(file);
-    setParseError("");
-    setImportSummary(null);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const text = e.target.result;
-        const rows = parseCSVText(text);
-        if (rows.length === 0) {
-          setParseError("No valid candidate rows with names found in the CSV.");
-          setParsedRows([]);
-        } else {
-          setParsedRows(rows);
-        }
-      } catch (err) {
-        setParseError("Failed to parse CSV file: " + err.message);
-        setParsedRows([]);
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
+    for (const quality of [0.92, 0.8, 0.65, 0.5]) {
+      const jpeg = canvas.toDataURL("image/jpeg", quality);
+      const encoded = jpeg.slice("data:image/jpeg;base64,".length);
+      const bytes = encoded.length * 3 / 4 - (encoded.match(/=+$/)?.[0].length ?? 0);
+      if (jpeg.startsWith("data:image/jpeg;base64,") && bytes <= 1_000_000) {
+        onApply(jpeg, crop);
+        return;
       }
-    };
-    reader.readAsText(file);
-  };
-
-  const handleDownloadSampleCSV = () => {
-    const csvContent =
-      "name,gender,age,height,marriageType,religion,caste,star,motherTongue,education,profession,location,phone,email,photo\n" +
-      'Ananya Menon,Bride,25,5\'5",Never Married,Hindu,Menon,Aswathy,Malayalam,M.Sc Biotechnology,Clinical Research Associate,Thrissur,9876543210,ananya.sample@keralakalyans.internal,\n' +
-      'Rahul Nair,Groom,28,5\'10",Never Married,Hindu,Nair,Rohini,Malayalam,B.Tech Computer Science,Software Architect,Kochi,9876543211,rahul.sample@keralakalyans.internal,\n' +
-      'Dr. Gopika Krishnan,Bride,26,5\'6",Never Married,Hindu,Ezhava,Makayiram,Malayalam,MBBS MD,Physician,Kottayam,9876543212,gopika.sample@keralakalyans.internal,\n' +
-      'Arun Varma,Groom,29,5\'11",Never Married,Hindu,Kshatriya,Thiruvonam,Malayalam,MBA Finance,Investment Banker,Thiruvananthapuram,9876543213,arun.sample@keralakalyans.internal,\n' +
-      'Deepa Pillai,Bride,24,5\'4",Never Married,Hindu,Nair,Ayilyam,Malayalam,Chartered Accountant (CA),Senior Financial Auditor,Kozhikode,9876543214,deepa.sample@keralakalyans.internal,\n';
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "kerala_kalyans_profiles_template.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const handleConfirmCSVImport = async () => {
-    if (parsedRows.length === 0) return;
-    setIsSubmitting(true);
-    setParseError("");
-
-    const activeToken = token || localStorage.getItem("apremiya_admin_token") || "";
-    const authHeaders = {
-      "Content-Type": "application/json",
-      ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {})
-    };
-
-    try {
-      let res;
-      try {
-        res = await fetch(`${API_BASE}/profiles/bulk-import`, {
-          method: "POST",
-          headers: authHeaders,
-          body: JSON.stringify({
-            profiles: parsedRows,
-            defaultStatus
-          })
-        });
-      } catch (networkErr) {
-        console.warn("Bulk import endpoint network error:", networkErr);
-      }
-
-      let data = {};
-      try {
-        data = (await res?.json()) || {};
-      } catch {
-        data = {};
-      }
-
-      if (res && res.ok) {
-        setImportSummary({
-          success: true,
-          count: data.importedCount || parsedRows.length,
-          failed: data.failedCount || 0,
-          message: data.message || `Successfully imported ${parsedRows.length} candidate profiles.`
-        });
-        try {
-          if (onImportSuccess) onImportSuccess();
-        } catch (cbErr) {
-          console.warn("onImportSuccess callback error caught safely:", cbErr);
-        }
-      } else {
-        setParseError(data.error || `Import failed (${res?.status || "Network error"}). Please verify backend service.`);
-      }
-    } catch (err) {
-      setParseError(err?.message || "Network error while connecting to import service.");
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+    setError("The cropped photo is too large. Select a smaller area.");
+  }
 
-  // ==========================================
-  // PDF UPLOAD (DIRECT - NO MANUAL FORM REQUIRED)
-  // ==========================================
-  const handlePDFFile = (file) => {
-    if (!file) return;
-    if (!file.name.endsWith(".pdf") && file.type !== "application/pdf") {
-      setParseError("Please select a valid .pdf document.");
-      return;
-    }
-
-    setPdfFile(file);
-    setPdfFileName(file.name);
-    setPdfFileSize(
-      file.size > 1024 * 1024
-        ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
-        : `${Math.round(file.size / 1024)} KB`
-    );
-    setParseError("");
-    setImportSummary(null);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setPdfBase64(e.target.result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleConfirmPDFUpload = async () => {
-    if (!pdfFileName) {
-      setParseError("Please select a PDF file first.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setParseError("");
-
-    const candidateName =
-      pdfFileName
-        .replace(/\.pdf$/i, "")
-        .replace(/[_-]/g, " ")
-        .replace(/\b(biodata|resume|profile|cv|matrimony)\b/gi, "")
-        .trim() || "Candidate";
-
-    const activeToken = token || localStorage.getItem("apremiya_admin_token") || "";
-    const authHeaders = {
-      "Content-Type": "application/json",
-      ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {})
-    };
-
-    try {
-      let res;
-      try {
-        res = await fetch(`${API_BASE}/profiles/upload-pdf`, {
-          method: "POST",
-          headers: authHeaders,
-          body: JSON.stringify({
-            pdfBase64,
-            fileName: pdfFileName,
-            candidateData: {
-              name: candidateName,
-              gender: pdfGender,
-              status: defaultStatus
-            }
-          })
-        });
-      } catch (err) {
-        console.warn("Primary upload-pdf error, attempting fallback:", err);
-      }
-
-      // If primary upload endpoint failed or returned non-2xx, fallback to standard profile creation
-      if (!res || !res.ok) {
-        try {
-          const fallbackRes = await fetch(`${API_BASE}/profiles`, {
-            method: "POST",
-            headers: authHeaders,
-            body: JSON.stringify({
-              name: candidateName,
-              gender: pdfGender,
-              status: defaultStatus,
-              biodataPdfName: pdfFileName,
-              notes: `Registered candidate via direct PDF biodata document upload: ${pdfFileName}`
-            })
-          });
-          if (fallbackRes.ok) {
-            res = fallbackRes;
-          }
-        } catch (fbErr) {
-          console.warn("Fallback createProfile error:", fbErr);
-        }
-      }
-
-      let data = {};
-      try {
-        data = (await res?.json()) || {};
-      } catch {
-        data = {};
-      }
-
-      if (res && res.ok) {
-        setImportSummary({
-          success: true,
-          count: 1,
-          message: `PDF Biodata "${pdfFileName}" uploaded and profile registered for "${data.profile?.name || candidateName}".`
-        });
-        try {
-          if (onImportSuccess) onImportSuccess();
-        } catch (cbErr) {
-          console.warn("onImportSuccess callback error caught safely:", cbErr);
-        }
-      } else {
-        setParseError(data.error || `Upload failed (${res?.status || "Network Error"}). Please check connectivity.`);
-      }
-    } catch (err) {
-      setParseError(err?.message || "Network error while submitting PDF biodata.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const edges = [
+    ["left", "Left edge", 0, right - 1],
+    ["right", "Right edge", left + 1, 100],
+    ["top", "Top edge", 0, bottom - 1],
+    ["bottom", "Bottom edge", top + 1, 100],
+  ];
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="bg-white w-full max-w-2xl rounded-2xl border border-[var(--admin-border)] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-[var(--admin-border)] flex items-center justify-between bg-[var(--admin-surface)]/60">
-          <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-[var(--admin-gold-strong)] text-white flex items-center justify-center shadow-xs">
-              <Upload size={18} />
-            </div>
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-[var(--admin-gold-ink)]">
-                Upload Candidates
-              </h2>
-              <p className="text-xs text-[var(--admin-gold-text)]">
-                Upload CSV spreadsheet or PDF biodata directly
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        {/* Tab Selectors */}
-        <div className="flex border-b border-[var(--admin-border)] bg-gray-50/70 px-5 pt-2 gap-2 text-xs">
-          <button
-            onClick={() => {
-              setActiveTab("csv");
-              setParseError("");
-              setImportSummary(null);
-            }}
-            className={`flex items-center gap-2 px-4 py-2.5 font-bold border-b-2 transition cursor-pointer ${
-              activeTab === "csv"
-                ? "border-[var(--admin-gold-strong)] text-[var(--admin-gold-strong)] bg-white rounded-t-lg"
-                : "border-transparent text-gray-500 hover:text-gray-900"
-            }`}
-          >
-            <FileSpreadsheet size={15} />
-            <span>CSV Spreadsheet</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("pdf");
-              setParseError("");
-              setImportSummary(null);
-            }}
-            className={`flex items-center gap-2 px-4 py-2.5 font-bold border-b-2 transition cursor-pointer ${
-              activeTab === "pdf"
-                ? "border-[var(--admin-gold-strong)] text-[var(--admin-gold-strong)] bg-white rounded-t-lg"
-                : "border-transparent text-gray-500 hover:text-gray-900"
-            }`}
-          >
-            <FileText size={15} />
-            <span>PDF Biodata Document</span>
-          </button>
-        </div>
-
-        {/* Body Content */}
-        <div className="p-5 overflow-y-auto space-y-4 flex-1">
-          {/* Error Message */}
-          {parseError && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2">
-              <AlertCircle size={16} className="shrink-0 mt-0.5" />
-              <span>{parseError}</span>
-            </div>
-          )}
-
-          {/* Success Summary */}
-          {importSummary && (
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <CheckCircle size={18} className="text-emerald-600 shrink-0" />
-                <div>
-                  <p className="font-bold text-emerald-950">
-                    Upload Completed Successfully!
-                  </p>
-                  <p className="text-[12px]">{importSummary.message}</p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs cursor-pointer shadow-xs"
-              >
-                Close
-              </button>
-            </div>
-          )}
-
-          {/* ============================================================ */}
-          {/* TAB 1: CSV BULK IMPORT */}
-          {/* ============================================================ */}
-          {activeTab === "csv" && !importSummary && (
-            <div className="space-y-4">
+    <div className="space-y-3 rounded-xl border border-[var(--admin-border)] bg-slate-50 p-3">
+      <p className="text-sm">Move the crop edges to frame the portrait.</p>
+      {source && (
+        <div className="flex justify-center overflow-hidden rounded-lg bg-slate-200">
+          <div className="relative overflow-hidden">
+            <img
+              ref={imageRef}
+              src={source}
+              alt="Original card with the selected crop outlined"
+              onLoad={() => setReady(true)}
+              onError={() => setError("Unable to open the original card image.")}
+              className="block h-auto max-h-80 max-w-full"
+              style={{ width: "auto" }}
+            />
+            {ready && (
               <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsDragging(true);
+                aria-hidden="true"
+                className="pointer-events-none absolute border-2 border-white ring-1 ring-black"
+                style={{
+                  inset: `${top}% ${100 - right}% ${100 - bottom}% ${left}%`,
+                  boxShadow: "0 0 0 200vmax rgb(0 0 0 / 55%)",
                 }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setIsDragging(false);
-                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                    handleCSVFile(e.dataTransfer.files[0]);
-                  }
-                }}
-                onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition ${
-                  isDragging
-                    ? "border-[var(--admin-gold-strong)] bg-amber-50/50"
-                    : "border-gray-300 hover:border-[var(--admin-gold)] bg-gray-50/40"
-                }`}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".csv,text/csv"
-                  className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      handleCSVFile(e.target.files[0]);
-                    }
-                  }}
-                />
-                <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mb-3">
-                  <FileSpreadsheet size={24} />
-                </div>
-                <h3 className="text-sm font-bold text-gray-900">
-                  {selectedFile
-                    ? selectedFile.name
-                    : "Drag and drop your CSV file here"}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  or <span className="text-[var(--admin-gold-strong)] font-semibold underline">browse computer</span> to select .csv file
-                </p>
-              </div>
-
-              {/* Sample Template Download Pill */}
-              <div className="flex items-center justify-between p-3 bg-amber-50/60 border border-amber-200/80 rounded-xl text-xs">
-                <div className="flex items-center gap-2 text-amber-900">
-                  <FileSpreadsheet size={15} />
-                  <span>Standard CSV format template:</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleDownloadSampleCSV}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 font-semibold cursor-pointer shadow-2xs"
-                >
-                  <Download size={13} />
-                  <span>Download Sample CSV</span>
-                </button>
-              </div>
-
-              {/* Preview Table if rows parsed */}
-              {parsedRows.length > 0 && (
-                <div className="space-y-3 pt-1">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-gray-900 flex items-center gap-1.5">
-                      <Users size={15} className="text-[var(--admin-gold-strong)]" />
-                      <span>{parsedRows.length} Candidate Profiles Detected</span>
-                    </span>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-500">Status:</span>
-                      <select
-                        value={defaultStatus}
-                        onChange={(e) => setDefaultStatus(e.target.value)}
-                        className="px-2 py-1 rounded-lg border border-gray-300 bg-white font-semibold text-xs"
-                      >
-                        <option value="approved">Approved &amp; Active</option>
-                        <option value="pending">Pending Approval</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="border border-gray-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-gray-100 text-gray-700 sticky top-0 border-b border-gray-200 text-[11px]">
-                        <tr>
-                          <th className="px-3 py-2">#</th>
-                          <th className="px-3 py-2">Name</th>
-                          <th className="px-3 py-2">Gender</th>
-                          <th className="px-3 py-2">Age</th>
-                          <th className="px-3 py-2">Community</th>
-                          <th className="px-3 py-2">Profession</th>
-                          <th className="px-3 py-2">Location</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100 text-gray-700">
-                        {parsedRows.slice(0, 8).map((r, i) => (
-                          <tr key={i} className="hover:bg-gray-50/70">
-                            <td className="px-3 py-1.5 text-gray-400 font-mono text-[10px]">
-                              {i + 1}
-                            </td>
-                            <td className="px-3 py-1.5 font-bold text-gray-900 whitespace-nowrap">
-                              {r.name}
-                            </td>
-                            <td className="px-3 py-1.5">
-                              <span
-                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                  r.gender === "Groom"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : "bg-pink-100 text-pink-800"
-                                }`}
-                              >
-                                {r.gender}
-                              </span>
-                            </td>
-                            <td className="px-3 py-1.5 whitespace-nowrap">{r.age} yrs</td>
-                            <td className="px-3 py-1.5 whitespace-nowrap">
-                              {r.religion} {r.caste ? `· ${r.caste}` : ""}
-                            </td>
-                            <td className="px-3 py-1.5 truncate max-w-[120px]">
-                              {r.profession}
-                            </td>
-                            <td className="px-3 py-1.5 truncate max-w-[100px]">
-                              {r.location}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ============================================================ */}
-          {/* TAB 2: PDF BIODATA UPLOAD (DIRECT - NO FORM) */}
-          {/* ============================================================ */}
-          {activeTab === "pdf" && !importSummary && (
-            <div className="space-y-4">
-              {/* PDF Dropzone */}
-              <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsDragging(true);
-                }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setIsDragging(false);
-                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                    handlePDFFile(e.dataTransfer.files[0]);
-                  }
-                }}
-                onClick={() => pdfInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition ${
-                  isDragging
-                    ? "border-[var(--admin-gold-strong)] bg-red-50/50"
-                    : "border-gray-300 hover:border-[var(--admin-gold)] bg-gray-50/40"
-                }`}
-              >
-                <input
-                  ref={pdfInputRef}
-                  type="file"
-                  accept=".pdf,application/pdf"
-                  className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      handlePDFFile(e.target.files[0]);
-                    }
-                  }}
-                />
-                <div className="mx-auto w-12 h-12 rounded-full bg-red-100 text-red-700 flex items-center justify-center mb-3">
-                  <FileText size={24} />
-                </div>
-                <h3 className="text-sm font-bold text-gray-900">
-                  {pdfFileName ? pdfFileName : "Drag and drop your PDF Biodata here"}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  or <span className="text-[var(--admin-gold-strong)] font-semibold underline">browse computer</span> to select .pdf file
-                </p>
-                <span className="inline-block mt-3 text-[11px] text-gray-400">
-                  Upload candidate biodata sheet, horoscope, or profile PDF directly
-                </span>
-              </div>
-
-              {/* Selected PDF File Card */}
-              {pdfFileName && (
-                <div className="p-4 rounded-xl bg-red-50/70 border border-red-200 flex items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-10 w-10 rounded-lg bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                      <FileText size={20} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-bold text-gray-900 truncate">
-                        {pdfFileName}
-                      </p>
-                      <p className="text-[11px] text-gray-500">
-                        {pdfFileSize} · Ready to upload
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    {/* Quick Gender selection */}
-                    <select
-                      value={pdfGender}
-                      onChange={(e) => setPdfGender(e.target.value)}
-                      className="px-2.5 py-1.5 rounded-lg border border-red-300 bg-white font-semibold text-xs text-gray-700 focus:outline-none"
-                    >
-                      <option value="Bride">Bride</option>
-                      <option value="Groom">Groom</option>
-                    </select>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPdfFile(null);
-                        setPdfFileName("");
-                        setPdfBase64("");
-                      }}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-100 transition cursor-pointer"
-                      title="Remove file"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Footer Actions */}
-        {!importSummary && (
-          <div className="px-5 py-3.5 border-t border-[var(--admin-border)] bg-gray-50 flex items-center justify-between gap-3 text-xs">
-            <span className="text-gray-500">
-              {activeTab === "csv"
-                ? parsedRows.length > 0
-                  ? `${parsedRows.length} candidates ready to import`
-                  : "Select a CSV file to begin"
-                : pdfFileName
-                  ? "PDF ready for direct upload"
-                  : "Select a PDF biodata file"}
-            </span>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold cursor-pointer"
-              >
-                Cancel
-              </button>
-
-              {activeTab === "csv" ? (
-                <button
-                  type="button"
-                  onClick={handleConfirmCSVImport}
-                  disabled={isSubmitting || parsedRows.length === 0}
-                  className="px-5 py-2 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-bold flex items-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 size={14} className="animate-spin" />
-                      <span>Importing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload size={14} />
-                      <span>Confirm &amp; Import {parsedRows.length > 0 ? `(${parsedRows.length})` : ""}</span>
-                    </>
-                  )}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleConfirmPDFUpload}
-                  disabled={isSubmitting || !pdfFileName}
-                  className="px-5 py-2 rounded-xl bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-bold flex items-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 size={14} className="animate-spin" />
-                      <span>Uploading PDF...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload size={14} />
-                      <span>Upload PDF Biodata</span>
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
+              />
+            )}
           </div>
-        )}
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-3">
+        {edges.map(([key, label, min, max]) => (
+          <label key={key} className="grid gap-1 text-sm">
+            <span>{label} · {crop[key]}%</span>
+            <input
+              type="range"
+              min={min}
+              max={max}
+              value={crop[key]}
+              onChange={(event) => {
+                setCrop({ ...crop, [key]: Number(event.target.value) });
+                setError("");
+              }}
+              className="w-full accent-[var(--admin-gold-strong)]"
+            />
+          </label>
+        ))}
       </div>
+      {error && <p role="alert" className="text-sm text-red-800">{error}</p>}
+      <div className="flex justify-end gap-2">
+        <button type="button" onClick={onCancel} className="rounded-lg border px-3 py-2 text-sm">Cancel crop</button>
+        <button type="button" onClick={applyCrop} disabled={!ready} className="rounded-lg bg-[var(--admin-gold-strong)] px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">
+          Apply crop
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function AdminBulkUploadModal({ token, onClose, onImportSuccess }) {
+  const titleId = useId();
+  const [file, setFile] = useState(null);
+  const [details, setDetails] = useState(null);
+  const [photo, setPhoto] = useState("");
+  const [crop, setCrop] = useState(defaultCrop);
+  const [adjustingPhoto, setAdjustingPhoto] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  function selectFile(image) {
+    if (busy || !image) return;
+    setFile(null);
+    setDetails(null);
+    setPhoto("");
+    setCrop(defaultCrop);
+    setAdjustingPhoto(false);
+    setError("");
+    if (!["image/jpeg", "image/png"].includes(image.type) || image.size > 1_000_000) {
+      setError("Select a JPEG or PNG image up to 1 MB.");
+      return;
+    }
+    setFile(image);
+  }
+
+  async function submit(event) {
+    event.preventDefault();
+    if (!file || busy || adjustingPhoto) return;
+    setBusy(true);
+    setError("");
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const form = new FormData();
+      form.append("image", file);
+      const body = details
+        ? JSON.stringify({ ...details, photo: await compressPhotoForSave(photo) })
+        : form;
+      const response = await fetch(`${API_BASE}/profiles/${details ? "card-save" : "card-extract"}`, {
+        method: "POST",
+        headers: details ? { ...headers, "Content-Type": "application/json" } : headers,
+        body,
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to process the candidate card.");
+      if (details) {
+        onImportSuccess();
+        onClose();
+      } else {
+        setPhoto(`data:${result.photo.mimeType};base64,${result.photo.base64}`);
+        setDetails({
+          ...Object.fromEntries(fields.map(([key, , source]) => [key, result.data[source] ?? ""])),
+          gender: "",
+        });
+      }
+    } catch (err) {
+      setError(err.message || "Unable to process the candidate card.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="max-h-[90dvh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[var(--admin-border)] bg-white shadow-xl"
+      >
+        <header className="flex items-center justify-between border-b border-[var(--admin-border)] bg-[var(--admin-surface)] px-5 py-4">
+          <h2 id={titleId} className="text-xl font-bold text-[var(--admin-gold-ink)]">
+            Upload Candidate Card
+          </h2>
+          <button type="button" aria-label="Close" onClick={onClose} disabled={busy} className="rounded-lg p-2 disabled:opacity-50">
+            <X size={20} />
+          </button>
+        </header>
+        <form onSubmit={submit}>
+          <fieldset disabled={busy} className="space-y-4 p-5">
+            <label
+              className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center focus-within:ring-2 focus-within:ring-amber-600"
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => {
+                event.preventDefault();
+                selectFile(event.dataTransfer.files[0]);
+              }}
+            >
+              <ImageUp size={28} className="text-[var(--admin-gold-text)]" />
+              <span className="break-all font-semibold">{file?.name || "Drop a card image or browse files"}</span>
+              <span className="text-sm text-slate-600">{file ? "Choose a different image" : "JPEG or PNG, up to 1 MB"}</span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png"
+                className="sr-only"
+                onChange={(event) => {
+                  selectFile(event.target.files[0]);
+                  event.target.value = "";
+                }}
+              />
+            </label>
+            {details && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <img src={photo} alt="Cropped candidate portrait" className="h-28 w-24 rounded-lg border object-contain" />
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-700">Check the cropped photo and correct the extracted details before saving.</p>
+                    {!adjustingPhoto && (
+                      <button type="button" onClick={() => setAdjustingPhoto(true)} className="rounded-lg border border-[var(--admin-border)] px-3 py-2 text-sm font-semibold text-[var(--admin-gold-text)]">
+                        Adjust photo
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {adjustingPhoto && (
+                  <CardPhotoEditor
+                    file={file}
+                    initialCrop={crop}
+                    onCancel={() => setAdjustingPhoto(false)}
+                    onApply={(jpeg, appliedCrop) => {
+                      setPhoto(jpeg);
+                      setCrop(appliedCrop);
+                      setAdjustingPhoto(false);
+                    }}
+                  />
+                )}
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {fields.map(([key, label, , required]) => (
+                    <label key={key} className="grid gap-1 text-sm font-medium">
+                      {label}{required && " *"}
+                      <input
+                        type="text"
+                        inputMode={key === "age" ? "numeric" : key === "phone" ? "tel" : undefined}
+                        required={required}
+                        maxLength={key === "name" ? 150 : 200}
+                        value={details[key]}
+                        onChange={(event) => setDetails({ ...details, [key]: event.target.value })}
+                        className="min-w-0 rounded-lg border border-slate-300 px-3 py-2"
+                      />
+                    </label>
+                  ))}
+                  <label className="grid gap-1 text-sm font-medium">
+                    Gender *
+                    <select
+                      required
+                      value={details.gender}
+                      onChange={(event) => setDetails({ ...details, gender: event.target.value })}
+                      className="rounded-lg border border-slate-300 px-3 py-2"
+                    >
+                      <option value="">Select gender</option>
+                      <option>Bride</option>
+                      <option>Groom</option>
+                      <option>Other</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            )}
+            {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>}
+          </fieldset>
+          <footer className="flex justify-end gap-2 border-t border-[var(--admin-border)] p-4">
+            <button type="button" onClick={onClose} disabled={busy} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold disabled:opacity-50">
+              Cancel
+            </button>
+            <button type="submit" disabled={!file || busy || adjustingPhoto} className="rounded-lg bg-[var(--admin-gold-strong)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
+              {details ? (busy ? "Saving..." : "Approve & Save") : (busy ? "Extracting..." : "Extract Details")}
+            </button>
+          </footer>
+        </form>
+      </section>
     </div>
   );
 }

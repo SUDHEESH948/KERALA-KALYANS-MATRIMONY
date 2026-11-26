@@ -5,7 +5,7 @@ const SelectBox = ({ value, onChange, children, small = false, variant = 'dark' 
 
 export default function HeroSection({ lookingFor, setLookingFor, ageFrom, setAgeFrom, ageTo, setAgeTo, religion, setReligion, motherTongue, setMotherTongue, mobileSearchOpen, setMobileSearchOpen, searchProfiles, currentMember, onOpenMatches }) {
   const ages = Array.from({ length: 53 }, (_, i) => 18 + i)
-  const religions = ['Select', 'Hindu', 'Muslim', 'Christian', 'Sikh', 'Jain', 'Buddhist', 'Parsi', 'Jewish', 'Any']
+  const religions = ['Select', 'Hindu', 'Christian', 'Sikh', 'Jain', 'Buddhist', 'Parsi', 'Jewish', 'Any']
   const languages = ['Select', 'Malayalam', 'Tamil', 'Telugu', 'Kannada', 'Hindi', 'Marathi', 'Bengali', 'Gujarati', 'Punjabi', 'Odia', 'Urdu', 'English']
   const submit = (event) => {
     if (currentMember && onOpenMatches) { event?.preventDefault?.(); onOpenMatches(currentMember); return }

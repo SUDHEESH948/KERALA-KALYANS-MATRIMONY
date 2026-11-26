@@ -44,6 +44,10 @@ const profileSchema = new mongoose.Schema(
       type: String,
       default: ''
     },
+    fatherName: {
+      type: String,
+      trim: true
+    },
     star: {
       type: String,
       default: '',

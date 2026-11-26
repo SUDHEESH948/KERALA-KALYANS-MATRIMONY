@@ -66,7 +66,9 @@ export default function ProfileDetailsPage({
         if (controller.signal.aborted) return;
         if (res.ok) {
           setProfile(data);
-          window.dispatchEvent(new Event("apremiya-profile-opened"));
+          if (data.id !== currentMember?.id) {
+            window.dispatchEvent(new Event("apremiya-profile-opened"));
+          }
           // Check if interest was sent
           try {
             const savedInterests = JSON.parse(
@@ -310,6 +312,15 @@ export default function ProfileDetailsPage({
                     Kerala Kalyans Matrimony admissions team.
                   </p>
                 </div>
+
+                {profile.id === currentMember?.id && Number.isInteger(profile.profileOpenCount) && (
+                  <div className="rounded-xl border border-[#eadfce] bg-[#FAF7F1] p-3">
+                    <p className="text-xs font-semibold text-gray-600">Total profiles viewed</p>
+                    <p className="mt-1 text-lg font-bold tabular-nums text-[#701C35]">
+                      {profile.profileOpenCount} of {profile.profileOpenLimit}
+                    </p>
+                  </div>
+                )}
 
                 {/* Grid of Key Attributes */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-xs">

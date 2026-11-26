@@ -991,15 +991,15 @@ export default function AdminPage({ onExit }) {
                 </div>
               </div>
 
-              {/* Upload CSV / PDF Profiles Button */}
+              {/* Upload candidate card */}
               <button
                 type="button"
                 onClick={() => setBulkUploadOpen(true)}
                 className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[var(--admin-gold-strong)] hover:bg-[var(--admin-gold-strong-hover)] text-white font-bold transition cursor-pointer shadow-xs whitespace-nowrap text-xs w-full sm:w-auto"
-                title="Bulk upload profiles from CSV spreadsheet or PDF document"
+                title="Upload a matrimony card image"
               >
                 <Upload size={14} />
-                <span>Upload CSV / PDF</span>
+                <span>Upload Card Image</span>
               </button>
             </div>
 
@@ -1629,14 +1629,14 @@ export default function AdminPage({ onExit }) {
         )}
       </div>
 
-      {/* BULK UPLOAD MODAL (CSV / PDF) */}
+      {/* Candidate card upload */}
       {bulkUploadOpen && (
         <AdminBulkUploadModal
           token={token || localStorage.getItem("apremiya_admin_token") || ""}
           onClose={() => setBulkUploadOpen(false)}
           onImportSuccess={() => {
             fetchData(true);
-            showToast("Profiles uploaded and imported successfully!");
+            showToast("Candidate profile approved and saved.");
           }}
         />
       )}
@@ -1769,7 +1769,6 @@ export default function AdminPage({ onExit }) {
                   >
                     <option>Hindu</option>
                     <option>Christian</option>
-                    <option>Muslim</option>
                     <option>Sikh</option>
                     <option>Other</option>
                   </select>
