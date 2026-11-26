@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {
   Heart,
   ShieldCheck,
@@ -29,21 +29,17 @@ import {
 import { API_BASE } from '../config/api'
 import ScreenshotPrivacyShield from '../components/ScreenshotPrivacyShield'
 import MemberCartDrawer from '../components/MemberCartDrawer'
+import SafeAvatar from '../components/SafeAvatar'
 
 export default function MemberMatchesPage({ currentMember, onLogout, onNavigateHome, onViewProfile }) {
   const [profiles, setProfiles] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // Determine user's gender and the opposite gender to match
-  const memberGender = (currentMember?.gender || 'Groom').toLowerCase()
-  const isMemberMale = memberGender === 'groom' || memberGender === 'man' || memberGender === 'male'
-  const targetGender = isMemberMale ? 'Bride' : 'Groom'
-  const targetGenderLabel = isMemberMale ? 'Brides (Women)' : 'Grooms (Men)'
+  const memberGender = (currentMember?.gender || 'Groom').trim().toLowerCase()
+  const isMemberMale = ['groom', 'man', 'male'].includes(memberGender)
 
-  // Filter state (defaults to compatible target gender: Brides for Groom, Grooms for Bride)
   const [searchQuery, setSearchQuery] = useState('')
-  const [genderFilter, setGenderFilter] = useState(() => (isMemberMale ? 'Bride' : 'Groom'))
   const [strictSameReligion, setStrictSameReligion] = useState(true)
   const [strictSameCaste, setStrictSameCaste] = useState(false)
   const [selectedCaste, setSelectedCaste] = useState('all')
@@ -85,95 +81,76 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
   const [viewingProfile, setViewingProfile] = useState(null)
   const [toastMessage, setToastMessage] = useState(null)
 
-  const showToast = (msg) => {
-    setToastMessage(msg)
-    setTimeout(() => setToastMessage(null), 3000)
+  const toastTimer = useRef(null)
+
+  const showToast = (message) => {
+    clearTimeout(toastTimer.current)
+    setToastMessage(message)
+    toastTimer.current = setTimeout(() => setToastMessage(null), 3000)
   }
 
+  useEffect(() => () => clearTimeout(toastTimer.current), [])
+
+  const memberName = (currentMember?.name?.trim() || 'You').replace(
+    /\p{L}+/gu,
+    (word, offset, fullName) => {
+      if (word !== word.toLocaleLowerCase()) return word
+      const isTrailingInitials = offset + word.length === fullName.length
+        && /\s$/.test(fullName.slice(0, offset))
+        && /^[b-df-hj-np-tv-z]{2}$/i.test(word)
+      if (isTrailingInitials) {
+        return word.toLocaleUpperCase()
+      }
+      return word[0].toLocaleUpperCase() + word.slice(1)
+    },
+  )
   const memberReligion = currentMember?.religion || 'Hindu'
   const memberCaste = (currentMember?.caste || '').trim()
 
-  // Dynamic counts for gender tabs based on current religion filter
-  const countsByGender = useMemo(() => {
-    let all = 0
-    let brides = 0
-    let grooms = 0
-
-    profiles.forEach((p) => {
-      if (p.id === currentMember?.id || (currentMember?.email && p.email === currentMember.email)) return
-      if (strictSameReligion) {
-        const pRel = (p.religion || '').trim().toLowerCase()
-        const mRel = (memberReligion || 'Hindu').trim().toLowerCase()
-        if (pRel !== mRel) return
-      }
-      const pG = (p.gender || '').toLowerCase()
-      all++
-      if (pG === 'bride' || pG === 'woman' || pG === 'female') brides++
-      if (pG === 'groom' || pG === 'man' || pG === 'male') grooms++
-    })
-
-    return { all, brides, grooms }
-  }, [profiles, currentMember, strictSameReligion, memberReligion])
-
-  const activeGenderLabel = useMemo(() => {
-    if (genderFilter === 'Bride') return 'Brides (Women)'
-    if (genderFilter === 'Groom') return 'Grooms (Men)'
-    return 'All Matches (Brides & Grooms)'
-  }, [genderFilter])
-
-  const activeGenderShort = useMemo(() => {
-    if (genderFilter === 'Bride') return 'Brides'
-    if (genderFilter === 'Groom') return 'Grooms'
-    return 'Candidates'
-  }, [genderFilter])
+  const hasRefinements = Boolean(searchQuery || !strictSameReligion || strictSameCaste
+    || selectedCaste !== 'all' || selectedMarriageType !== 'all')
+  const activeGenderLabel = isMemberMale ? 'Brides (Women)' : 'Grooms (Men)'
+  const activeGenderShort = isMemberMale ? 'Brides' : 'Grooms'
+  const matchingGenders = useMemo(
+    () => isMemberMale ? ['bride', 'woman', 'female'] : ['groom', 'man', 'male'],
+    [isMemberMale],
+  )
 
   // Fetch approved active profiles
   useEffect(() => {
+    const controller = new AbortController()
+    const { signal } = controller
+
     const fetchProfiles = async () => {
-      setIsLoading(true)
       try {
-        const res = await fetch(`${API_BASE}/profiles?status=approved`)
-        if (res.ok) {
-          const data = await res.json()
-          setProfiles(Array.isArray(data) ? data : [])
-        } else {
-          setError('Failed to fetch matched profiles')
+        const res = await fetch(`${API_BASE}/profiles?status=approved`, { signal })
+        if (!res.ok) {
+          if (!signal.aborted) setError('Failed to fetch matched profiles')
+          return
         }
+        const data = await res.json()
+        if (!signal.aborted) setProfiles(Array.isArray(data) ? data : [])
       } catch {
-        setError('Network error connecting to profiles service')
+        if (!signal.aborted) setError('Network error connecting to profiles service')
       } finally {
-        setIsLoading(false)
+        if (!signal.aborted) setIsLoading(false)
       }
     }
+
     fetchProfiles()
+    return () => controller.abort()
   }, [])
 
-  // Core Filtering Algorithm:
-  // 1. OPPOSITE GENDER (Female -> Male, Male -> Female)
-  // 2. SAME RELIGION (Strict by default as requested)
-  // 3. SAME CATEGORY / CASTE (Strict option or selected filter)
-  // 4. Exclude self
   const matchedProfiles = useMemo(() => {
     return profiles.filter((p) => {
-      // 1. Exclude logged in user's own profile
       if (p.id === currentMember?.id || (currentMember?.email && p.email === currentMember.email)) {
         return false
       }
 
-      // 2. GENDER MATCHING (Support Male, Female, and All)
-      const pGender = (p.gender || '').toLowerCase()
-      const isPGroom = pGender === 'groom' || pGender === 'man' || pGender === 'male'
-      const isPBride = pGender === 'bride' || pGender === 'woman' || pGender === 'female'
+      const gender = (p.gender || '').trim().toLowerCase()
+      if (!matchingGenders.includes(gender)) return false
 
-      if (genderFilter === 'Bride' && !isPBride) return false
-      if (genderFilter === 'Groom' && !isPGroom) return false
-      if (genderFilter === 'opposite') {
-        const isTargetMale = !isMemberMale
-        const matchesTargetGender = isTargetMale ? isPGroom : isPBride
-        if (!matchesTargetGender) return false
-      }
-
-      // 3. SAME RELIGION MATCHING
+      // SAME RELIGION MATCHING
       if (strictSameReligion) {
         const pReligion = (p.religion || '').trim().toLowerCase()
         const mReligion = memberReligion.trim().toLowerCase()
@@ -224,7 +201,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
       return true
     })
-  }, [profiles, isMemberMale, memberReligion, strictSameReligion, memberCaste, strictSameCaste, selectedCaste, selectedMarriageType, searchQuery, minAge, maxAge, currentMember])
+  }, [profiles, matchingGenders, memberReligion, strictSameReligion, memberCaste, strictSameCaste, selectedCaste, selectedMarriageType, searchQuery, minAge, maxAge, currentMember])
 
   // Extract unique castes available among matched religion profiles for filter dropdown
   const availableCastes = useMemo(() => {
@@ -344,10 +321,10 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
       />
 
       {/* 1. TOP NAVIGATION BAR */}
-      <header className="sticky top-0 z-40 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-[#eadfce] shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 bg-[#FAF7F1] border-b border-[#eadfce] shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 lg:h-20 flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo & Tagline */}
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <button
               onClick={onNavigateHome}
               className="flex items-center gap-2.5 group cursor-pointer text-left"
@@ -355,9 +332,9 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               <img
                 src="/kerala-kalyan-logo.png"
                 alt="Kerala Kalyans Matrimony"
-                className="h-10 sm:h-12 w-auto object-contain mix-blend-multiply group-hover:scale-105 transition"
+                className="h-8 sm:h-10 lg:h-12 w-auto object-contain mix-blend-multiply"
               />
-              <div className="hidden sm:block">
+              <div className="hidden whitespace-nowrap xl:block">
                 <span className="text-lg sm:text-xl font-bold tracking-tight text-[#701C35] block leading-tight">
                   Kerala Kalyans
                 </span>
@@ -369,36 +346,34 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
           </div>
 
           {/* Center Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1.5 bg-white/70 border border-[#eadfce] p-1 rounded-full text-xs font-semibold text-gray-600">
+          <nav className="hidden shrink-0 items-center gap-1.5 whitespace-nowrap bg-white/70 md:flex border border-[#eadfce] p-1 rounded-full text-xs font-semibold text-gray-600">
             <button
               onClick={onNavigateHome}
-              className="px-4 py-1.5 rounded-full hover:text-[#701C35] hover:bg-white transition cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-1.5 rounded-full hover:text-[#701C35] hover:bg-white cursor-pointer flex items-center gap-1.5"
             >
               <Home size={14} />
               <span>Home</span>
             </button>
-            <div className="px-4 py-1.5 rounded-full bg-[#701C35] text-white shadow-xs flex items-center gap-1.5 cursor-default">
+            <div aria-current="page" className="px-4 py-1.5 rounded-full bg-[#701C35] text-white shadow-xs flex items-center gap-1.5 cursor-default">
               <Sparkles size={14} />
               <span>My Matches ({matchedProfiles.length})</span>
             </div>
           </nav>
 
           {/* Cart, Logged in Member Profile & Actions */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-2 whitespace-nowrap sm:gap-3">
             {/* Selected Profiles Cart Button */}
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#eadfce] bg-white text-gray-750 hover:text-[#701C35] hover:border-[#701C35] transition shadow-xs text-xs font-bold cursor-pointer group"
+              className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#eadfce] bg-white text-gray-750 hover:text-[#701C35] hover:border-[#701C35] shadow-xs text-xs font-bold cursor-pointer group"
               title="View Selected Profiles Cart"
             >
-              <ShoppingCart size={15} className="group-hover:scale-110 transition text-[#701C35]" />
-              <span className="hidden sm:inline">Cart</span>
-              {cartProfileIds.length > 0 && (
-                <span className="h-5 min-w-5 px-1 rounded-full bg-[#701C35] text-white text-[10px] font-bold flex items-center justify-center animate-in zoom-in-50">
-                  {cartProfileIds.length}
-                </span>
-              )}
+              <ShoppingCart size={15} className="shrink-0 text-[#701C35]" />
+              <span className="hidden lg:inline">Cart</span>
+              <span className={`flex size-5 shrink-0 items-center justify-center rounded-full bg-[#701C35] text-[10px] font-bold tabular-nums text-white ${cartProfileIds.length ? '' : 'invisible'}`}>
+                {cartProfileIds.length > 99 ? '99+' : cartProfileIds.length}
+              </span>
             </button>
 
             <button
@@ -408,20 +383,15 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                   window.location.hash = `#profile/${currentMember.id}`
                 }
               }}
-              className="flex items-center gap-2.5 bg-white hover:bg-[#FAF7F1] pl-2 pr-3.5 py-1.5 rounded-full border border-[#eadfce] hover:border-[#701C35]/50 shadow-xs cursor-pointer transition text-left group"
+              className="flex items-center gap-2.5 bg-white hover:bg-[#FAF7F1] p-1.5 lg:pl-2 lg:pr-3.5 rounded-full border border-[#eadfce] hover:border-[#701C35]/50 shadow-xs cursor-pointer text-left group"
               title="Click to view your own complete profile"
             >
-              <img
-                src={
-                  currentMember?.photo ||
-                  (isMemberMale
-                    ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200'
-                    : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200')
-                }
-                alt={currentMember?.name || 'Member'}
-                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover border border-[#701C35]/30 group-hover:scale-105 transition"
+              <SafeAvatar
+                src={currentMember?.photo}
+                name={currentMember?.name || 'Member'}
+                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover border border-[#701C35]/30 shrink-0"
               />
-              <div className="text-left hidden sm:block">
+              <div className="text-left hidden lg:block">
                 <div className="text-xs font-bold text-gray-900 leading-tight max-w-[120px] truncate group-hover:text-[#701C35]">
                   {currentMember?.name || 'Member'}
                 </div>
@@ -434,39 +404,39 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
             <button
               onClick={onLogout}
-              className="p-2 sm:px-3 sm:py-2 rounded-full sm:rounded-lg border border-[#eadfce] bg-white text-gray-600 hover:text-red-700 hover:border-red-200 hover:bg-red-50/50 transition cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+              className="p-2 sm:px-3 sm:py-2 rounded-full sm:rounded-lg border border-[#eadfce] bg-white text-gray-600 hover:text-red-700 hover:border-red-200 hover:bg-red-50/50 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
               title="Sign Out"
             >
               <LogOut size={16} />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden lg:inline">Logout</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* 2. MATCH CRITERIA HERO BANNER */}
-      <section className="bg-gradient-to-r from-[#701C35] via-[#5C1429] to-[#3E0A1A] text-white py-8 sm:py-10 px-4 sm:px-6 shadow-md">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
+      <section className="bg-gradient-to-r from-[#701C35] via-[#5C1429] to-[#3E0A1A] text-white px-4 py-5 shadow-md sm:px-6 lg:px-8 lg:py-7">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+          <div className="min-w-0 flex-[1_1_28rem] space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs border border-white/20 text-xs font-semibold text-[#E8CA91]">
               <Sparkles size={13} />
               <span>AUTOMATIC COMPATIBILITY FILTER</span>
             </div>
             <h1 className="text-2xl sm:text-4xl tracking-tight text-white leading-tight">
-              Curated Matches for {currentMember?.name || 'You'}
+              Curated Matches for{' '}<span className="inline-block max-w-full [overflow-wrap:anywhere]">{memberName}</span>
             </h1>
             <p className="text-xs sm:text-sm text-gray-200 max-w-2xl leading-relaxed">
-              Listing verified <b>{activeGenderLabel}</b> matching your religion:{' '}
+              Listing verified <b>{activeGenderLabel}</b> from{' '}
               <span className="text-[#E8CA91] font-bold underline decoration-[#E8CA91]/50 underline-offset-4">
-                {memberReligion}
+                {strictSameReligion ? memberReligion : 'all religions'}
               </span>
               . Connect with genuine matrimonial profiles seeking life partners.
             </p>
           </div>
 
           {/* Quick Context Card */}
-          <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 flex items-center gap-4 flex-shrink-0 self-start md:self-auto">
-            <div className="h-12 w-12 rounded-xl bg-[#E8CA91] text-[#701C35] flex items-center justify-center font-bold text-lg shadow-inner">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 flex max-w-full items-center gap-3 px-3 py-2.5 sm:px-4">
+            <div className="h-10 w-14 shrink-0 rounded-xl tabular-nums bg-[#E8CA91] text-[#701C35] flex items-center justify-center font-bold text-lg shadow-inner">
               {matchedProfiles.length}
             </div>
             <div className="text-left">
@@ -474,7 +444,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 Available Matches
               </span>
               <span className="text-base sm:text-lg font-bold text-white block">
-                {activeGenderShort} in {memberReligion}
+                {activeGenderShort} ? {strictSameReligion ? memberReligion : 'All religions'}
               </span>
             </div>
           </div>
@@ -482,24 +452,26 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
       </section>
 
       {/* 3. MAIN CONTENT AREA */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex-1 w-full space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 flex-1 w-full space-y-4 sm:space-y-5">
         {/* FILTER & SEARCH TOOLBAR */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#eadfce] shadow-xs space-y-4">
+        <div className="bg-white rounded-2xl p-3 sm:p-4 border border-[#eadfce] shadow-xs space-y-2.5">
           {/* Top Row: Search Input & Gender Segmented Switch */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5">
+          <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center">
             {/* Search Input */}
-            <div className="relative flex-1 max-w-lg min-w-[260px]">
+            <div className="relative min-w-0 flex-1">
               <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               <input
                 type="text"
+                aria-label="Search matches"
                 placeholder="Search matches by name, caste, job, location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl border border-gray-200 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] transition bg-gray-50/40 hover:bg-white focus:bg-white"
+                className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl border border-gray-200 focus:outline-none focus:border-[#701C35] focus:ring-1 focus:ring-[#701C35] bg-gray-50/40 hover:bg-white focus:bg-white"
               />
               {searchQuery && (
                 <button
                   type="button"
+                  aria-label="Clear search"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
                 >
@@ -508,67 +480,28 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               )}
             </div>
 
-            {/* Gender Selector: Male, Female, and All Profiles with Badge Counts */}
-            <div className="inline-flex items-center gap-1 bg-[#FAF7F1] p-1.5 rounded-xl border border-[#eadfce] text-xs font-semibold self-start md:self-auto flex-wrap">
-              <button
-                type="button"
-                onClick={() => setGenderFilter('Bride')}
-                className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
-                  genderFilter === 'Bride'
-                    ? 'bg-[#701C35] text-white shadow-xs'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
-                }`}
-              >
-                <span>Brides (Women)</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[11px] font-bold ${genderFilter === 'Bride' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'}`}>
-                  {countsByGender.brides}
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setGenderFilter('Groom')}
-                className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
-                  genderFilter === 'Groom'
-                    ? 'bg-[#701C35] text-white shadow-xs'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
-                }`}
-              >
-                <span>Grooms (Men)</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[11px] font-bold ${genderFilter === 'Groom' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'}`}>
-                  {countsByGender.grooms}
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setGenderFilter('all')}
-                className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
-                  genderFilter === 'all'
-                    ? 'bg-[#701C35] text-white shadow-xs'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
-                }`}
-              >
-                <span>All Matches</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[11px] font-bold ${genderFilter === 'all' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'}`}>
-                  {countsByGender.all}
-                </span>
-              </button>
+            <div className="inline-flex self-start items-center gap-1.5 rounded-lg bg-[#701C35] px-3 py-1.5 text-xs font-semibold text-white shadow-xs lg:self-center">
+              <span>{activeGenderLabel}</span>
+              <span className="w-[6ch] rounded-full bg-white/20 px-1 text-center text-[11px] font-bold tabular-nums">
+                {matchedProfiles.length}
+              </span>
             </div>
           </div>
 
           {/* Row 2: Secondary Refinement Filters */}
-          <div className="flex flex-wrap items-center gap-2.5 text-xs pt-2 border-t border-gray-100">
+          <div className="grid grid-cols-2 items-stretch gap-2 border-t border-gray-100 pt-2 text-xs xl:grid-cols-4">
             {/* Strict Religion Toggle Button */}
             <button
               type="button"
               onClick={() => setStrictSameReligion(!strictSameReligion)}
-              className={`px-3.5 py-2 rounded-xl border font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
+              className={`min-w-0 px-2.5 py-2 rounded-xl border font-semibold cursor-pointer flex items-center justify-center gap-1.5 shadow-xs [overflow-wrap:anywhere] ${
                 strictSameReligion
                   ? 'bg-[#701C35] text-white border-[#701C35]'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-[#FAF7F1]'
               }`}
               title="Toggle between Same Religion and All Religions"
             >
-              <Check size={14} className={strictSameReligion ? 'opacity-100' : 'opacity-0'} />
+              <Check size={14} aria-hidden="true" className={`shrink-0 ${strictSameReligion ? "" : "invisible"}`} />
               <span>Same Religion ({memberReligion})</span>
             </button>
 
@@ -581,56 +514,57 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                   setStrictSameCaste(next)
                   if (next) setSelectedCaste('all')
                 }}
-                className={`px-3.5 py-2 rounded-xl border font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
+                className={`min-w-0 px-2.5 py-2 rounded-xl border font-semibold cursor-pointer flex items-center justify-center gap-1.5 shadow-xs [overflow-wrap:anywhere] ${
                   strictSameCaste
                     ? 'bg-[#701C35] text-white border-[#701C35]'
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-[#FAF7F1]'
                 }`}
                 title={`Filter profiles strictly for your category (${memberCaste.toUpperCase()})`}
               >
-                <Check size={14} className={strictSameCaste ? 'opacity-100' : 'opacity-0'} />
+                <Check size={14} aria-hidden="true" className={`shrink-0 ${strictSameCaste ? "" : "invisible"}`} />
                 <span>Same Category ({memberCaste.toUpperCase()})</span>
               </button>
             )}
 
             {/* Caste Filter Dropdown */}
-            {availableCastes.length > 0 && (
-              <div className="relative">
-                <select
-                  value={strictSameCaste ? (availableCastes.find(c => c.toLowerCase() === memberCaste.toLowerCase()) || 'all') : selectedCaste}
-                  onChange={(e) => {
-                    const val = e.target.value
-                    setSelectedCaste(val)
-                    if (val === 'all') {
-                      setStrictSameCaste(false)
-                    } else if (memberCaste && val.toLowerCase() === memberCaste.toLowerCase()) {
-                      setStrictSameCaste(true)
-                    } else {
-                      setStrictSameCaste(false)
-                    }
-                  }}
-                  className="appearance-none bg-white border border-gray-200 px-3.5 py-2 pr-8 rounded-xl font-medium text-gray-700 focus:outline-none focus:border-[#701C35] text-xs cursor-pointer shadow-xs"
-                >
-                  <option value="all">All {strictSameReligion ? `${memberReligion} ` : ''}Castes</option>
-                  {availableCastes.map((c) => {
-                    const isMyCategory = memberCaste && c.toLowerCase() === memberCaste.toLowerCase()
-                    return (
-                      <option key={c} value={c}>
-                        {c} {isMyCategory ? '★ (Same Category)' : ''}
-                      </option>
-                    )
-                  })}
-                </select>
-                <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              </div>
-            )}
+            <div className="relative min-w-0">
+              <select
+                aria-label="Caste"
+                disabled={availableCastes.length === 0}
+                value={strictSameCaste ? (availableCastes.find(c => c.toLowerCase() === memberCaste.toLowerCase()) || 'all') : selectedCaste}
+                onChange={(e) => {
+                  const val = e.target.value
+                  setSelectedCaste(val)
+                  if (val === 'all') {
+                    setStrictSameCaste(false)
+                  } else if (memberCaste && val.toLowerCase() === memberCaste.toLowerCase()) {
+                    setStrictSameCaste(true)
+                  } else {
+                    setStrictSameCaste(false)
+                  }
+                }}
+                className="w-full min-w-0 truncate appearance-none rounded-xl border border-gray-200 bg-white px-2.5 py-2 pr-7 text-xs font-medium text-gray-700 shadow-xs focus:border-[#701C35] focus:outline-none enabled:cursor-pointer disabled:opacity-50"
+              >
+                <option value="all">All {strictSameReligion ? `${memberReligion} ` : ''}Castes</option>
+                {availableCastes.map((c) => {
+                  const isMyCategory = memberCaste && c.toLowerCase() === memberCaste.toLowerCase()
+                  return (
+                    <option key={c} value={c}>
+                      {c} {isMyCategory ? '★ (Same Category)' : ''}
+                    </option>
+                  )
+                })}
+              </select>
+              <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            </div>
 
             {/* Marriage Type Filter Dropdown */}
             <div className="relative">
               <select
+                aria-label="Marriage type"
                 value={selectedMarriageType}
                 onChange={(e) => setSelectedMarriageType(e.target.value)}
-                className="appearance-none bg-white border border-gray-200 px-3.5 py-2 pr-8 rounded-xl font-medium text-gray-700 focus:outline-none focus:border-[#701C35] text-xs cursor-pointer shadow-xs"
+                className="w-full min-w-0 truncate appearance-none bg-white border border-gray-200 px-2.5 py-2 pr-7 rounded-xl font-medium text-gray-700 focus:outline-none focus:border-[#701C35] text-xs cursor-pointer shadow-xs"
               >
                 <option value="all">All Marriage Types</option>
                 <option value="Never Married">Never Married</option>
@@ -644,25 +578,27 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
             </div>
 
             {/* Clear all filters */}
-            {(searchQuery || !strictSameReligion || strictSameCaste || selectedCaste !== 'all' || selectedMarriageType !== 'all') && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('')
-                  setStrictSameReligion(true)
-                  setStrictSameCaste(false)
-                  setSelectedCaste('all')
-                  setSelectedMarriageType('all')
-                }}
-                className="px-3 py-2 text-xs font-semibold text-[#701C35] hover:underline cursor-pointer ml-auto"
-              >
-                Reset Filters
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('')
+                setStrictSameReligion(true)
+                setStrictSameCaste(false)
+                setSelectedCaste('all')
+                setSelectedMarriageType('all')
+              }}
+              disabled={!hasRefinements}
+              className="col-span-full justify-self-end px-3 py-1 text-xs font-semibold text-[#701C35] enabled:cursor-pointer enabled:hover:underline disabled:opacity-50"
+            >
+              Reset Filters
+            </button>
           </div>
 
           {/* Active Filter Pills Bar */}
-          <div className="flex items-center gap-2 text-xs text-gray-500 pt-2 border-t border-gray-100 flex-wrap">
+          <div className="flex h-11 items-start gap-2 overflow-x-auto whitespace-nowrap border-t border-gray-100 pt-2 text-xs text-gray-500 [scrollbar-width:thin]"
+            role="region"
+            aria-label="Active filters"
+            tabIndex={0}>
             <span className="font-semibold text-gray-400 text-[13px] uppercase tracking-wider">Active Filters:</span>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[13px] font-semibold">
               Looking for: {activeGenderLabel}
@@ -692,9 +628,13 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
         {/* 4. PROFILES GRID OR LOADING / EMPTY STATE */}
         {isLoading ? (
-          <div className="py-24 text-center">
-            <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-[#701C35] border-t-transparent mb-4" />
-            <p className="text-sm font-semibold text-gray-600">Finding your perfect {memberReligion} matches...</p>
+          <div role="status" className="grid min-h-[29rem] content-center justify-items-center text-center sm:min-h-[30rem] lg:min-h-[32rem]">
+            <div className="inline-block motion-safe:animate-spin rounded-full h-10 w-10 border-4 border-[#701C35] border-t-transparent mb-4" />
+            <p className="text-sm font-semibold text-gray-600">Finding your matches...</p>
+          </div>
+        ) : error ? (
+          <div role="alert" className="mx-auto max-w-md rounded-2xl border border-[#eadfce] bg-white p-6 text-center text-sm">
+            {error}. Refresh the page to try again.
           </div>
         ) : matchedProfiles.length === 0 ? (
           <div className="bg-white rounded-2xl border border-[#eadfce] p-12 text-center max-w-md mx-auto space-y-4 shadow-xs">
@@ -705,7 +645,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               No Matches Found Under Current Filters
             </h3>
             <p className="text-xs text-gray-500 leading-relaxed">
-              We couldn't find any other verified <b>{targetGender}s</b> in <b>{memberReligion}</b> matching your search criteria.
+              No verified profiles match your selected gender, search, and filters.
             </p>
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
               <button
@@ -713,9 +653,11 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 onClick={() => {
                   setSearchQuery('')
                   setSelectedCaste('all')
+                  setStrictSameCaste(false)
+                  setSelectedMarriageType('all')
                   setStrictSameReligion(false)
                 }}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#701C35] hover:bg-[#8B2342] text-white text-xs font-semibold transition cursor-pointer shadow-sm"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#701C35] hover:bg-[#8B2342] text-white text-xs font-semibold cursor-pointer shadow-sm"
               >
                 Expand Search to All Religions
               </button>
@@ -724,13 +666,13 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {matchedProfiles.map((p) => {
-              const isInterestSent = interestsSent.includes(p.id)
+              const isInCart = cartProfileIds.includes(p.id)
               const isSaved = shortlisted.includes(p.id)
 
               return (
                 <div
                   key={p.id}
-                  className="bg-white rounded-2xl border border-[#eadfce] overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group"
+                  className="flex min-h-[29rem] min-w-0 flex-col overflow-hidden rounded-2xl border border-[#eadfce] bg-white shadow-xs sm:min-h-[30rem] lg:min-h-[32rem]"
                 >
                   {/* Photo Container */}
                   <div
@@ -738,28 +680,34 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                       if (onViewProfile) onViewProfile(p.id)
                       else window.location.hash = `#profile/${p.id}`
                     }}
-                    className="relative h-64 sm:h-72 w-full overflow-hidden bg-gray-100 cursor-pointer"
+                    className="group/photo relative h-52 w-full shrink-0 cursor-pointer overflow-hidden bg-gray-100 sm:h-56 lg:h-64"
                     title="Click to view full separate profile page"
                   >
                     <img
-                      src={p.photo}
+                      src={p.photo || '/kerala-hero-couple.jpg'}
                       alt={p.name}
-                      className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none"
+                      onError={(e) => {
+                        const fallback = '/kerala-hero-couple.jpg'
+                        if (e.currentTarget.getAttribute('src') !== fallback) {
+                          e.currentTarget.src = fallback
+                        }
+                      }}
+                      className="h-full w-full object-cover object-top motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover/photo:scale-105 select-none pointer-events-none"
                       loading="lazy"
                       draggable={false}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20 pointer-events-none" />
 
                     {/* Hover "View Profile" Pill Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                      <span className="px-4 py-2 rounded-full bg-white/95 backdrop-blur-md text-[#701C35] font-bold text-xs shadow-xl flex items-center gap-1.5 border border-[#eadfce] transform group-hover:scale-105 transition-transform">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/photo:opacity-100 motion-safe:transition-opacity motion-safe:duration-200 pointer-events-none">
+                      <span className="px-4 py-2 rounded-full bg-white/95 backdrop-blur-md text-[#701C35] font-bold text-xs shadow-xl flex items-center gap-1.5 border border-[#eadfce]">
                         <Eye size={15} />
                         <span>View Profile</span>
                       </span>
                     </div>
 
                     {/* Top Badges */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                    <div className="absolute inset-x-4 top-4 sm:inset-x-5 sm:top-5 flex items-center justify-between pointer-events-none">
                       <div className="flex items-center gap-1.5">
                         {/* Checkbox to select profile for moving to Cart */}
                         <div
@@ -798,12 +746,12 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                             e.stopPropagation()
                             handleToggleCart(p)
                           }}
-                          className={`p-2 rounded-full backdrop-blur-md transition cursor-pointer ${
-                            cartProfileIds.includes(p.id)
+                          className={`p-2 rounded-full backdrop-blur-md cursor-pointer ${
+                            isInCart
                               ? 'bg-[#701C35] text-white shadow-md'
                               : 'bg-black/40 text-white hover:bg-black/60'
                           }`}
-                          title={cartProfileIds.includes(p.id) ? 'In Cart' : 'Add to Cart'}
+                          title={isInCart ? 'Remove from Cart' : 'Add to Cart'}
                         >
                           <ShoppingCart size={14} />
                         </button>
@@ -814,7 +762,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                             e.stopPropagation()
                             handleToggleShortlist(p)
                           }}
-                          className={`p-2 rounded-full backdrop-blur-md transition cursor-pointer ${
+                          className={`p-2 rounded-full backdrop-blur-md cursor-pointer ${
                             isSaved
                               ? 'bg-amber-400 text-white shadow-md'
                               : 'bg-black/40 text-white hover:bg-black/60'
@@ -891,7 +839,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                           if (onViewProfile) onViewProfile(p.id)
                           else window.location.hash = `#profile/${p.id}`
                         }}
-                        className="w-full py-2.5 px-2 rounded-xl border border-[#701C35] bg-white hover:bg-[#701C35] text-[#701C35] hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition duration-200 cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
+                        className="w-full py-2.5 px-2 rounded-xl border border-[#701C35] bg-white hover:bg-[#701C35] text-[#701C35] hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 motion-safe:transition-transform motion-safe:duration-200 cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
                         title="View Full Profile Details"
                       >
                         <Eye size={14} />
@@ -900,15 +848,18 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
 
                       <button
                         type="button"
-                        onClick={() => handleSendInterest(p)}
-                        className={`w-full py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition duration-200 cursor-pointer shadow-xs active:scale-95 ${
-                          isInterestSent
+                        onClick={() => {
+                          if (isInCart) setIsCartOpen(true)
+                          else handleToggleCart(p)
+                        }}
+                        className={`w-full py-2.5 px-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 motion-safe:transition-transform motion-safe:duration-200 cursor-pointer shadow-xs active:scale-95 ${
+                          isInCart
                             ? 'bg-emerald-600 text-white'
                             : 'bg-[#701C35] hover:bg-[#5C1429] text-white'
                         }`}
                       >
-                        <Heart size={14} fill={isInterestSent ? 'white' : 'none'} />
-                        <span>{isInterestSent ? 'Connected' : 'Connect'}</span>
+                        <ShoppingCart size={14} className="shrink-0" aria-hidden="true" />
+                        <span>{isInCart ? 'View Cart' : 'Add to Cart'}</span>
                       </button>
                     </div>
                   </div>
@@ -926,9 +877,13 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
             {/* Header Image Cover */}
             <div className="relative h-48 sm:h-56 bg-gray-900 overflow-hidden">
               <img
-                src={viewingProfile.photo}
+                src={viewingProfile.photo || '/kerala-hero-couple.jpg'}
                 alt={viewingProfile.name}
-                className="h-full w-full object-cover object-center filter brightness-90 select-none pointer-events-none"
+                onError={(e) => {
+                  e.currentTarget.onerror = null
+                  e.currentTarget.src = '/kerala-hero-couple.jpg'
+                }}
+                className="h-full w-full object-cover object-top filter brightness-90 select-none pointer-events-none"
                 draggable={false}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
@@ -936,7 +891,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               <button
                 type="button"
                 onClick={() => setViewingProfile(null)}
-                className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition cursor-pointer"
+                className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -1017,7 +972,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 <div className="flex flex-col sm:flex-row gap-2 pt-1 text-xs">
                   <a
                     href="tel:+918075588406"
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#701C35] hover:bg-[#511327] text-white font-semibold transition"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#701C35] hover:bg-[#511327] text-white font-semibold"
                   >
                     <Phone size={13} />
                     <span>Call: (+91) 80755 88406</span>
@@ -1026,7 +981,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                     href={`https://wa.me/917907348468?text=Hello%20Kerala%20Kalyans,%20I%20am%20interested%20in%20Profile%20ID:%20${encodeURIComponent(viewingProfile.id || '')}%20(${encodeURIComponent(viewingProfile.name || '')})`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold transition"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold"
                   >
                     <MessageCircle size={13} />
                     <span>WhatsApp: (+91) 79073 48468</span>
@@ -1040,7 +995,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
               <button
                 type="button"
                 onClick={() => setViewingProfile(null)}
-                className="px-4 py-2 rounded-xl border border-gray-300 bg-white text-gray-700 font-semibold text-xs hover:bg-gray-50 transition cursor-pointer"
+                className="px-4 py-2 rounded-xl border border-gray-300 bg-white text-gray-700 font-semibold text-xs hover:bg-gray-50 cursor-pointer"
               >
                 Close
               </button>
@@ -1049,7 +1004,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
                 onClick={() => {
                   handleSendInterest(viewingProfile)
                 }}
-                className="px-5 py-2 rounded-xl bg-[#701C35] hover:bg-[#8B2342] text-white font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm"
+                className="px-5 py-2 rounded-xl bg-[#701C35] hover:bg-[#8B2342] text-white font-bold text-xs cursor-pointer flex items-center gap-1.5 shadow-sm"
               >
                 <Heart size={14} fill={interestsSent.includes(viewingProfile.id) ? 'white' : 'none'} />
                 <span>{interestsSent.includes(viewingProfile.id) ? 'Interest Sent' : 'Send Interest'}</span>
@@ -1073,7 +1028,7 @@ export default function MemberMatchesPage({ currentMember, onLogout, onNavigateH
             <button
               type="button"
               onClick={handleBatchMoveToCart}
-              className="px-4 py-2 rounded-xl bg-[#E8CA91] text-[#701C35] font-bold hover:bg-[#d4b06f] transition cursor-pointer shadow-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#E8CA91] text-[#701C35] font-bold hover:bg-[#d4b06f] cursor-pointer shadow-xs flex items-center gap-1.5"
             >
               <ShoppingCart size={14} />
               <span>Move to Cart</span>

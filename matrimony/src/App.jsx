@@ -164,9 +164,11 @@ export default function App() {
     window.location.hash = '#matches'
   }
 
+  const showMatches = isMatchesView && currentMember && !viewingProfileId && !isChangePasswordView && !isAdminView
+
   return (
     <NotificationProvider>
-      <div className="relative min-w-[320px] overflow-x-hidden">
+      <div className="relative overflow-x-clip">
         {viewingProfileId ? (
           <ProfileDetailsPage
             profileId={viewingProfileId}
@@ -183,7 +185,7 @@ export default function App() {
           <ChangePasswordPage onPasswordChanged={handlePasswordChangedSuccess} />
         ) : isAdminView ? (
           <AdminPage onExit={exitAdmin} />
-        ) : isMatchesView && currentMember ? (
+        ) : showMatches ? (
           <MemberMatchesPage
             currentMember={currentMember}
             onLogout={handleLogoutMember}
@@ -204,7 +206,7 @@ export default function App() {
           <MembershipWarning key={currentMember.id} memberId={currentMember.id} />
         )}
         {/* Floating WhatsApp Contact Button (Hidden on Admin Page) */}
-        {!isAdminView && <FloatingWhatsAppButton number={contact.whatsapp} />}
+        {!isAdminView && <FloatingWhatsAppButton number={contact.whatsapp} inline={Boolean(showMatches)} />}
       </div>
     </NotificationProvider>
   )

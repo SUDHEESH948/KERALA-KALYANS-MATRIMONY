@@ -47,12 +47,12 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    overflow-x: clip;
   }
 
   body {
-    overflow-x: hidden;
-    min-width: 320px;
+    overflow-x: clip;
     font-family: var(--font-sans);
     font-size: var(--text-base);
     font-weight: 400;

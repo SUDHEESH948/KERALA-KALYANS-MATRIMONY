@@ -1,5 +1,6 @@
 import { Menu, X, ShieldCheck, LogIn, LogOut, UserCheck, Sparkles, Home, Users, Crown, UserPlus } from 'lucide-react'
 import { useNotification } from '../context/NotificationContext'
+import SafeAvatar from './SafeAvatar'
 
 export default function Navbar({
   onOpenAdmin,
@@ -58,9 +59,9 @@ export default function Navbar({
                 className="flex items-center gap-2.5 bg-white hover:bg-[#f1f3f3] px-3 py-1.5 rounded-full border border-[#eadfce] shadow-xs cursor-pointer transition"
                 title="View your compatible matches"
               >
-                <img
+                <SafeAvatar
                   src={currentMember.photo}
-                  alt={currentMember.name}
+                  name={currentMember.name}
                   className="h-7 w-7 rounded-full object-cover border border-[#c79c18]/40"
                 />
                 <div className="text-left font-sans">
@@ -111,10 +112,11 @@ export default function Navbar({
               className="flex items-center gap-1.5 bg-[#701C35] hover:bg-[#511327] px-3 py-1.5 rounded-full text-white shadow-xs active:scale-95 transition cursor-pointer"
               title="Click to view your Matches"
             >
-              <img
+              <SafeAvatar
                 src={currentMember.photo}
-                alt={currentMember.name}
+                name={currentMember.name}
                 className="h-5 w-5 rounded-full object-cover border border-white/40"
+                fallbackClassName="bg-white/20 text-white text-[10px]"
               />
               <span className="text-[13px] font-bold max-w-[75px] truncate">
                 {currentMember.name}
@@ -138,9 +140,9 @@ export default function Navbar({
           {currentMember && (
             <div className="mb-4 flex items-center justify-between rounded-2xl border border-[#eadfce] bg-white p-3">
               <div className="flex items-center gap-2.5 min-w-0">
-                <img
+                <SafeAvatar
                   src={currentMember.photo}
-                  alt={currentMember.name}
+                  name={currentMember.name}
                   className="h-9 w-9 rounded-full object-cover border border-[#c79c18]/40"
                 />
                 <div className="min-w-0">

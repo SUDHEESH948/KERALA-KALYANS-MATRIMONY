@@ -1,25 +1,25 @@
 import { whatsappLink } from '../config/contact'
 
-export default function FloatingWhatsAppButton({ number }) {
+export default function FloatingWhatsAppButton({ number, inline = false }) {
   const message = encodeURIComponent('Hello Kerala Kalyans Matrimony, I am interested in registration and profile services.')
   const whatsappUrl = `${whatsappLink(number)}?text=${message}`
 
   return (
     <aside
       aria-label="WhatsApp Contact Support"
-      className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40"
+      className={inline ? "mx-auto flex w-full max-w-7xl justify-end px-4 pb-6 sm:px-6 lg:px-8" : "fixed bottom-5 right-4 z-40 sm:bottom-6 sm:right-6"}
     >
       {/* Floating Circular WhatsApp Button */}
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="relative flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-2xl hover:shadow-emerald-500/40 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+        className="relative flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-2xl motion-safe:transition-transform motion-safe:hover:scale-105 active:scale-95 cursor-pointer"
         title={`Chat with Kerala Kalyans on WhatsApp: ${number}`}
         aria-label="Chat on WhatsApp"
       >
         {/* Soft ripple pulse */}
-        <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-35 animate-ping pointer-events-none" />
+        {!inline && <span className="pointer-events-none absolute inset-0 rounded-full bg-[#25D366] opacity-35 motion-safe:animate-ping" />}
 
         {/* WhatsApp Vector Icon */}
         <svg
