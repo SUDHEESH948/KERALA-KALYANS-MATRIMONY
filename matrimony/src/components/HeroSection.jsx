@@ -14,8 +14,11 @@ export default function HeroSection({ lookingFor, setLookingFor, ageFrom, setAge
   const ageOptions = ages.map(age => <option key={age} value={age}>{age}</option>)
   return <section className="bg-white px-3 pb-8 sm:px-6 sm:pb-12 lg:px-10">
     <div className="relative mx-auto min-h-[620px] max-w-[1440px] overflow-hidden rounded-[26px] bg-[#252b2e] sm:min-h-[650px] sm:rounded-[34px] md:min-h-[680px]">
-    <img src="/Gemini_Generated_Image_hlp8u6hlp8u6hlp8.png" alt="Kerala wedding celebration" className="absolute inset-0 hidden h-full w-full object-cover object-[center_15%] md:block" />
-    <img src="/erasio_Gemini_Generated_Image_yr2m55yr2m55yr2m (1).png" alt="Kerala wedding celebration" className="absolute inset-0 block h-full w-full object-cover object-top md:hidden" />
+    <picture>
+      <source media="(min-width: 1024px)" srcSet="/homepage/desctop.png" />
+      <source media="(min-width: 640px)" srcSet="/homepage/tab.png" />
+      <img src="/homepage/mobile.png" alt="Kerala wedding celebration" className="absolute inset-0 h-full w-full object-cover object-[center_15%]" />
+    </picture>
     <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/75 via-black/30 to-black/10" />
     <div className="relative z-10 mx-auto flex min-h-[620px] w-full max-w-[1320px] flex-col px-5 py-10 sm:min-h-[650px] sm:px-10 sm:py-12 md:min-h-[680px] md:px-12 md:py-12">
       <motion.div className="flex h-full flex-1 flex-col justify-between" initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
