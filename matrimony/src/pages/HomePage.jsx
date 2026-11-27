@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import HeroSection from '../components/HeroSection'
 import TrustSection from '../components/TrustSection'
+import HappyCouplesSection from '../components/HappyCouplesSection'
 import CommunitySection from '../components/CommunitySection'
 import StoriesSection from '../components/StoriesSection'
 import MembershipSection from '../components/MembershipSection'
@@ -133,6 +134,9 @@ export default function HomePage({ onOpenAdmin, onOpenMatches, contact }) {
 
       {/* 3. Trust & Statistics Section */}
       <TrustSection platformStats={platformStats} />
+
+      {/* 4. Happy Couples Section */}
+      <HappyCouplesSection />
 
       {/* 5. Matrimony By Community Section */}
       <CommunitySection />

@@ -13,9 +13,11 @@ import inquiryRoutes from './routes/inquiryRoutes.js'
 import statsRoutes from './routes/statsRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
 import photoRoutes from './routes/photoRoutes.js'
+import happyCoupleRoutes from './routes/happyCoupleRoutes.js'
 import { purgeDummyData } from './controllers/statsController.js'
 import { notFound, errorHandler } from './middleware/errorHandler.js'
 import { startMarriageSurveyScheduler } from './services/marriageSurvey.js'
+import { startOcrService } from './services/ocrProcess.js'
 
 // Environment Configuration
 const __filename = fileURLToPath(import.meta.url)
@@ -37,6 +39,7 @@ app.use('/api/inquiries', inquiryRoutes)
 app.use('/api/stats', statsRoutes)
 app.use('/api/contact', contactRoutes)
 app.use('/api/photos', photoRoutes)
+app.use('/api/happy-couples', happyCoupleRoutes)
 app.post('/api/admin/clean-dummy-data', purgeDummyData)
 
 // Health Check
@@ -62,7 +65,11 @@ const startServer = async () => {
 
     const server = app.listen(PORT, () => {
       const stopMarriageSurveyScheduler = startMarriageSurveyScheduler()
-      server.once('close', stopMarriageSurveyScheduler)
+      const stopOcrService = startOcrService()
+      server.once('close', () => {
+        stopMarriageSurveyScheduler()
+        stopOcrService()
+      })
       console.log('==============================================')
       console.log(` Apremiya Matrimony Server Running!`)
       console.log(` Mode: ${process.env.NODE_ENV || 'development'}`)

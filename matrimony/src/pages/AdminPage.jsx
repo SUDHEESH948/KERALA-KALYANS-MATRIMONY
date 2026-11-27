@@ -38,6 +38,7 @@ import AdminContactDialog from "../components/AdminContactDialog";
 import AdminBulkUploadModal from "../components/AdminBulkUploadModal";
 import { useNotification } from "../context/NotificationContext";
 import AdminWhatsAppFollowUps from "../components/AdminWhatsAppFollowUps";
+import AdminHappyCouplesTab from "../components/AdminHappyCouplesTab";
 import {
   KERALA_NAKSHATRAS,
   KERALA_DISTRICTS,
@@ -93,6 +94,7 @@ export default function AdminPage({ onExit }) {
   const [stats, setStats] = useState(null);
   const [profiles, setProfiles] = useState([]);
   const [inquiries, setInquiries] = useState([]);
+  const [happyCouples, setHappyCouples] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -186,6 +188,7 @@ export default function AdminPage({ onExit }) {
     setApprovalModal(null);
     setProfiles([]);
     setInquiries([]);
+    setHappyCouples([]);
     setLoginError(message);
   }, []);
 
@@ -240,12 +243,13 @@ export default function AdminPage({ onExit }) {
     if (!token) return;
     if (!isSilent) setIsLoading(true);
     try {
-      const [resStats, resProfiles, resInquiries] = await Promise.all([
+      const [resStats, resProfiles, resInquiries, resCouples] = await Promise.all([
         fetch(`${API_BASE}/stats`),
         fetchAsAdmin(`${API_BASE}/profiles/admin`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(`${API_BASE}/inquiries`),
+        fetch(`${API_BASE}/happy-couples`),
       ]);
       if (resProfiles.status === 401 || resProfiles.status === 403 ||
           localStorage.getItem("apremiya_admin_token") !== token) return;
@@ -266,6 +270,11 @@ export default function AdminPage({ onExit }) {
       if (resInquiries.ok) {
         const inqs = await resInquiries.json();
         setInquiries(Array.isArray(inqs) ? inqs : []);
+      }
+
+      if (resCouples.ok) {
+        const couples = await resCouples.json();
+        setHappyCouples(Array.isArray(couples) ? couples : []);
       }
 
       setLastRefreshedAt(new Date());
@@ -810,13 +819,18 @@ export default function AdminPage({ onExit }) {
                 isBadge: true,
               },
               { id: "settings", label: "Stats Control" },
+              {
+                id: "happy-couples",
+                label: "Happy Couples",
+                count: happyCouples.length,
+              },
             ].map((tab) => (
               <button
                 key={tab.id}
                 type="button"
                 aria-pressed={activeTab === tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`admin-tab min-h-11 min-w-0 px-2 py-2 sm:min-h-0 sm:whitespace-nowrap sm:px-3 sm:py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`admin-tab last:odd:col-span-2 min-h-11 min-w-0 px-2 py-2 sm:min-h-0 sm:whitespace-nowrap sm:px-3 sm:py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
                   activeTab === tab.id
                     ? "bg-[var(--admin-gold-strong)] text-white shadow-md"
                     : "bg-white text-[var(--admin-gold-text)] hover:bg-[var(--admin-surface)] border border-[var(--admin-border)]"
@@ -842,7 +856,7 @@ export default function AdminPage({ onExit }) {
               type="button"
               aria-haspopup="dialog"
               onClick={() => setContactOpen(true)}
-              className="admin-tab min-h-11 rounded-lg border border-[var(--admin-border)] bg-white px-2 py-2 text-xs text-[var(--admin-gold-text)] transition hover:bg-[var(--admin-surface)] sm:min-h-0 sm:px-3 sm:py-1.5"
+              className="admin-tab last:odd:col-span-2 min-h-11 rounded-lg border border-[var(--admin-border)] bg-white px-2 py-2 text-xs text-[var(--admin-gold-text)] transition hover:bg-[var(--admin-surface)] sm:min-h-0 sm:px-3 sm:py-1.5"
             >
               Contact
             </button>
@@ -1626,6 +1640,16 @@ export default function AdminPage({ onExit }) {
               </button>
             </form>
           </div>
+        )}
+        {/* TAB 5: HAPPY COUPLES GALLERY */}
+        {activeTab === "happy-couples" && (
+          <AdminHappyCouplesTab
+            couples={happyCouples}
+            token={token}
+            fetchAsAdmin={fetchAsAdmin}
+            onRefresh={() => fetchData(true)}
+            showToast={showToast}
+          />
         )}
       </div>
 
